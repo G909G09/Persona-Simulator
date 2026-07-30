@@ -383,7 +383,8 @@ h2.sec:first-child{margin-top:0}
 'use strict';
 window.onerror=function(msg,src,line,col){
   var el=document.getElementById('errOverlay');
-  if(el){el.style.display='block'; el.textContent='스크립트 오류: '+msg+' (줄 '+line+':'+col+') — 이 메시지를 캡처해 주세요.';}
+  var isEn=false; try{ isEn=localStorage.getItem('personaWatchLang')==='en'; }catch(e){}
+  if(el){el.style.display='block'; el.textContent=(isEn?'Script error: ':'스크립트 오류: ')+msg+(isEn?' (line ':' (줄 ')+line+':'+col+')'+(isEn?' — please capture this message.':' — 이 메시지를 캡처해 주세요.');}
 };
 /* ══════════════ 언어 전환 (UI 전용 — 서사/대사 콘텐츠는 한국어 고정) ══════════════
    내부 데이터 키(성격·성별·의상명 등)는 계속 한국어 문자열로 저장·비교되며(세이브 호환),
