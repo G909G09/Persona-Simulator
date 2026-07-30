@@ -287,73 +287,76 @@ h2.sec:first-child{margin-top:0}
 <div id="errOverlay"></div>
 
 <div id="toolbar">
-  <span class="title">PERSONA WATCH<small>성격 시뮬레이션 프로토타입 v39</small></span>
+  <span class="title">PERSONA WATCH<small data-i18n="title.sub">성격 시뮬레이션 프로토타입 v39</small></span>
   <span id="clock">T000 · 아침</span>
-  <select id="rateSel" title="관찰 등급">
-    <option value="0">등급: 전체이용가</option><option value="1">등급: 15세</option>
-    <option value="2">등급: 성인</option><option value="3">등급: R18</option>
+  <select id="rateSel" title="관찰 등급" data-i18n-title="rate.title">
+    <option value="0" data-i18n="rate.0">등급: 전체이용가</option><option value="1" data-i18n="rate.1">등급: 15세</option>
+    <option value="2" data-i18n="rate.2">등급: 성인</option><option value="3" data-i18n="rate.3">등급: R18</option>
+  </select>
+  <select id="langSel" title="Language / 언어">
+    <option value="ko">한국어</option><option value="en">English</option>
   </select>
   <span class="grow"></span>
-  <button id="btnConsole" class="icoBtn" title="시스템 설정">⚙</button>
-  <button id="btnSE" class="icoBtn" title="효과음 켬/끔">🔊</button>
-  <button id="btnSave" class="icoBtn" title="브라우저에 저장">💾</button>
-  <button id="btnLoad" class="icoBtn" title="저장 불러오기">📂</button>
-  <button id="btnExport" class="icoBtn" title="파일로 내보내기">⬇</button>
-  <button id="btnImport" class="icoBtn" title="파일 가져오기">⬆</button>
+  <button id="btnConsole" class="icoBtn" title="시스템 설정" data-i18n-title="btn.console">⚙</button>
+  <button id="btnSE" class="icoBtn" title="효과음 켬/끔" data-i18n-title="btn.se">🔊</button>
+  <button id="btnSave" class="icoBtn" title="브라우저에 저장" data-i18n-title="btn.save">💾</button>
+  <button id="btnLoad" class="icoBtn" title="저장 불러오기" data-i18n-title="btn.load">📂</button>
+  <button id="btnExport" class="icoBtn" title="파일로 내보내기" data-i18n-title="btn.export">⬇</button>
+  <button id="btnImport" class="icoBtn" title="파일 가져오기" data-i18n-title="btn.import">⬆</button>
   <input type="file" id="fileLoad" accept=".json,application/json">
-  <button id="btnStep">1턴 ⏭</button>
-  <button id="btnPlay" class="primary">▶ 자동재생</button>
+  <button id="btnStep" data-i18n="btn.step">1턴 ⏭</button>
+  <button id="btnPlay" class="primary" data-i18n="btn.play">▶ 자동재생</button>
   <select id="speedSel"><option value="1600">1×</option><option value="900">2×</option><option value="500">4×</option></select>
 </div>
 
 <div id="sheetBackdrop"></div>
-<button id="actFab" title="행동 패널 열기/닫기">⚡</button>
+<button id="actFab" title="행동 패널 열기/닫기" data-i18n-title="btn.actFab">⚡</button>
 
 <nav id="mobileNav">
-  <button data-mtab="mapWrap" class="on"><span class="ico">▦</span>지도</button>
-  <button data-mtab="leftCol"><span class="ico">☺</span>인물</button>
-  <button data-mtab="rightCol"><span class="ico">≡</span>활동</button>
+  <button data-mtab="mapWrap" class="on"><span class="ico">▦</span><span data-i18n="nav.map">지도</span></button>
+  <button data-mtab="leftCol"><span class="ico">☺</span><span data-i18n="nav.people">인물</span></button>
+  <button data-mtab="rightCol"><span class="ico">≡</span><span data-i18n="nav.activity">활동</span></button>
 </nav>
 
 <div id="layout">
   <!-- 좌: 캐릭터 -->
   <div class="col" id="leftCol">
     <div id="detail"></div>
-    <h2 class="sec">등장인물 <span id="npcCount" style="font-family:var(--mono);letter-spacing:0"></span></h2>
+    <h2 class="sec"><span data-i18n="sec.roster">등장인물</span> <span id="npcCount" style="font-family:var(--mono);letter-spacing:0"></span></h2>
     <div id="roster"></div>
 
-    <h2 class="sec">캐릭터 추가</h2>
+    <h2 class="sec" data-i18n="sec.addChar">캐릭터 추가</h2>
     <div id="createForm">
       <div id="cLookWrap"></div>
-      <div class="row"><label>이름</label><input type="text" id="cName" placeholder="비우면 자동" style="flex:1"></div>
-      <div class="row"><label>성격</label>
+      <div class="row"><label data-i18n="form.name">이름</label><input type="text" id="cName" placeholder="비우면 자동" data-i18n-ph="form.name.ph" style="flex:1"></div>
+      <div class="row"><label data-i18n="form.arch">성격</label>
         <select id="cArch" style="flex:1"></select>
       </div>
-      <div class="row"><label>격식</label>
+      <div class="row"><label data-i18n="form.form">격식</label>
         <select id="cForm" style="flex:1">
-          <option value="반말">반말</option><option value="존댓말">존댓말</option><option value="혼합">혼합</option>
+          <option value="반말" data-i18n="form.반말">반말</option><option value="존댓말" data-i18n="form.존댓말">존댓말</option><option value="혼합" data-i18n="form.혼합">혼합</option>
         </select>
       </div>
-      <div class="row"><label style="width:auto;font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="cR18" checked>R18 행동 참여 (등급 3 전용)</label></div>
-      <div class="row"><label style="width:auto;font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="cCor" checked>타락 허용</label></div>
-      <div class="axRow"><span style="font-size:11px">초기 타락</span><input type="range" id="cLewd0" min="0" max="100" value="0"><span class="val" id="cLewd0v">0</span></div>
-      <div class="axRow"><span style="font-size:11px">최대 정력</span><input type="range" id="cMaxEng" min="100" max="500" step="10" value="100"><span class="val" id="cMaxEngV">100</span></div>
-      <div class="psec" style="margin-top:8px">신체 민감도 <span style="font-weight:400;color:var(--muted)">(40 = 표준)</span></div>
+      <div class="row"><label style="width:auto;font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="cR18" checked><span data-i18n="form.r18">R18 행동 참여 (등급 3 전용)</span></label></div>
+      <div class="row"><label style="width:auto;font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="cCor" checked><span data-i18n="form.cor">타락 허용</span></label></div>
+      <div class="axRow"><span style="font-size:11px" data-i18n="form.lewd0">초기 타락</span><input type="range" id="cLewd0" min="0" max="100" value="0"><span class="val" id="cLewd0v">0</span></div>
+      <div class="axRow"><span style="font-size:11px" data-i18n="form.maxeng">최대 정력</span><input type="range" id="cMaxEng" min="100" max="500" step="10" value="100"><span class="val" id="cMaxEngV">100</span></div>
+      <div class="psec" style="margin-top:8px"><span data-i18n="form.sens">신체 민감도</span> <span style="font-weight:400;color:var(--muted)" data-i18n="form.sens.std">(40 = 표준)</span></div>
       <div id="cSensRows"></div>
       <div id="mixOpts">
-        <div class="row"><label style="width:52px">기본</label>
-          <select id="cMixBase" style="flex:1"><option value="반말">반말</option><option value="존댓말">존댓말</option></select></div>
-        <div class="row"><label style="width:52px">전환</label>
-          <select id="cMixTrig" style="flex:1"><option value="감정고조">감정고조 시</option><option value="친밀">친밀 대상에게</option></select></div>
+        <div class="row"><label style="width:52px" data-i18n="form.mixBase">기본</label>
+          <select id="cMixBase" style="flex:1"><option value="반말" data-i18n="form.반말">반말</option><option value="존댓말" data-i18n="form.존댓말">존댓말</option></select></div>
+        <div class="row"><label style="width:52px" data-i18n="form.mixTrig">전환</label>
+          <select id="cMixTrig" style="flex:1"><option value="감정고조" data-i18n="form.trig.emo">감정고조 시</option><option value="친밀" data-i18n="form.trig.close">친밀 대상에게</option></select></div>
       </div>
       <div id="axSliders"></div>
       <div class="btnRow">
-        <button id="btnRandArch">아키타입 ±15</button>
-        <button id="btnRandFull">완전 랜덤</button>
+        <button id="btnRandArch" data-i18n="btn.randArch">아키타입 ±15</button>
+        <button id="btnRandFull" data-i18n="btn.randFull">완전 랜덤</button>
       </div>
-      <button id="btnAdd" class="primary">캐릭터 추가</button>
+      <button id="btnAdd" class="primary" data-i18n="btn.addChar">캐릭터 추가</button>
     </div>
-    <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5">
+    <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5" data-i18n="help.createForm">
       아키타입 선택 시 축 값이 프리셋으로 채워지며, 슬라이더로 자유 조정할 수 있습니다. 토큰·목록 클릭 = 캐릭터 단일 확인, 두 사람의 관계는 상세의 [관계] 탭에서 행을 눌러 확인합니다.
     </p>
   </div>
@@ -361,8 +364,8 @@ h2.sec:first-child{margin-top:0}
   <!-- 중앙: 평면도 -->
   <div class="col" id="mapWrap">
     <div id="planHead">
-      <span class="ttl">FLOOR PLAN — 휴양지 숙소동</span>
-      <span class="sub">P0 공공 – P3 밀실 · 이동은 인접 1칸/턴</span>
+      <span class="ttl" data-i18n="map.title">FLOOR PLAN — 휴양지 숙소동</span>
+      <span class="sub" data-i18n="map.sub">P0 공공 – P3 밀실 · 이동은 인접 1칸/턴</span>
     </div>
     <div id="floorplan"></div>
   </div>
@@ -370,7 +373,7 @@ h2.sec:first-child{margin-top:0}
   <!-- 우: 플레이어 + 상세 + 이야기(1인칭) / 전체 로그(백그라운드) -->
   <div class="col" id="rightCol">
     <div id="playerPanel"></div>
-    <div id="logHead"><span id="logHeadLabel">이야기</span><span id="logFilterTag"></span><button id="btnLogMode" title="당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환">전체 로그</button><button id="btnClearLog">비우기</button></div>
+    <div id="logHead"><span id="logHeadLabel" data-i18n="log.story">이야기</span><span id="logFilterTag"></span><button id="btnLogMode" title="당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환" data-i18n-title="log.mode.title" data-i18n="log.full">전체 로그</button><button id="btnClearLog" data-i18n="log.clear">비우기</button></div>
     <div id="story"></div>
     <div id="log" style="display:none"></div>
   </div>
@@ -380,8 +383,172 @@ h2.sec:first-child{margin-top:0}
 'use strict';
 window.onerror=function(msg,src,line,col){
   var el=document.getElementById('errOverlay');
-  if(el){el.style.display='block'; el.textContent='스크립트 오류: '+msg+' (줄 '+line+':'+col+') — 이 메시지를 캡처해 주세요.';}
+  var isEn=false; try{ isEn=localStorage.getItem('personaWatchLang')==='en'; }catch(e){}
+  if(el){el.style.display='block'; el.textContent=(isEn?'Script error: ':'스크립트 오류: ')+msg+(isEn?' (line ':' (줄 ')+line+':'+col+')'+(isEn?' — please capture this message.':' — 이 메시지를 캡처해 주세요.');}
 };
+/* ══════════════ 언어 전환 (UI 전용 — 서사/대사 콘텐츠는 한국어 고정) ══════════════
+   내부 데이터 키(성격·성별·의상명 등)는 계속 한국어 문자열로 저장·비교되며(세이브 호환),
+   화면에 보여줄 때만 LABEL_EN 사전을 거쳐 영어로 치환한다. 정적 UI 문구는 data-i18n
+   속성 + applyI18n()으로, 동적으로 다시 그려지는 패널은 tr()/lbl() 호출로 전환한다. */
+let LANG='ko';
+try{ LANG=localStorage.getItem('personaWatchLang')||'ko'; }catch(e){}
+function saveLang(){ try{ localStorage.setItem('personaWatchLang',LANG); }catch(e){} }
+const I18N={ ko:{}, en:{} };
+/* 함수명은 tr() — 코드 전반에서 대상 NPC를 가리키는 지역 변수/매개변수 이름으로 t가
+   워낙 많이 쓰여서, 전역 t()를 두면 그 안에서 가려져(shadow) 조용히 깨지는 함수가 생긴다. */
+function tr(key){ const d=I18N[LANG]||I18N.ko; if(d&&d[key]!==undefined)return d[key]; return (I18N.ko[key]!==undefined)?I18N.ko[key]:key; }
+const LABEL_EN={};
+function lbl(cat,key){ if(LANG!=='en'||key==null)return key; const m=LABEL_EN[cat]; return (m&&m[key]!==undefined)?m[key]:key; }
+function applyI18n(root){
+  const r=root||document;
+  r.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=tr(el.dataset.i18n); });
+  r.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=tr(el.dataset.i18nPh); });
+  r.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title=tr(el.dataset.i18nTitle); });
+}
+function setLang(v){ LANG=v; saveLang(); applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; }
+Object.assign(I18N.ko,{
+ 'title.sub':'성격 시뮬레이션 프로토타입 v39',
+ 'rate.title':'관찰 등급','rate.0':'등급: 전체이용가','rate.1':'등급: 15세','rate.2':'등급: 성인','rate.3':'등급: R18',
+ 'btn.console':'시스템 설정','btn.se':'효과음 켬/끔','btn.save':'브라우저에 저장','btn.load':'저장 불러오기','btn.export':'파일로 내보내기','btn.import':'파일 가져오기',
+ 'btn.step':'1턴 ⏭','btn.stepWait':'대기 ⏭','btn.play':'▶ 자동재생','btn.pause':'∥ 정지','btn.actFab':'행동 패널 열기/닫기',
+ 'nav.map':'지도','nav.people':'인물','nav.activity':'활동',
+ 'sec.roster':'등장인물','sec.addChar':'캐릭터 추가',
+ 'form.name':'이름','form.name.ph':'비우면 자동','form.arch':'성격','form.form':'격식',
+ 'form.반말':'반말','form.존댓말':'존댓말','form.혼합':'혼합',
+ 'form.r18':'R18 행동 참여 (등급 3 전용)','form.cor':'타락 허용','form.lewd0':'초기 타락','form.maxeng':'최대 정력',
+ 'form.sens':'신체 민감도','form.sens.std':'(40 = 표준)','form.mixBase':'기본','form.mixTrig':'전환',
+ 'form.trig.emo':'감정고조 시','form.trig.close':'친밀 대상에게',
+ 'btn.randArch':'아키타입 ±15','btn.randFull':'완전 랜덤','btn.addChar':'캐릭터 추가',
+ 'help.createForm':'아키타입 선택 시 축 값이 프리셋으로 채워지며, 슬라이더로 자유 조정할 수 있습니다. 토큰·목록 클릭 = 캐릭터 단일 확인, 두 사람의 관계는 상세의 [관계] 탭에서 행을 눌러 확인합니다.',
+ 'map.title':'FLOOR PLAN — 휴양지 숙소동','map.sub':'P0 공공 – P3 밀실 · 이동은 인접 1칸/턴',
+ 'log.story':'이야기','log.full':'전체 로그','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기'
+});
+/* ── 데이터 라벨 사전: 내부 키(한국어)는 그대로 두고, 화면 표시용 영어만 매핑 ── */
+Object.assign(LABEL_EN,{
+ arch:{'활발':'Energetic','쿨':'Cool','얌전':'Quiet','오만':'Arrogant','천연':'Airhead','츤데레':'Tsundere',
+   '장난꾸러기':'Prankster','위원장':'Class Rep','무뚝뚝':'Blunt','소악마':'Little Devil','온화':'Gentle',
+   '겁쟁이':'Timid','열혈':'Hot-Blooded','냉소':'Cynical','어른스러움':'Mature','응석받이':'Spoiled',
+   '고고함':'Aloof','과묵한 사색가':'Quiet Thinker','리더':'Leader','마이페이스':'My-Pace'},
+ form:{'반말':'Casual','존댓말':'Formal','혼합':'Mixed'},
+ axis:{'외향':'Extrov.','대담':'Bold','온화':'Gentle','솔직':'Frank','성실':'Diligent','감수':'Sensitive'},
+ slot:{'아침':'Morning','낮':'Day','저녁':'Evening','밤':'Night'},
+ weather:{'맑음':'Clear','흐림':'Cloudy','비':'Rain','강풍':'Windy','무더위':'Heatwave','한파':'Cold Snap'},
+ gender:{'여성':'Female','남성':'Male'},
+ genital:{'여성기':'Female','남성기':'Male','양성':'Both'},
+ r18mode:{'기본':'Default','부탁':'Plea','강압':'Force','복종':'Submit'},
+ need:{'사교욕':'Social','피로':'Fatigue','성취욕':'Drive','안정도':'Stability','매력':'Charm','노출도':'Exposure'},
+ sexstat:{'흥분':'Arousal','취기':'Drunk','타락':'Corrupt.','정력':'Stamina','체격':'Build','운동':'Fitness'},
+ part:{'입술':'Lips','귀':'Ears','목':'Neck','가슴':'Chest','허리':'Waist','하복부':'Groin'},
+ hair:{'숏컷':'Short','단발':'Bob','포니테일':'Ponytail','트윈테일':'Twintails','롱헤어':'Long','대머리':'Bald'},
+ status:{'감기':'Cold','점액감염':'Slime Infection','기생체':'Parasite'},
+ space:{'전망대':'Lookout','해변길':'Beach Path','해변':'Beach','창고':'Shed','광장':'Plaza','카페':'Cafe',
+   '옥상':'Rooftop','복도':'Hallway','식당':'Dining Hall','도서실':'Library',
+   '개인실 A':'Room A','개인실 B':'Room B','개인실 C':'Room C','개인실 D':'Room D','트레이닝룸':'Gym',
+   '외곽길':'Outer Path','마트':'Mart','농장':'Farm','성인용품점':'Adult Shop','스트립클럽':'Strip Club',
+   '깊은 숲길':'Deep Forest Path','숲':'Forest'},
+ outfit:{'평상복':'Casual','캐주얼':'Casual Wear','전신 코트':'Long Coat','정장':'Suit','수영복':'Swimsuit',
+   '드레스':'Dress','노출 의상':'Revealing Outfit','란제리':'Lingerie','트레이닝복':'Tracksuit','유카타':'Yukata',
+   '차이나 드레스':'Cheongsam','웨딩 드레스':'Wedding Dress','비키니':'Bikini','가죽 의상':'Leather Outfit',
+   '메이드복':'Maid Outfit','바니걸':'Bunny Suit','교복':'School Uniform','잠옷':'Pajamas','우비':'Raincoat',
+   '집사복':'Butler Outfit','무녀복':'Shrine Maiden Robe','간호사복':'Nurse Outfit','스쿨 수영복':'School Swimsuit',
+   '치어리더복':'Cheerleader Outfit','알몸':'Nude'},
+ under:{'브라':'Bra','레이스 브라':'Lace Bra','팬티':'Panties','레이스 팬티':'Lace Panties','착용 안 함':'None'},
+ hact:{'애무':'Caress','키스':'Kiss','속삭이기':'Whisper','삽입':'Insert','격렬하게':'Rough','천천히':'Slow',
+   '체위 바꾸기':'Change Position','멈추고 안기':'Pause & Hold','중단':'Stop'},
+ rellabel:{'연인':'Lovers','구멍동지':'Fling Circle','섹파':'FWB','비밀스러운 사이':'Secret Fling',
+   '짝사랑':'Unrequited','라이벌':'Rivals','앙숙':'Feuding','절친':'Best Friends','친구':'Friends',
+   '지인':'Acquaintance','타인':'Stranger'},
+ relflag:{'연인':'Lovers','갈등 중':'In Conflict','갈등':'Conflict','고백 거절 이력':'Rejected Before'},
+ rel:{'호감':'Liking','애정':'Affection','신뢰':'Trust','긴장':'Tension','욕망':'Desire'},
+ ud:{'상':'Top','하':'Bottom'}
+});
+Object.assign(I18N.ko,{
+ 'tab.stat':'능력치','tab.rel':'관계','btn.pairEditDone':'조절 완료','btn.pairEdit':'관계 조절 ✎',
+ 'sec.msTitle':'관계 이정표','unit.day':'일차','sec.sexstat':'성 스탯','sec.corLock':'타락 잠금','sec.r18mode':'R18 성향',
+ 'sec.sens':'민감도','label.hsexing':'H 진행 중 —','btn.editSettings':'설정 변경','label.now':'현재','label.privRoom':'개인실',
+ 'label.r18in':'참여','label.r18out':'미참여','label.relTo':'관계','unit.turn':'턴',
+ 'edit.title':'설정 변경','edit.player':'플레이어','edit.themeColor':'테마색','edit.maxEng':'최대정력','edit.curEng':'현재정력',
+ 'edit.build':'체격','edit.athletic':'운동','edit.charm':'매력','edit.exposure':'노출도','edit.save':'저장','edit.cancel':'취소',
+ 'alert.dupName':'같은 이름이 이미 있습니다.','label.noOthers':'다른 인물이 없다.',
+ 'pp.createTitle':'컨트롤 캐릭터 만들기','pp.namePh':'이름 (비우면 자동)','pp.startBtn':'1인칭으로 시작',
+ 'pp.createHelp':'플레이어를 만들면 행동·이동·대기 하나가 1턴이 되고, 그 뒤에 다른 인물들이 움직입니다. 자동재생은 계속 대기하며 지켜보는 관찰 모드가 됩니다.',
+ 'alert.max20':'최대 20명까지 가능합니다.','pp.sleepingTitle':'잠자는 중 💤','pp.wake':'깨어나기',
+ 'unit.step':'단계','btn.quitWork':'그만두기','label.expose':'노출','label.crossdress':'크로스드레싱','unit.coin':'코인',
+ 'label.goals':'🎯 목표','label.weeklyRent':'🏨 이번 주 숙박료','label.paidUp':'납부 완료','label.within':' 내','unit.days':'일',
+ 'label.allGoalsDone':'모든 목표 달성 — 리조트의 중심이 되었다 👑','label.corLockState':'타락 잠금 상태',
+ 'unit.person':'인','label.orgyWord':'난교',
+ 'btn.continueWait':'계속한다 ⏭','btn.takeControl':'주도권 빼앗기','btn.autoOn':'자동 진행 ON ▶ — 누르면 끔','btn.autoOff':'자동 진행 OFF — 누르면 자동재생',
+ 'btn.leaveToPartner':'상대에게 맡긴다 ⏭','sec.move':'이동 — 인접 공간','btn.shuttle':'🚌 셔틀','btn.bike':'🚲 자전거',
+ 'sec.interact':'상호작용 — 상대 선택','label.noOneHere':'이 공간에는 아무도 없다.','sec.bringAlong':'데려가기','sec.giveGift':'선물하기 🎁',
+ 'label.specialInteract':'✦ 특수 교류','title.needMoreRel':'관계를 더 쌓으면 열립니다','sec.job':'일자리','sec.shop':'구매',
+ 'sec.underwear':'속옷 🩲','sec.wardrobe':'옷장 👗','label.needWardrobe':'👗 옷을 갈아입으려면 옷장이 있는 곳(개인실·트레이닝룸)으로 가야 한다',
+ 'btn.sleep':'잠자기 💤','btn.autoFaint':'자동 기절','btn.reputation':'평판 📊','btn.batchAdmin':'⚙ 일괄',
+ 'sec.useItem':'아이템 사용 🧪','sec.solo':'혼자 하기','btn.doNothing':'아무것도 하지 않고 지켜본다 ⏭','label.partnerTier':'상대 반응단계',
+ 'label.partnerLeading':'상대가 주도하고 있다.','label.choosePartner':'상대 선택',
+ 'btn.close':'닫기 ✕','btn.restoreDefaults':'기본값 복원','btn.applyClose':'적용하고 닫기','confirm.resetCfg':'모든 설정을 기본값으로 되돌릴까요?',
+ 'modal.sleepPrompt':'몇 턴 동안 잘까? 자는 동안 턴이 자동으로 흐르고, 말을 걸어도 듣지 못한다.',
+ 'modal.sleepShort':'짧게 (3턴)','modal.sleepNormal':'보통 (5턴)','modal.sleepDeep':'깊이 (8턴)',
+ 'btn.random':'랜덤','btn.cancel':'취소','btn.continue':'계속',
+ 'modal.batchTitle':'⚙ 전체 일괄 편집','modal.batchDesc':'모든 인물(플레이어 제외)의 파라미터를 한 번에 바꾼다.',
+ 'btn.randStat':'스탯 랜덤화','btn.randRel':'관계 랜덤화','btn.calmAll':'욕구·상태 초기화','btn.r18allToggle':'전원 R18 토글','btn.purifyAll':'전원 타락 0',
+ 'modal.repMatrixTitle':'📊 평판 매트릭스','modal.repMatrixSub':'(행→열 호감)',
+ 'modal.busTitle':'🚌 셔틀버스 (5코인)','modal.bikeTitle':'🚲 자전거로 이동',
+ 'modal.busDesc':'노선을 따라 원하는 곳까지 한 번에. 낯선 승객과 밀착될 수도 있다...','modal.bikeDesc':'페달을 밟아 어디든 빠르고 안전하게.',
+ 'err.badSaveFile':'형식이 올바르지 않은 저장 파일','alert.saveBlocked':'이 환경에서는 브라우저 저장이 차단되어 있습니다.\n⬇ 버튼으로 파일 내보내기를 사용해 주세요.',
+ 'alert.noSaveData':'브라우저 저장 데이터가 없습니다.','alert.loadFailed':'불러오기 실패: ','alert.fileReadFailed':'파일을 읽을 수 없습니다: ','btn.delete':'삭제'
+});
+Object.assign(I18N.en,{
+ 'tab.stat':'Stats','tab.rel':'Relations','btn.pairEditDone':'Done Adjusting','btn.pairEdit':'Adjust Relation ✎',
+ 'sec.msTitle':'Milestones','unit.day':'Day ','sec.sexstat':'Sex Stats','sec.corLock':'Corruption Locked','sec.r18mode':'R18 Style',
+ 'sec.sens':'Sensitivity','label.hsexing':'In an H session —','btn.editSettings':'Edit Settings','label.now':'Now at','label.privRoom':'Room',
+ 'label.r18in':'Yes','label.r18out':'No','label.relTo':'Relation','unit.turn':'t',
+ 'edit.title':'Edit Settings','edit.player':'Player','edit.themeColor':'Theme Color','edit.maxEng':'Max Stamina','edit.curEng':'Current Stamina',
+ 'edit.build':'Build','edit.athletic':'Fitness','edit.charm':'Charm','edit.exposure':'Exposure','edit.save':'Save','edit.cancel':'Cancel',
+ 'alert.dupName':'That name is already taken.','label.noOthers':'No other characters.',
+ 'pp.createTitle':'Create Control Character','pp.namePh':'Name (blank = random)','pp.startBtn':'Start in First Person',
+ 'pp.createHelp':'Once you create a player, each action, move, or wait becomes one turn, after which the other characters act. Auto-play becomes an observation mode that keeps waiting.',
+ 'alert.max20':'Up to 20 characters allowed.','pp.sleepingTitle':'Sleeping 💤','pp.wake':'Wake Up',
+ 'unit.step':'step','btn.quitWork':'Quit','label.expose':'Exposure','label.crossdress':'Crossdressing','unit.coin':'coins',
+ 'label.goals':'🎯 Goals','label.weeklyRent':'🏨 This week\'s rent','label.paidUp':'Paid up','label.within':' left','unit.days':' day(s)',
+ 'label.allGoalsDone':'All goals complete — you\'ve become the heart of the resort 👑','label.corLockState':'Corruption locked',
+ 'unit.person':'-person','label.orgyWord':'orgy',
+ 'btn.continueWait':'Continue ⏭','btn.takeControl':'Take Control Back','btn.autoOn':'Auto-progress ON ▶ — click to stop','btn.autoOff':'Auto-progress OFF — click to auto-play',
+ 'btn.leaveToPartner':'Leave it to them ⏭','sec.move':'Move — Adjacent Rooms','btn.shuttle':'🚌 Shuttle','btn.bike':'🚲 Bike',
+ 'sec.interact':'Interact — Choose Partner','label.noOneHere':'No one is here.','sec.bringAlong':'Bring Along','sec.giveGift':'Give Gift 🎁',
+ 'label.specialInteract':'✦ Special Interaction','title.needMoreRel':'Build more relationship to unlock','sec.job':'Work','sec.shop':'Shop',
+ 'sec.underwear':'Underwear 🩲','sec.wardrobe':'Wardrobe 👗','label.needWardrobe':'👗 You need to be somewhere with a wardrobe (private room / gym) to change clothes',
+ 'btn.sleep':'Sleep 💤','btn.autoFaint':'Auto-Faint','btn.reputation':'Reputation 📊','btn.batchAdmin':'⚙ Batch',
+ 'sec.useItem':'Use Item 🧪','sec.solo':'Solo Actions','btn.doNothing':'Do nothing and watch ⏭','label.partnerTier':'Partner tier',
+ 'label.partnerLeading':'Your partner is taking the lead.','label.choosePartner':'Choose Partner',
+ 'btn.close':'Close ✕','btn.restoreDefaults':'Restore Defaults','btn.applyClose':'Apply & Close','confirm.resetCfg':'Reset all settings to their defaults?',
+ 'modal.sleepPrompt':'How many turns should you sleep? Turns pass automatically while asleep, and you won\'t hear anyone talking to you.',
+ 'modal.sleepShort':'Short (3 turns)','modal.sleepNormal':'Normal (5 turns)','modal.sleepDeep':'Deep (8 turns)',
+ 'btn.random':'Random','btn.cancel':'Cancel','btn.continue':'Continue',
+ 'modal.batchTitle':'⚙ Batch Edit All','modal.batchDesc':'Change parameters for every character (except the player) at once.',
+ 'btn.randStat':'Randomize Stats','btn.randRel':'Randomize Relations','btn.calmAll':'Reset Needs/Status','btn.r18allToggle':'Toggle R18 for All','btn.purifyAll':'Zero Corruption for All',
+ 'modal.repMatrixTitle':'📊 Reputation Matrix','modal.repMatrixSub':'(row → column liking)',
+ 'modal.busTitle':'🚌 Shuttle Bus (5 coins)','modal.bikeTitle':'🚲 Travel by Bike',
+ 'modal.busDesc':'Ride the route straight to your destination in one go. You might end up pressed against a stranger...','modal.bikeDesc':'Pedal your way anywhere, fast and safe.',
+ 'err.badSaveFile':'Malformed save file','alert.saveBlocked':'Browser storage is blocked in this environment.\nPlease use the ⬇ Export to File button instead.',
+ 'alert.noSaveData':'No browser save data found.','alert.loadFailed':'Load failed: ','alert.fileReadFailed':'Could not read file: ','btn.delete':'Delete'
+});
+Object.assign(I18N.en,{
+ 'title.sub':'Persona Simulation Prototype v39',
+ 'rate.title':'Content rating','rate.0':'Rating: All Ages','rate.1':'Rating: 15+','rate.2':'Rating: Adult','rate.3':'Rating: R18',
+ 'btn.console':'System settings','btn.se':'Toggle sound effects','btn.save':'Save to browser','btn.load':'Load save','btn.export':'Export to file','btn.import':'Import from file',
+ 'btn.step':'1 Turn ⏭','btn.stepWait':'Wait ⏭','btn.play':'▶ Auto-play','btn.pause':'■ Pause','btn.actFab':'Open/close action panel',
+ 'nav.map':'Map','nav.people':'People','nav.activity':'Activity',
+ 'sec.roster':'Characters','sec.addChar':'Add Character',
+ 'form.name':'Name','form.name.ph':'Leave blank for random','form.arch':'Personality','form.form':'Speech',
+ 'form.반말':'Casual','form.존댓말':'Formal','form.혼합':'Mixed',
+ 'form.r18':'Participates in R18 acts (rating 3 only)','form.cor':'Allow corruption','form.lewd0':'Starting corruption','form.maxeng':'Max stamina',
+ 'form.sens':'Body sensitivity','form.sens.std':'(40 = standard)','form.mixBase':'Base','form.mixTrig':'Switches on',
+ 'form.trig.emo':'Heightened emotion','form.trig.close':'Close relations',
+ 'btn.randArch':'Archetype ±15','btn.randFull':'Fully random','btn.addChar':'Add Character',
+ 'help.createForm':'Picking an archetype fills the axis sliders with a preset, which you can then adjust freely. Click a token/roster entry to inspect one character; to see how two characters relate, open the [Relations] tab in the detail panel and click a row.',
+ 'map.title':'FLOOR PLAN — Resort Lodge','map.sub':'P0 Public – P3 Private · Move 1 adjacent room/turn',
+ 'log.story':'Story','log.full':'Full Log','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear'
+});
 /* ══════════════ 데이터 ══════════════ */
 const AXES=['외향','대담','온화','솔직','성실','감수'];
 const ARCH={
@@ -955,33 +1122,33 @@ try{ Object.assign(CFG, JSON.parse(localStorage.getItem(CFG_KEY)||'{}')); }catch
 function cfgSave(){ try{ localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); }catch(e){} }
 
 const CFG_SCHEMA=[
- {g:'시스템'},
- {k:'faint',    t:'toggle', l:'기절 시스템',     d:'H 중 피로 100 도달 시 기절·강제 종료. 끄면 피로가 한계여도 세션이 유지됩니다.'},
- {k:'climax',   t:'toggle', l:'절정 시스템',     d:'흥분 100 도달 시 절정 연출과 정력 소모. 끄면 흥분이 100에서 유지됩니다.'},
- {k:'intrusion',t:'toggle', l:'난입 반응',       d:'H 중인 공간에 다른 인물이 들어올 때의 즉시 반응.'},
- {g:'확률·밸런스'},
- {k:'spectateP',t:'range', l:'관전 반응 확률',  min:0,max:100,step:5, u:'%', d:'같은 공간의 제3자가 매 턴 반응할 확률. 0이면 관전 반응(자위·H 제안 포함) 자체가 꺼집니다.'},
- {k:'sceneP',   t:'range', l:'이벤트씬 확률',   min:0,max:100,step:5, u:'%', d:'매 턴 이벤트씬 판정을 시도할 확률.'},
- {k:'corruptX', t:'range', l:'타락 전파 배율',  min:0,max:300,step:10, u:'%', d:'R18 교류로 타락이 전파되는 속도. 0이면 전파가 멈춥니다(초기 타락·직접 설정은 유지).'},
- {k:'arousalDecay',t:'range', l:'흥분 자연 감소', min:0,max:12,step:1, u:'/턴', d:'매 턴 흥분이 저절로 내려가는 양.'},
- {k:'engRegen', t:'range', l:'정력 회복 배율',  min:0,max:300,step:10, u:'%', d:'비 H 상태에서의 정력 자연 회복 속도.'},
- {k:'sensX',    t:'range', l:'민감도 영향 배율', min:0,max:200,step:10, u:'%', d:'민감 부위 자극 시 흥분 상승 보정의 강도. 0이면 민감도가 무시됩니다.'},
- {g:'효과음'},
- {k:'se',       t:'toggle', l:'효과음(SE)',      d:'툴바 🔊 버튼과 연동됩니다.'},
- {k:'seVol',    t:'range', l:'SE 볼륨',         min:0,max:100,step:5, u:'%'},
- {g:'저장·로그'},
- {k:'autosave', t:'select', l:'자동 저장 간격', opts:[[0,'끔'],[6,'6턴'],[12,'12턴'],[24,'24턴']], d:'브라우저 저장(💾)과 같은 슬롯에 저장됩니다.'},
- {k:'logMax',   t:'select', l:'로그 최대 보관', opts:[[150,'150'],[300,'300'],[600,'600'],[1000,'1000']]},
- {g:'신규 캐릭터 기본값'},
- {k:'defR18',   t:'toggle', l:'R18 참여 기본 켬', d:'생성 폼·플레이어 폼 체크박스의 초기 상태.'},
- {k:'defCor',   t:'toggle', l:'타락 허용 기본 켬'},
- {k:'fet_beast',   t:'toggle', l:'R18+ 수간 요소',   d:'등급 3에서 짐승과 얽히는 페티시 활동·이벤트·아이템·일자리를 활성화합니다.'},
- {k:'fet_water',   t:'toggle', l:'R18+ 워터스포츠',  d:'등급 3에서 배뇨 관련 페티시 요소를 활성화합니다.'},
- {k:'fet_tentacle',t:'toggle', l:'R18+ 촉수 요소',   d:'등급 3에서 촉수 페티시 활동·이벤트를 활성화합니다.'},
- {k:'fet_bondage', t:'toggle', l:'R18+ 구속 요소',   d:'등급 3에서 밀실·창고 등에서 구속·조교 플레이 이벤트를 활성화합니다.'},
- {k:'fet_exhibition',t:'toggle', l:'R18+ 노출증 요소',d:'등급 3에서 공공장소 노출·관음 이벤트를 활성화합니다.'},
- {g:'1인칭 시점'},
- {k:'immersion', t:'toggle', l:'시작 시 이야기 모드',   d:'켜면 시작할 때 우측 패널이 [이야기](당신에게 직접 벌어지는 일만, 인터랙티브 스토리 형식) 모드로 열립니다. 끄면 [전체 로그](모든 인물의 행동을 기록하는 관찰용 로그)로 시작합니다. 플레이 중에는 로그 헤더의 전환 버튼으로 언제든 바꿀 수 있습니다.'}
+ {g:'시스템',g_en:'System'},
+ {k:'faint',    t:'toggle', l:'기절 시스템', l_en:'Fainting System',     d:'H 중 피로 100 도달 시 기절·강제 종료. 끄면 피로가 한계여도 세션이 유지됩니다.', d_en:'Faint and force-end an H session when fatigue hits 100. If off, the session continues even at max fatigue.'},
+ {k:'climax',   t:'toggle', l:'절정 시스템', l_en:'Climax System',     d:'흥분 100 도달 시 절정 연출과 정력 소모. 끄면 흥분이 100에서 유지됩니다.', d_en:'Trigger a climax scene and consume stamina when arousal hits 100. If off, arousal simply holds at 100.'},
+ {k:'intrusion',t:'toggle', l:'난입 반응', l_en:'Interruption Reactions',       d:'H 중인 공간에 다른 인물이 들어올 때의 즉시 반응.', d_en:'Immediate reaction when someone else enters a room where an H session is underway.'},
+ {g:'확률·밸런스',g_en:'Probability & Balance'},
+ {k:'spectateP',t:'range', l:'관전 반응 확률', l_en:'Onlooker Reaction Chance',  min:0,max:100,step:5, u:'%', d:'같은 공간의 제3자가 매 턴 반응할 확률. 0이면 관전 반응(자위·H 제안 포함) 자체가 꺼집니다.', d_en:'Chance per turn that a third party in the same room reacts. At 0, onlooker reactions (including masturbation/propositioning) are disabled entirely.'},
+ {k:'sceneP',   t:'range', l:'이벤트씬 확률', l_en:'Event Scene Chance',   min:0,max:100,step:5, u:'%', d:'매 턴 이벤트씬 판정을 시도할 확률.', d_en:'Chance per turn to attempt an event-scene roll.'},
+ {k:'corruptX', t:'range', l:'타락 전파 배율', l_en:'Corruption Spread Rate',  min:0,max:300,step:10, u:'%', d:'R18 교류로 타락이 전파되는 속도. 0이면 전파가 멈춥니다(초기 타락·직접 설정은 유지).', d_en:'Speed at which corruption spreads through R18 interactions. At 0, spread stops entirely (starting corruption/manual edits are unaffected).'},
+ {k:'arousalDecay',t:'range', l:'흥분 자연 감소', l_en:'Passive Arousal Decay', min:0,max:12,step:1, u:'/턴', d:'매 턴 흥분이 저절로 내려가는 양.', d_en:'Amount arousal naturally drops each turn.'},
+ {k:'engRegen', t:'range', l:'정력 회복 배율', l_en:'Stamina Regen Rate',  min:0,max:300,step:10, u:'%', d:'비 H 상태에서의 정력 자연 회복 속도.', d_en:'Natural stamina regeneration speed while not in an H session.'},
+ {k:'sensX',    t:'range', l:'민감도 영향 배율', l_en:'Sensitivity Impact Rate', min:0,max:200,step:10, u:'%', d:'민감 부위 자극 시 흥분 상승 보정의 강도. 0이면 민감도가 무시됩니다.', d_en:'Strength of the arousal bonus when a sensitive spot is stimulated. At 0, sensitivity is ignored.'},
+ {g:'효과음',g_en:'Sound Effects'},
+ {k:'se',       t:'toggle', l:'효과음(SE)', l_en:'Sound Effects (SE)',      d:'툴바 🔊 버튼과 연동됩니다.', d_en:'Linked to the 🔊 toolbar button.'},
+ {k:'seVol',    t:'range', l:'SE 볼륨', l_en:'SE Volume',         min:0,max:100,step:5, u:'%'},
+ {g:'저장·로그',g_en:'Save & Log'},
+ {k:'autosave', t:'select', l:'자동 저장 간격', l_en:'Autosave Interval', opts:[[0,'끔'],[6,'6턴'],[12,'12턴'],[24,'24턴']], opts_en:[[0,'Off'],[6,'6 turns'],[12,'12 turns'],[24,'24 turns']], d:'브라우저 저장(💾)과 같은 슬롯에 저장됩니다.', d_en:'Saves to the same slot as the browser-save (💾) button.'},
+ {k:'logMax',   t:'select', l:'로그 최대 보관', l_en:'Max Log Entries', opts:[[150,'150'],[300,'300'],[600,'600'],[1000,'1000']]},
+ {g:'신규 캐릭터 기본값',g_en:'New Character Defaults'},
+ {k:'defR18',   t:'toggle', l:'R18 참여 기본 켬', l_en:'R18 Participation Default On', d:'생성 폼·플레이어 폼 체크박스의 초기 상태.', d_en:'Initial state of the checkbox on the creation and player forms.'},
+ {k:'defCor',   t:'toggle', l:'타락 허용 기본 켬', l_en:'Allow Corruption Default On'},
+ {k:'fet_beast',   t:'toggle', l:'R18+ 수간 요소', l_en:'R18+ Bestiality Content',   d:'등급 3에서 짐승과 얽히는 페티시 활동·이벤트·아이템·일자리를 활성화합니다.', d_en:'At rating 3, enables fetish activities/events/items/jobs involving animals.'},
+ {k:'fet_water',   t:'toggle', l:'R18+ 워터스포츠', l_en:'R18+ Watersports Content',  d:'등급 3에서 배뇨 관련 페티시 요소를 활성화합니다.', d_en:'At rating 3, enables urination-related fetish content.'},
+ {k:'fet_tentacle',t:'toggle', l:'R18+ 촉수 요소', l_en:'R18+ Tentacle Content',   d:'등급 3에서 촉수 페티시 활동·이벤트를 활성화합니다.', d_en:'At rating 3, enables tentacle fetish activities/events.'},
+ {k:'fet_bondage', t:'toggle', l:'R18+ 구속 요소', l_en:'R18+ Bondage Content',   d:'등급 3에서 밀실·창고 등에서 구속·조교 플레이 이벤트를 활성화합니다.', d_en:'At rating 3, enables bondage/training-play events in private rooms, the shed, etc.'},
+ {k:'fet_exhibition',t:'toggle', l:'R18+ 노출증 요소', l_en:'R18+ Exhibitionism Content',d:'등급 3에서 공공장소 노출·관음 이벤트를 활성화합니다.', d_en:'At rating 3, enables public-exposure/voyeurism events.'},
+ {g:'1인칭 시점',g_en:'First-Person View'},
+ {k:'immersion', t:'toggle', l:'시작 시 이야기 모드', l_en:'Story Mode on Start',   d:'켜면 시작할 때 우측 패널이 [이야기](당신에게 직접 벌어지는 일만, 인터랙티브 스토리 형식) 모드로 열립니다. 끄면 [전체 로그](모든 인물의 행동을 기록하는 관찰용 로그)로 시작합니다. 플레이 중에는 로그 헤더의 전환 버튼으로 언제든 바꿀 수 있습니다.', d_en:'If on, the right panel opens in [Story] mode (only what happens directly to you, as an interactive story) at start. If off, it starts in [Full Log] mode (every character\'s actions, for observation). You can toggle between them any time from the log header button.'}
 ];
 
 function openConsole(){
@@ -990,21 +1157,23 @@ function openConsole(){
   const w=document.createElement('div'); w.id='consoleWrap';
   let b='';
   for(const it of CFG_SCHEMA){
-    if(it.g){ b+='<div class="cGroup">'+it.g+'</div>'; continue; }
+    if(it.g){ b+='<div class="cGroup">'+(LANG==='en'?(it.g_en||it.g):it.g)+'</div>'; continue; }
     let ctrl='';
+    const optList=(LANG==='en'&&it.opts_en)?it.opts_en:it.opts;
     if(it.t==='toggle'){
       ctrl='<button class="cSwitch'+(CFG[it.k]?' on':'')+'" data-ck="'+it.k+'" role="switch" aria-checked="'+(!!CFG[it.k])+'"></button>';
     }else if(it.t==='range'){
       ctrl='<span class="ctrl"><input type="range" min="'+it.min+'" max="'+it.max+'" step="'+it.step+'" value="'+CFG[it.k]+'" data-ck="'+it.k+'"><span class="cv">'+CFG[it.k]+(it.u||'')+'</span></span>';
     }else if(it.t==='select'){
-      ctrl='<select data-ck="'+it.k+'">'+it.opts.map(function(o){return '<option value="'+o[0]+'"'+(CFG[it.k]==o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>';
+      ctrl='<select data-ck="'+it.k+'">'+optList.map(function(o){return '<option value="'+o[0]+'"'+(CFG[it.k]==o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>';
     }
-    b+='<div class="cItem"><span class="cl">'+it.l+'</span>'+ctrl+(it.d?'<span class="cd">'+it.d+'</span>':'')+'</div>';
+    const itLabel=LANG==='en'?(it.l_en||it.l):it.l, itDesc=LANG==='en'?(it.d_en||it.d):it.d;
+    b+='<div class="cItem"><span class="cl">'+itLabel+'</span>'+ctrl+(itDesc?'<span class="cd">'+itDesc+'</span>':'')+'</div>';
   }
   w.innerHTML='<div class="ccard">'
-    +'<div class="chead"><b>SYSTEM CONSOLE</b><button id="cClose">닫기 ✕</button></div>'
+    +'<div class="chead"><b>SYSTEM CONSOLE</b><button id="cClose">'+tr('btn.close')+'</button></div>'
     +'<div class="cbody">'+b+'</div>'
-    +'<div class="cfoot"><button id="cReset">기본값 복원</button><button id="cDone" class="primary">적용하고 닫기</button></div>'
+    +'<div class="cfoot"><button id="cReset">'+tr('btn.restoreDefaults')+'</button><button id="cDone" class="primary">'+tr('btn.applyClose')+'</button></div>'
     +'</div>';
   document.body.appendChild(w);
   const apply=function(k,v){
@@ -1034,7 +1203,7 @@ function openConsole(){
   w.querySelector('#cDone').onclick=close;
   w.onclick=function(e){ if(e.target===w)close(); };
   w.querySelector('#cReset').onclick=function(){
-    if(!confirm('모든 설정을 기본값으로 되돌릴까요?'))return;
+    if(!confirm(tr('confirm.resetCfg')))return;
     Object.assign(CFG,CFG_DEF); cfgSave(); syncSEBtn();
     w.remove(); openConsole();
   };
@@ -1778,19 +1947,19 @@ function milestone(a,b,key){
 const _lovers=p=>Object.keys(p.flags).filter(k=>k.startsWith('연인:')).length;
 const _spNPCs=p=>Object.keys(p.flags).filter(k=>k.startsWith('sp:')).map(k=>k.split(':')[1]).filter((v,i,a)=>a.indexOf(v)===i).length;
 const QUESTS=[
-  {id:'friend',icon:'🌱',desc:'누군가와 가까워지기 (호감 40)',chk:p=>npcs.some(o=>o.id!==p.id&&o.relations[p.id]&&o.relations[p.id].호감>=40),rw:{coins:15}},
-  {id:'explore',icon:'🗺️',desc:'여러 장소 둘러보기 (8곳 방문)',chk:p=>Object.keys(p.flags._visited||{}).length>=8,rw:{coins:25}},
-  {id:'forest',icon:'🌲',desc:'깊은 숲까지 가보기',chk:p=>(p.flags._visited||{}).forest,rw:{coins:20}},
-  {id:'jobs',icon:'🛠️',desc:'서로 다른 일자리 3곳 경험',chk:p=>Object.keys(p.flags._jobs||{}).length>=3,rw:{coins:30}},
-  {id:'coins',icon:'💰',desc:'코인 200 모으기',chk:p=>p.money>=200,rw:{매력:6}},
-  {id:'wardrobe',icon:'👗',desc:'의상 5벌 이상 갖추기',chk:p=>(p.wardrobe||[]).length>=5,rw:{coins:30}},
-  {id:'lover',icon:'💞',desc:'누군가와 연인이 되기',chk:p=>_lovers(p)>=1,rw:{coins:40,매력:5}},
-  {id:'fixed',icon:'✦',desc:'특수 인물 3명과 사연 나누기',chk:p=>_spNPCs(p)>=3,rw:{coins:35}},
-  {id:'night',icon:'🌙',desc:'첫 밤을 함께하기',minR:3,chk:p=>Object.keys(p.flags).some(k=>k.startsWith('MS:첫관계:')),rw:{coins:30}},
-  {id:'expose',icon:'🔥',desc:'노출 의상으로 사람들 앞에 서기',minR:3,chk:p=>(p.노출도>=70)&&npcs.some(o=>o.id!==p.id&&o.space===p.space),rw:{매력:6}},
-  {id:'corrupt',icon:'😈',desc:'타락 50에 이르기',minR:3,chk:p=>p.lewd.타락>=50,rw:{coins:25}},
-  {id:'multi',icon:'👥',desc:'다인 관계(3인 이상) 경험',minR:3,chk:p=>!!p.flags._multiH,rw:{coins:50,매력:5}},
-  {id:'harem',icon:'👑',desc:'세 사람과 연인이 되기',minR:3,chk:p=>_lovers(p)>=3,rw:{coins:120,매력:12}}
+  {id:'friend',icon:'🌱',desc:'누군가와 가까워지기 (호감 40)',desc_en:'Grow close to someone (Liking 40)',chk:p=>npcs.some(o=>o.id!==p.id&&o.relations[p.id]&&o.relations[p.id].호감>=40),rw:{coins:15}},
+  {id:'explore',icon:'🗺️',desc:'여러 장소 둘러보기 (8곳 방문)',desc_en:'Explore the resort (visit 8 places)',chk:p=>Object.keys(p.flags._visited||{}).length>=8,rw:{coins:25}},
+  {id:'forest',icon:'🌲',desc:'깊은 숲까지 가보기',desc_en:'Make it to the deep forest',chk:p=>(p.flags._visited||{}).forest,rw:{coins:20}},
+  {id:'jobs',icon:'🛠️',desc:'서로 다른 일자리 3곳 경험',desc_en:'Try 3 different jobs',chk:p=>Object.keys(p.flags._jobs||{}).length>=3,rw:{coins:30}},
+  {id:'coins',icon:'💰',desc:'코인 200 모으기',desc_en:'Save up 200 coins',chk:p=>p.money>=200,rw:{매력:6}},
+  {id:'wardrobe',icon:'👗',desc:'의상 5벌 이상 갖추기',desc_en:'Collect 5 or more outfits',chk:p=>(p.wardrobe||[]).length>=5,rw:{coins:30}},
+  {id:'lover',icon:'💞',desc:'누군가와 연인이 되기',desc_en:'Become lovers with someone',chk:p=>_lovers(p)>=1,rw:{coins:40,매력:5}},
+  {id:'fixed',icon:'✦',desc:'특수 인물 3명과 사연 나누기',desc_en:'Share stories with 3 special characters',chk:p=>_spNPCs(p)>=3,rw:{coins:35}},
+  {id:'night',icon:'🌙',desc:'첫 밤을 함께하기',desc_en:'Spend a first night together',minR:3,chk:p=>Object.keys(p.flags).some(k=>k.startsWith('MS:첫관계:')),rw:{coins:30}},
+  {id:'expose',icon:'🔥',desc:'노출 의상으로 사람들 앞에 서기',desc_en:'Stand before others in a revealing outfit',minR:3,chk:p=>(p.노출도>=70)&&npcs.some(o=>o.id!==p.id&&o.space===p.space),rw:{매력:6}},
+  {id:'corrupt',icon:'😈',desc:'타락 50에 이르기',desc_en:'Reach 50 corruption',minR:3,chk:p=>p.lewd.타락>=50,rw:{coins:25}},
+  {id:'multi',icon:'👥',desc:'다인 관계(3인 이상) 경험',desc_en:'Experience a group relationship (3+ people)',minR:3,chk:p=>!!p.flags._multiH,rw:{coins:50,매력:5}},
+  {id:'harem',icon:'👑',desc:'세 사람과 연인이 되기',desc_en:'Become lovers with three people',minR:3,chk:p=>_lovers(p)>=3,rw:{coins:120,매력:12}}
 ];
 function activeQuests(p){ return QUESTS.filter(q=>(!q.minR||RATING>=q.minR)&&!p.flags['Q:'+q.id]); }
 function checkQuests(p){
@@ -2445,15 +2614,15 @@ function showAdminPanel(){
   stopPlay();
   const ex=document.getElementById('modal'); if(ex)ex.remove();
   const m=document.createElement('div'); m.id='modal';
-  m.innerHTML=`<div class="card"><div class="who">⚙ 전체 일괄 편집</div>
-    <div class="say" style="font-size:11px">모든 인물(플레이어 제외)의 파라미터를 한 번에 바꾼다.</div>
+  m.innerHTML=`<div class="card"><div class="who">${tr('modal.batchTitle')}</div>
+    <div class="say" style="font-size:11px">${tr('modal.batchDesc')}</div>
     <div class="btns" style="flex-wrap:wrap">
-      <button data-adm="randStat">스탯 랜덤화</button>
-      <button data-adm="randRel">관계 랜덤화</button>
-      <button data-adm="calm">욕구·상태 초기화</button>
-      <button data-adm="r18all">전원 R18 토글</button>
-      <button data-adm="purify">전원 타락 0</button>
-      <button id="admClose">닫기</button></div></div>`;
+      <button data-adm="randStat">${tr('btn.randStat')}</button>
+      <button data-adm="randRel">${tr('btn.randRel')}</button>
+      <button data-adm="calm">${tr('btn.calmAll')}</button>
+      <button data-adm="r18all">${tr('btn.r18allToggle')}</button>
+      <button data-adm="purify">${tr('btn.purifyAll')}</button>
+      <button id="admClose">${tr('btn.close').replace(' ✕','')}</button></div></div>`;
   document.body.appendChild(m);
   m.querySelectorAll('[data-adm]').forEach(b=>b.onclick=()=>{ admBatch(b.dataset.adm); m.remove(); render(); });
   document.getElementById('admClose').onclick=()=>{ m.remove(); render(); };
@@ -2481,7 +2650,7 @@ function showRepMatrix(){
     t+='</tr>'; });
   t+='</table>';
   const m=document.createElement('div'); m.id='modal';
-  m.innerHTML=`<div class="card" style="max-width:520px"><div class="who">📊 평판 매트릭스 <span style="opacity:.5;font-size:10px">(행→열 호감)</span></div><div class="say" style="overflow-x:auto">${t}</div><div class="btns"><button id="repClose">닫기</button></div></div>`;
+  m.innerHTML=`<div class="card" style="max-width:520px"><div class="who">${tr('modal.repMatrixTitle')} <span style="opacity:.5;font-size:10px">${tr('modal.repMatrixSub')}</span></div><div class="say" style="overflow-x:auto">${t}</div><div class="btns"><button id="repClose">${tr('btn.close').replace(' ✕','')}</button></div></div>`;
   document.body.appendChild(m);
   document.getElementById('repClose').onclick=()=>{ m.remove(); render(); };
 }
@@ -3114,7 +3283,7 @@ function appendEntry(id,html,cls,sp,trackerKey,narrative){
   const L0=document.getElementById(id); if(!L0)return;
   if(window[trackerKey]!==turn){ window[trackerKey]=turn;
     const dv=document.createElement('div'); dv.className='lgDiv';
-    dv.textContent=`── ${timeStr()} · ${slot()} ──`;
+    dv.textContent=`── ${timeStr()} · ${lbl("slot",slot())} ──`;
     L0.appendChild(dv); }
   const el=document.createElement('div');
   el.className='lg'+(cls?' '+cls:'');
@@ -3159,7 +3328,7 @@ function buildMap(){
     const el=document.createElement('div');
     el.className='room'+(s.hallway?' hallway':'');
     el.style.gridArea=s.area; el.dataset.space=id;
-    el.innerHTML=`<span class="rname">${s.n}</span><span class="rmeta">P${s.p}</span>`;
+    el.innerHTML=`<span class="rname">${lbl('space',s.n)}</span><span class="rmeta">P${s.p}</span>`;
     el.onclick=()=>toggleLogFilter(id);
     fp.appendChild(el);
   }
@@ -3217,7 +3386,7 @@ function renderRoster(){
     const it=document.createElement('div');
     const isSel=sel.includes(n.id);
     it.className='rosterItem'+(isSel?' sel':'');
-    it.innerHTML=`<span class="mini" style="${isSel?'':`border-color:${n.color};color:${n.color}`}">${n.name[0]}</span><span class="nm">${n.fixed?'<span style="color:#C9A227">✦</span>':''}${esc(n.name)}${n.isPlayer?' <small style="opacity:.5">P</small>':''}</span><span class="at">${n.arch}·${n.form}</span><button class="del" title="삭제">×</button>`;
+    it.innerHTML=`<span class="mini" style="${isSel?'':`border-color:${n.color};color:${n.color}`}">${n.name[0]}</span><span class="nm">${n.fixed?'<span style="color:#C9A227">✦</span>':''}${esc(n.name)}${n.isPlayer?' <small style="opacity:.5">P</small>':''}</span><span class="at">${lbl('arch',n.arch)}·${lbl('form',n.form)}</span><button class="del" title="${tr('btn.delete')}">×</button>`;
     it.onclick=e=>{if(e.target.className==='del'){removeNpc(n.id)}else select(n.id)};
     R.appendChild(it);
   }
@@ -3231,23 +3400,23 @@ let editId=null, dTab='stat';
 const REL_KEYS=[['호감','#33689C'],['애정','#B23A6B'],['신뢰','#3E7A4E'],['긴장','#B3423A'],['욕망','#7E5AA2']];
 function renderRelTab(n,D){
   let h=`<div class="dname" style="color:${n.color}">${n.fixed?'✦ ':''}${esc(n.name)}</div>
-    <div class="dsub">관계 — ${SPACES[n.space].n}</div>
-    <div class="relLegend">${REL_KEYS.filter(k=>k[0]!=='욕망'||RATING>=3).map(([k,c])=>`<span style="color:${c}">■</span>${k}`).join(' ')}</div>`;
+    <div class="dsub">${tr('label.relTo')} — ${lbl('space',SPACES[n.space].n)}</div>
+    <div class="relLegend">${REL_KEYS.filter(k=>k[0]!=='욕망'||RATING>=3).map(([k,c])=>`<span style="color:${c}">■</span>${lbl('rel',k)}`).join(' ')}</div>`;
   const rows=npcs.filter(o=>o.id!==n.id)
     .map(o=>({o,r:n.relations[o.id],r2:o.relations[n.id],lb:relLabel(n,o)}))
     .sort((a,b)=>(b.r.호감+b.r.애정+b.r.욕망)-(a.r.호감+a.r.애정+a.r.욕망));
-  if(!rows.length)h+=`<div style="font-size:11.5px;color:var(--muted)">다른 인물이 없다.</div>`;
+  if(!rows.length)h+=`<div style="font-size:11.5px;color:var(--muted)">${tr('label.noOthers')}</div>`;
   for(const {o,r,r2,lb} of rows){
     const keys=REL_KEYS.filter(k=>k[0]!=='욕망'||RATING>=3);
     const bars=keys.map(([k,c])=>`<span style="width:${Math.max(2,r[k]*.6)}px;background:${c}"></span>`).join('');
     const bars2=keys.map(([k,c])=>`<span style="width:${Math.max(2,r2[k]*.6)}px;background:${c};opacity:.4"></span>`).join('');
     const fl=[];
-    if(n.flags['연인:'+o.id])fl.push('연인');
-    if(n.flags['갈등:'+o.id])fl.push('갈등');
+    if(n.flags['연인:'+o.id])fl.push(lbl('relflag','연인'));
+    if(n.flags['갈등:'+o.id])fl.push(lbl('relflag','갈등'));
     if(RATING>=3&&(n.r18log[o.id]||0)>0)fl.push('R18×'+n.r18log[o.id]);
     h+=`<div class="relRow" data-pair="${o.id}" style="cursor:pointer">
       <div><div class="who"><span class="dot" style="background:${o.color}"></span>${esc(o.name)}
-        <span class="tag">${lb}</span>${fl.map(f=>`<span class="tag">${f}</span>`).join('')}</div>
+        <span class="tag">${lbl('rellabel',lb)}</span>${fl.map(f=>`<span class="tag">${f}</span>`).join('')}</div>
         <div class="miniBars">${bars}</div><div class="miniBars">${bars2}</div></div>
       <div class="rv" style="font-family:var(--mono);font-size:9.5px;color:var(--muted);text-align:right">${relNums(r)}<br><span style="opacity:.5">${relNums(r2)}</span></div>
     </div>`;
@@ -3267,15 +3436,15 @@ function renderDetail(){
     if(a&&b){
       D.className='show';
       let h=`<div class="dname"><span style="color:${a.color}">${esc(a.name)}</span> ↔ <span style="color:${b.color}">${esc(b.name)}</span></div>
-        <div class="dsub">관계: ${relLabel(a,b)}${relLabel(a,b)!==relLabel(b,a)?' / '+relLabel(b,a):''}</div>`;
+        <div class="dsub">${tr('label.relTo')}: ${lbl('rellabel',relLabel(a,b))}${relLabel(a,b)!==relLabel(b,a)?' / '+lbl('rellabel',relLabel(b,a)):''}</div>`;
       [[a,b],[b,a]].forEach(([x,y])=>{
         const r=x.relations[y.id];
         h+=`<div class="pairArrow">${esc(x.name)} → ${esc(y.name)}</div>`;
         [['호감',r.호감],['애정',r.애정],['신뢰',r.신뢰],['긴장',r.긴장]].concat(RATING>=3?[['욕망',r.욕망]]:[]).forEach(([k,v])=>{
           if(pairEditMode){
-            h+=`<div class="axRow"><span style="font-size:11px">${k}</span><input type="range" min="0" max="100" value="${Math.round(v)}" data-redit="${x.id}|${y.id}|${k}"><span class="val">${Math.round(v)}</span></div>`;
+            h+=`<div class="axRow"><span style="font-size:11px">${lbl('rel',k)}</span><input type="range" min="0" max="100" value="${Math.round(v)}" data-redit="${x.id}|${y.id}|${k}"><span class="val">${Math.round(v)}</span></div>`;
           }else{
-            h+=`<div class="bar"><span>${k}</span><span class="tr"><span class="fl" style="width:${v}%;background:${x.color}"></span></span><span class="bv">${Math.round(v)}</span></div>`;
+            h+=`<div class="bar"><span>${lbl('rel',k)}</span><span class="tr"><span class="fl" style="width:${v}%;background:${x.color}"></span></span><span class="bv">${Math.round(v)}</span></div>`;
           }
         });
       });
@@ -3309,35 +3478,35 @@ function renderDetail(){
   const n=npcs.find(x=>x.id===sel[0]);
   if(!n){D.className=''; D.innerHTML=''; return;}
   D.className='show';
-  const tabs=`<div class="tabRow"><button class="${dTab==='stat'?'on':''}" data-tab="stat">능력치</button><button class="${dTab==='rel'?'on':''}" data-tab="rel">관계</button></div>`;
+  const tabs=`<div class="tabRow"><button class="${dTab==='stat'?'on':''}" data-tab="stat">${tr('tab.stat')}</button><button class="${dTab==='rel'?'on':''}" data-tab="rel">${tr('tab.rel')}</button></div>`;
   const bind=()=>D.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{dTab=b.dataset.tab; renderDetail();});
   if(dTab==='rel'){ renderRelTab(n,D); D.innerHTML=tabs+D.innerHTML;
     D.querySelectorAll('[data-pair]').forEach(el=>el.onclick=()=>{sel=[n.id,el.dataset.pair]; render();});
     bind(); return; }
   let h=tabs+`<div style="display:flex;gap:9px;align-items:flex-start">${avatarCanvasHTML('detAvatar',60)}<div style="flex:1;min-width:0">
     <div class="dname" style="color:${n.color}">${n.fixed?'✦ ':''}${esc(n.name)}</div>
-    <div class="dsub">${n.arch} · ${n.form}${n.form==='혼합'?`(기본 ${n.mix.base}, ${n.mix.trig})`:''} · 현재 ${SPACES[n.space].n} · ${OUTFITS[n.outfit]?OUTFITS[n.outfit].emoji:''}${esc(n.outfit||'평상복')} · 개인실 ${SPACES[n.home].n.slice(-1)}${RATING>=3?` · R18 ${n.r18?'참여':'미참여'}`:''}</div></div></div>`;
+    <div class="dsub">${lbl('arch',n.arch)} · ${lbl('form',n.form)}${n.form==='혼합'?`(${tr('form.mixBase')} ${lbl('form',n.mix.base)}, ${lbl('form',n.mix.trig)})`:''} · ${tr('label.now')} ${lbl('space',SPACES[n.space].n)} · ${OUTFITS[n.outfit]?OUTFITS[n.outfit].emoji:''}${esc(lbl('outfit',n.outfit||'평상복'))} · ${tr('label.privRoom')} ${SPACES[n.home].n.slice(-1)}${RATING>=3?` · R18 ${n.r18?tr('label.r18in'):tr('label.r18out')}`:''}</div></div></div>`;
   { const sts=activeStatuses(n);
-    if(sts.length)h+=`<div style="font-size:11px;margin:-2px 0 8px">${sts.map(k=>`<span style="border:1px solid #B23A6B;color:#B23A6B;border-radius:2px;padding:1px 6px;margin-right:4px;display:inline-block">${STATUS_DEF[k].icon} ${STATUS_DEF[k].label} <span style="opacity:.7">(${n.flags['status:'+k]}턴)</span></span>`).join('')}</div>`; }
-  AXES.forEach((a,i)=>{h+=`<div class="bar"><span>${a}</span><span class="tr"><span class="fl" style="width:${n.axes[i]}%"></span></span><span class="bv">${n.axes[i]}</span></div>`});
+    if(sts.length)h+=`<div style="font-size:11px;margin:-2px 0 8px">${sts.map(k=>`<span style="border:1px solid #B23A6B;color:#B23A6B;border-radius:2px;padding:1px 6px;margin-right:4px;display:inline-block">${STATUS_DEF[k].icon} ${lbl('status',STATUS_DEF[k].label)} <span style="opacity:.7">(${n.flags['status:'+k]}${tr('unit.turn')})</span></span>`).join('')}</div>`; }
+  AXES.forEach((a,i)=>{h+=`<div class="bar"><span>${lbl('axis',a)}</span><span class="tr"><span class="fl" style="width:${n.axes[i]}%"></span></span><span class="bv">${n.axes[i]}</span></div>`});
   h+=`<div style="height:8px"></div>`;
   [['사교욕',n.needs.사교],['피로',n.needs.피로],['성취욕',n.needs.성취],['안정도',n.stability],['매력',n.매력||0],['노출도',n.노출도||0]].forEach(([k,v])=>{
-    h+=`<div class="bar"><span style="font-size:10px">${k}</span><span class="tr"><span class="fl" style="width:${v}%;opacity:.45"></span></span><span class="bv">${Math.round(v)}</span></div>`});
+    h+=`<div class="bar"><span style="font-size:10px">${lbl('need',k)}</span><span class="tr"><span class="fl" style="width:${v}%;opacity:.45"></span></span><span class="bv">${Math.round(v)}</span></div>`});
   if(RATING>=2){
-    h+=`<div class="psec">성 스탯${n.corruptible?'':' · 타락 잠금'}${RATING>=3?` · R18 성향 ${n.r18Mode}`:''}</div>`;
+    h+=`<div class="psec">${tr('sec.sexstat')}${n.corruptible?'':' · '+tr('sec.corLock')}${RATING>=3?` · ${tr('sec.r18mode')} ${lbl('r18mode',n.r18Mode)}`:''}</div>`;
     const lr=[['흥분',n.lewd.흥분],['취기',n.lewd.취기],['타락',n.lewd.타락]];
     if(RATING>=3)lr.push(['정력',n.lewd.정력],['체격',n.body.체격],['운동',n.body.운동]);
     lr.forEach(([k,v])=>{
       let maxVal = (k === '정력') ? n.lewd.max정력 : 100;
       let pct = Math.min(100, (v / maxVal) * 100);
       let text = (k === '정력') ? `${Math.round(v)}/${maxVal}` : Math.round(v);
-      h+=`<div class="bar"><span style="font-size:10px">${k}</span><span class="tr"><span class="fl" style="width:${pct}%;background:${n.color};opacity:.7"></span></span><span class="bv">${text}</span></div>`
+      h+=`<div class="bar"><span style="font-size:10px">${lbl('sexstat',k)}</span><span class="tr"><span class="fl" style="width:${pct}%;background:${n.color};opacity:.7"></span></span><span class="bv">${text}</span></div>`
     });
     ensureSens(n);
-    h+=`<div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin:4px 0;line-height:1.6">민감도 · ${PARTS.map(p=>sensOf(n,p)>=70?`<b style="color:#B23A6B">♨${p} ${sensOf(n,p)}</b>`:`${p} ${sensOf(n,p)}`).join(' · ')}</div>`;
-    if(n.hsex){const par=npcs.find(o=>o.id===n.hsex.with); h+=`<div style="font-size:10px;color:var(--muted)">H 진행 중 — ${par?esc(par.name):'?'}</div>`;}
+    h+=`<div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin:4px 0;line-height:1.6">${tr('sec.sens')} · ${PARTS.map(p=>sensOf(n,p)>=70?`<b style="color:#B23A6B">♨${lbl('part',p)} ${sensOf(n,p)}</b>`:`${lbl('part',p)} ${sensOf(n,p)}`).join(' · ')}</div>`;
+    if(n.hsex){const par=npcs.find(o=>o.id===n.hsex.with); h+=`<div style="font-size:10px;color:var(--muted)">${tr('label.hsexing')} ${par?esc(par.name):'?'}</div>`;}
   }
-  h+=`<button class="chip" id="btnEdit" style="margin-top:8px;width:100%">설정 변경</button>`;
+  h+=`<button class="chip" id="btnEdit" style="margin-top:8px;width:100%">${tr('btn.editSettings')}</button>`;
   D.innerHTML=h;
   renderAvatarInto(document.getElementById('detAvatar'),n);
   $('#btnEdit').onclick=()=>{editId=n.id; drawEditForm();};
@@ -3348,33 +3517,33 @@ function drawEditForm(){
   if(!n){editId=null; renderDetail(); return;}
   D.className='show';
   const opts=Object.keys(ARCH).map(k=>`<option${k===n.arch?' selected':''}>${k}</option>`).join('');
-  const axRows=AXES.map((a,i)=>`<div class="axRow"><span>${a}</span><input type="range" min="0" max="100" value="${n.axes[i]}" data-eax="${i}"><span class="val">${n.axes[i]}</span></div>`).join('');
-  const sw=n.isPlayer?'':`<div class="psec">테마색</div><div class="chipRow">${PALETTE.map(c=>`<button class="chip" data-col="${c}" style="width:22px;height:22px;padding:0;background:${c};border-color:${c};outline:${c===n.color?'2px solid var(--ink)':'none'}"></button>`).join('')}</div>`;
-  D.innerHTML=`<div class="psec">설정 변경 — ${esc(n.name)}${n.isPlayer?' (플레이어)':''}</div>
+  const axRows=AXES.map((a,i)=>`<div class="axRow"><span>${lbl('axis',a)}</span><input type="range" min="0" max="100" value="${n.axes[i]}" data-eax="${i}"><span class="val">${n.axes[i]}</span></div>`).join('');
+  const sw=n.isPlayer?'':`<div class="psec">${tr('edit.themeColor')}</div><div class="chipRow">${PALETTE.map(c=>`<button class="chip" data-col="${c}" style="width:22px;height:22px;padding:0;background:${c};border-color:${c};outline:${c===n.color?'2px solid var(--ink)':'none'}"></button>`).join('')}</div>`;
+  D.innerHTML=`<div class="psec">${tr('edit.title')} — ${esc(n.name)}${n.isPlayer?' ('+tr('edit.player')+')':''}</div>
    <div style="display:flex;flex-direction:column;gap:7px">
    ${lookEditorHTML('e')}
    <input type="text" id="eName" value="${esc(n.name)}">
    <select id="eArch">${opts}</select>
    ${axRows}
-   <select id="eForm">${['반말','존댓말','혼합'].map(f=>`<option${f===n.form?' selected':''}>${f}</option>`).join('')}</select>
+   <select id="eForm">${['반말','존댓말','혼합'].map(f=>`<option value="${f}"${f===n.form?' selected':''}>${lbl('form',f)}</option>`).join('')}</select>
    <div id="eMix" style="display:${n.form==='혼합'?'flex':'none'};flex-direction:column;gap:6px">
-     <select id="eMixBase">${['반말','존댓말'].map(f=>`<option${n.mix&&f===n.mix.base?' selected':''}>${f}</option>`).join('')}</select>
-     <select id="eMixTrig"><option value="감정고조"${n.mix&&n.mix.trig==='감정고조'?' selected':''}>감정고조 시</option><option value="친밀"${n.mix&&n.mix.trig==='친밀'?' selected':''}>친밀 대상에게</option></select>
+     <select id="eMixBase">${['반말','존댓말'].map(f=>`<option value="${f}"${n.mix&&f===n.mix.base?' selected':''}>${lbl('form',f)}</option>`).join('')}</select>
+     <select id="eMixTrig"><option value="감정고조"${n.mix&&n.mix.trig==='감정고조'?' selected':''}>${tr('form.trig.emo')}</option><option value="친밀"${n.mix&&n.mix.trig==='친밀'?' selected':''}>${tr('form.trig.close')}</option></select>
    </div>
-   <label style="font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="eR18"${n.r18?' checked':''}>R18 행동 참여 (등급 3 전용)</label>
-   <label style="font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="eCor"${n.corruptible?' checked':''}>타락 허용</label>
-   <div class="axRow"><span style="font-size:11px">타락</span><input type="range" id="eLewd" min="0" max="100" value="${Math.round(n.lewd.타락)}"><span class="val">${Math.round(n.lewd.타락)}</span></div>
-      <div class="axRow"><span style="font-size:11px">최대정력</span><input type="range" id="eMaxEng" min="100" max="500" step="10" value="${n.lewd.max정력}"><span class="val">${n.lewd.max정력}</span></div>
-      <div class="axRow"><span style="font-size:11px">현재정력</span><input type="range" id="eCurEng" min="0" max="500" step="5" value="${Math.round(n.lewd.정력)}"><span class="val">${Math.round(n.lewd.정력)}</span></div>
-      <div class="psec">신체 민감도</div>
-      ${PARTS.map(p=>`<div class="axRow"><span style="font-size:11px">${p}</span><input type="range" min="0" max="100" value="${sensOf(n,p)}" data-esens="${p}"><span class="val">${sensOf(n,p)}</span></div>`).join('')}
-   <div class="axRow"><span style="font-size:11px">체격</span><input type="range" id="eBody" min="0" max="100" value="${n.body.체격}"><span class="val">${n.body.체격}</span></div>
-   <div class="axRow"><span style="font-size:11px">운동</span><input type="range" id="eAth" min="0" max="100" value="${n.body.운동}"><span class="val">${n.body.운동}</span></div>
-   <div class="axRow"><span style="font-size:11px">매력</span><input type="range" id="eCharm" min="0" max="100" value="${n.매력||0}"><span class="val">${n.매력||0}</span></div>
-   <div class="axRow"><span style="font-size:11px">노출도</span><input type="range" id="eExpose" min="0" max="100" value="${n.노출도||0}"><span class="val">${n.노출도||0}</span></div>
-   <select id="eR18Mode"><option value="기본"${n.r18Mode==='기본'?' selected':''}>R18 성향: 기본</option><option value="부탁"${n.r18Mode==='부탁'?' selected':''}>R18 성향: 부탁</option><option value="강압"${n.r18Mode==='강압'?' selected':''}>R18 성향: 강압</option><option value="복종"${n.r18Mode==='복종'?' selected':''}>R18 성향: 복종</option></select>
+   <label style="font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="eR18"${n.r18?' checked':''}>${tr('form.r18')}</label>
+   <label style="font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="eCor"${n.corruptible?' checked':''}>${tr('form.cor')}</label>
+   <div class="axRow"><span style="font-size:11px">${lbl('sexstat','타락')}</span><input type="range" id="eLewd" min="0" max="100" value="${Math.round(n.lewd.타락)}"><span class="val">${Math.round(n.lewd.타락)}</span></div>
+      <div class="axRow"><span style="font-size:11px">${tr('edit.maxEng')}</span><input type="range" id="eMaxEng" min="100" max="500" step="10" value="${n.lewd.max정력}"><span class="val">${n.lewd.max정력}</span></div>
+      <div class="axRow"><span style="font-size:11px">${tr('edit.curEng')}</span><input type="range" id="eCurEng" min="0" max="500" step="5" value="${Math.round(n.lewd.정력)}"><span class="val">${Math.round(n.lewd.정력)}</span></div>
+      <div class="psec">${tr('sec.sens')}</div>
+      ${PARTS.map(p=>`<div class="axRow"><span style="font-size:11px">${lbl('part',p)}</span><input type="range" min="0" max="100" value="${sensOf(n,p)}" data-esens="${p}"><span class="val">${sensOf(n,p)}</span></div>`).join('')}
+   <div class="axRow"><span style="font-size:11px">${tr('edit.build')}</span><input type="range" id="eBody" min="0" max="100" value="${n.body.체격}"><span class="val">${n.body.체격}</span></div>
+   <div class="axRow"><span style="font-size:11px">${tr('edit.athletic')}</span><input type="range" id="eAth" min="0" max="100" value="${n.body.운동}"><span class="val">${n.body.운동}</span></div>
+   <div class="axRow"><span style="font-size:11px">${tr('edit.charm')}</span><input type="range" id="eCharm" min="0" max="100" value="${n.매력||0}"><span class="val">${n.매력||0}</span></div>
+   <div class="axRow"><span style="font-size:11px">${tr('edit.exposure')}</span><input type="range" id="eExpose" min="0" max="100" value="${n.노출도||0}"><span class="val">${n.노출도||0}</span></div>
+   <select id="eR18Mode"><option value="기본"${n.r18Mode==='기본'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','기본')}</option><option value="부탁"${n.r18Mode==='부탁'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','부탁')}</option><option value="강압"${n.r18Mode==='강압'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','강압')}</option><option value="복종"${n.r18Mode==='복종'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','복종')}</option></select>
    ${sw}
-   <div style="display:flex;gap:6px"><button class="primary" id="eSave" style="flex:1">저장</button><button id="eCancel" style="flex:1">취소</button></div>
+   <div style="display:flex;gap:6px"><button class="primary" id="eSave" style="flex:1">${tr('edit.save')}</button><button id="eCancel" style="flex:1">${tr('edit.cancel')}</button></div>
    </div>`;
   const getLook=wireLookEditor('e',n.look,n.outfit);
   D.querySelectorAll('input[type=range]').forEach(inp=>inp.oninput=e=>e.target.parentElement.querySelector('.val').textContent=e.target.value);
@@ -3390,7 +3559,7 @@ function drawEditForm(){
   $('#eCancel').onclick=()=>{editId=null; render();};
   $('#eSave').onclick=()=>{
     const nm=$('#eName').value.trim()||n.name;
-    if(nm!==n.name&&npcs.some(o=>o.id!==n.id&&o.name===nm)){alert('같은 이름이 이미 있습니다.');return;}
+    if(nm!==n.name&&npcs.some(o=>o.id!==n.id&&o.name===nm)){alert(tr('alert.dupName'));return;}
     n.name=nm;
     n.arch=$('#eArch').value;
     n.axes=[...D.querySelectorAll('[data-eax]')].map(i=>+i.value);
@@ -3414,8 +3583,8 @@ function drawEditForm(){
   };
 }
 function render(){
-  $('#clock').textContent=`T${String(turn).padStart(3,'0')} · ${slot()}`;
-  $('#btnStep').textContent=P()?'대기 ⏭':'1턴 ⏭';
+  $('#clock').textContent=`T${String(turn).padStart(3,'0')} · ${lbl('slot',slot())}`;
+  $('#btnStep').textContent=P()?tr('btn.stepWait'):tr('btn.step');
   renderTokens(); renderRoster(); renderDetail(); renderPlayerPanel();
 }
 function select(id){
@@ -3783,9 +3952,9 @@ function travelModal(mode){
   stopPlay(); const p=P(); if(!p)return;
   const ex=document.getElementById('modal'); if(ex)ex.remove();
   const dests=TRAVEL_DESTS.filter(s=>s!==p.space&&SPACES[s]);
-  let btns=dests.map(s=>`<button data-trv="${s}">${SPACES[s].n}</button>`).join('');
+  let btns=dests.map(s=>`<button data-trv="${s}">${lbl('space',SPACES[s].n)}</button>`).join('');
   const m=document.createElement('div'); m.id='modal';
-  m.innerHTML=`<div class="card"><div class="who">${mode==='bus'?'🚌 셔틀버스 (5코인)':'🚲 자전거로 이동'}</div><div class="say">${mode==='bus'?'노선을 따라 원하는 곳까지 한 번에. 낯선 승객과 밀착될 수도 있다...':'페달을 밟아 어디든 빠르고 안전하게.'}</div><div class="btns" style="flex-wrap:wrap">${btns}<button id="trvCancel">취소</button></div></div>`;
+  m.innerHTML=`<div class="card"><div class="who">${mode==='bus'?tr('modal.busTitle'):tr('modal.bikeTitle')}</div><div class="say">${mode==='bus'?tr('modal.busDesc'):tr('modal.bikeDesc')}</div><div class="btns" style="flex-wrap:wrap">${btns}<button id="trvCancel">${tr('btn.cancel')}</button></div></div>`;
   document.body.appendChild(m);
   m.querySelectorAll('[data-trv]').forEach(b=>b.onclick=()=>{ m.remove(); doTravel(P(),b.dataset.trv,mode); });
   document.getElementById('trvCancel').onclick=()=>{ m.remove(); render(); };
@@ -3854,30 +4023,30 @@ function playerAct(name,tgtId){
 function renderPlayerPanel(){
   const PP=$('#playerPanel'); const p=P();
   if(!p){
-    const opts=Object.keys(ARCH).map(k=>`<option>${k}</option>`).join('');
-    PP.innerHTML=`<div class="psec">컨트롤 캐릭터 만들기</div>
+    const opts=Object.keys(ARCH).map(k=>`<option value="${k}">${lbl('arch',k)}</option>`).join('');
+    PP.innerHTML=`<div class="psec">${tr('pp.createTitle')}</div>
       <div style="display:flex;flex-direction:column;gap:6px">
       ${lookEditorHTML('p')}
-      <input type="text" id="pName" placeholder="이름 (비우면 자동)">
-      <div style="display:flex;gap:6px"><select id="pGender" style="flex:1"><option>여성</option><option>남성</option></select>
-      <select id="pGenital" style="flex:1"><option>여성기</option><option>남성기</option><option>양성</option></select></div>
+      <input type="text" id="pName" placeholder="${tr('pp.namePh')}">
+      <div style="display:flex;gap:6px"><select id="pGender" style="flex:1"><option value="여성">${lbl('gender','여성')}</option><option value="남성">${lbl('gender','남성')}</option></select>
+      <select id="pGenital" style="flex:1"><option value="여성기">${lbl('genital','여성기')}</option><option value="남성기">${lbl('genital','남성기')}</option><option value="양성">${lbl('genital','양성')}</option></select></div>
       <select id="pArch">${opts}</select>
-      <select id="pForm"><option>반말</option><option>존댓말</option><option>혼합</option></select>
+      <select id="pForm"><option value="반말">${lbl('form','반말')}</option><option value="존댓말">${lbl('form','존댓말')}</option><option value="혼합">${lbl('form','혼합')}</option></select>
       <div id="pMix" style="display:none;flex-direction:column;gap:6px">
-        <select id="pMixBase"><option>반말</option><option>존댓말</option></select>
-        <select id="pMixTrig"><option value="감정고조">감정고조 시</option><option value="친밀">친밀 대상에게</option></select>
+        <select id="pMixBase"><option value="반말">${lbl('form','반말')}</option><option value="존댓말">${lbl('form','존댓말')}</option></select>
+        <select id="pMixTrig"><option value="감정고조">${tr('form.trig.emo')}</option><option value="친밀">${tr('form.trig.close')}</option></select>
       </div>
-      <label style="font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="pR18"${CFG.defR18?' checked':''}>R18 행동 참여 (등급 3 전용)</label>
-      <label style="font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="pCor"${CFG.defCor?' checked':''}>타락 허용</label>
-      <button class="primary" id="pStart">1인칭으로 시작</button></div>
-      <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">플레이어를 만들면 행동·이동·대기 하나가 1턴이 되고, 그 뒤에 다른 인물들이 움직입니다. 자동재생은 계속 대기하며 지켜보는 관찰 모드가 됩니다.</p>`;
+      <label style="font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="pR18"${CFG.defR18?' checked':''}>${tr('form.r18')}</label>
+      <label style="font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="pCor"${CFG.defCor?' checked':''}>${tr('form.cor')}</label>
+      <button class="primary" id="pStart">${tr('pp.startBtn')}</button></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">${tr('pp.createHelp')}</p>`;
     $('#pForm').onchange=e=>$('#pMix').style.display=e.target.value==='혼합'?'flex':'none';
     const getPLook=wireLookEditor('p',randomLook());
     $('#pStart').onclick=()=>{
-      if(npcs.length>=20){alert('최대 20명까지 가능합니다.');return;}
+      if(npcs.length>=20){alert(tr('alert.max20'));return;}
       let nm=$('#pName').value.trim();
       if(!nm){const used=npcs.map(n=>n.name); nm=NAMEPOOL.find(x=>!used.includes(x))||'나';}
-      if(npcs.some(n=>n.name===nm)){alert('같은 이름이 이미 있습니다.');return;}
+      if(npcs.some(n=>n.name===nm)){alert(tr('alert.dupName'));return;}
       const form=$('#pForm').value;
       const mix=form==='혼합'?{base:$('#pMixBase').value,trig:$('#pMixTrig').value}:null;
       const gender=$('#pGender').value, genital=$('#pGenital').value, look=getPLook();   /* render()가 폼을 지우기 전에 값을 미리 읽어 둔다 */
@@ -3887,17 +4056,18 @@ function renderPlayerPanel(){
     return;
   }
   if(p.asleep>0){
-    PP.innerHTML=`<div class="psec">잠자는 중 💤</div><div style="font-size:11.5px;color:var(--muted);margin:4px 0 8px">약 ${p.asleep}턴 남음 — 자동으로 흐르는 중. 말을 걸어도 듣지 못한다.</div><button class="waitBtn" id="pWake">깨어나기</button>`;
+    const sleepDesc=LANG==='en'?`About ${p.asleep} turns remain — time passes automatically. You won't hear anyone talking to you.`:`약 ${p.asleep}턴 남음 — 자동으로 흐르는 중. 말을 걸어도 듣지 못한다.`;
+    PP.innerHTML=`<div class="psec">${tr('pp.sleepingTitle')}</div><div style="font-size:11.5px;color:var(--muted);margin:4px 0 8px">${sleepDesc}</div><button class="waitBtn" id="pWake">${tr('pp.wake')}</button>`;
     $('#pWake').onclick=()=>{ p.asleep=0; log(`${NM(p)}이(가) 눈을 떴다`,'event',p.space); render(); };
     return;
   }
   if(workState&&WORKFLOWS[workState.sp]){
     const wf=WORKFLOWS[workState.sp], steps=workState.steps||wf.steps, st=steps[workState.step];
-    let wh=`<div class="psec">${esc(wf.title)} · ${workState.step+1}/${steps.length}단계</div>`;
+    let wh=`<div class="psec">${esc(wf.title)} · ${workState.step+1}/${steps.length}${tr('unit.step')}</div>`;
     wh+=`<div style="font-size:11.5px;margin:2px 0 8px">${esc(st.prompt)}</div><div style="display:flex;flex-direction:column;gap:6px">`;
     st.opts.forEach((o,i)=>{ if(o.r18&&RATING<3)return; if(o.fet&&!CFG[o.fet])return; if(o.show&&!o.show(p))return;
       wh+=`<button class="chip act" data-wopt="${i}" style="text-align:left;justify-content:flex-start">${o.r18?'♥ ':''}${esc(o.label)}</button>`; });
-    wh+=`</div><button class="waitBtn" id="wCancel">그만두기</button>`;
+    wh+=`</div><button class="waitBtn" id="wCancel">${tr('btn.quitWork')}</button>`;
     PP.innerHTML=wh;
     PP.querySelectorAll('[data-wopt]').forEach(b=>b.onclick=()=>workChoose(+b.dataset.wopt));
     $('#wCancel').onclick=()=>{workState=null; log(`${p.name}이(가) 일을 그만두고 나왔다`,'event',p.space); render();};
@@ -3907,24 +4077,24 @@ function renderPlayerPanel(){
   if(pTarget&&!mates.some(m=>m.id===pTarget))pTarget=null;
   let h=`<div class="phead">${avatarCanvasHTML('pAvatar',38)}
     <div><div class="pname">${p.name}</div>
-    <div class="ploc">${p.arch} · ${p.form} — 현재 ${SPACES[p.space].n}</div></div></div>`;
+    <div class="ploc">${lbl('arch',p.arch)} · ${lbl('form',p.form)} — ${tr('label.now')} ${lbl('space',SPACES[p.space].n)}</div></div></div>`;
   const _inv=[...Object.keys(GIFTS),...Object.keys(USABLES)].filter(it=>(p.flags['아이템:'+it]||0)>0).map(it=>`${it}×${p.flags['아이템:'+it]}`).join(' · ');
   const _day=Math.floor(turn/12)+1, _sl=slot();
-  h+=`<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin:1px 0">📅 ${timeStr()} (${_sl}) · ${WEATHER_ICON[WEATHER]||''}${WEATHER} · ${OUTFITS[p.outfit]?OUTFITS[p.outfit].emoji:''} ${esc(p.outfit||'평상복')} <span style="opacity:.7">(노출 ${p.노출도})</span>${p.flags['크로스드레싱']?' · <b style="color:#7A5AA5">[크로스드레싱]</b>':''}${RATING>=3?` · <span style="color:#B23A6B">🔞${r18Score(p)}</span>`:''}</div>`;
-  if(p.outfit!=='알몸')h+=`<div style="font-family:var(--mono);font-size:10.5px;color:var(--muted);margin:1px 0">속옷 — 상: ${esc(p.under.상)} · 하: ${esc(p.under.하)}</div>`;
+  h+=`<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin:1px 0">📅 ${timeStr()} (${lbl('slot',_sl)}) · ${WEATHER_ICON[WEATHER]||''}${lbl('weather',WEATHER)} · ${OUTFITS[p.outfit]?OUTFITS[p.outfit].emoji:''} ${esc(lbl('outfit',p.outfit||'평상복'))} <span style="opacity:.7">(${tr('label.expose')} ${p.노출도})</span>${p.flags['크로스드레싱']?` · <b style="color:#7A5AA5">[${tr('label.crossdress')}]</b>`:''}${RATING>=3?` · <span style="color:#B23A6B">🔞${r18Score(p)}</span>`:''}</div>`;
+  if(p.outfit!=='알몸')h+=`<div style="font-family:var(--mono);font-size:10.5px;color:var(--muted);margin:1px 0">${tr('sec.underwear').replace(' 🩲','')} — ${lbl('ud','상')}: ${esc(lbl('under',p.under.상))} · ${lbl('ud','하')}: ${esc(lbl('under',p.under.하))}</div>`;
   { const sts=activeStatuses(p);
-    if(sts.length)h+=`<div style="font-size:11px;margin:3px 0 5px">${sts.map(k=>`<span style="border:1px solid #B23A6B;color:#B23A6B;border-radius:2px;padding:1px 6px;margin-right:4px;display:inline-block">${STATUS_DEF[k].icon} ${STATUS_DEF[k].label} <span style="opacity:.7">(${p.flags['status:'+k]}턴)</span></span>`).join('')}</div>`; }
-  h+=`<div style="font-family:var(--mono);font-size:11px;color:#8A6A1F;margin:1px 0 6px">💰 ${p.money||0} 코인${_inv?' · 🎒 '+_inv:''}</div>`;
+    if(sts.length)h+=`<div style="font-size:11px;margin:3px 0 5px">${sts.map(k=>`<span style="border:1px solid #B23A6B;color:#B23A6B;border-radius:2px;padding:1px 6px;margin-right:4px;display:inline-block">${STATUS_DEF[k].icon} ${lbl('status',STATUS_DEF[k].label)} <span style="opacity:.7">(${p.flags['status:'+k]}${tr('unit.turn')})</span></span>`).join('')}</div>`; }
+  h+=`<div style="font-family:var(--mono);font-size:11px;color:#8A6A1F;margin:1px 0 6px">💰 ${p.money||0} ${tr('unit.coin')}${_inv?' · 🎒 '+_inv:''}</div>`;
   { const _act=activeQuests(p), _tot=QUESTS.filter(q=>!q.minR||RATING>=q.minR).length, _done=_tot-_act.length;
     h+=`<div style="border:1px solid var(--line);border-radius:8px;padding:6px 9px;margin:2px 0 8px;background:rgba(201,146,42,.05)">`;
-    h+=`<div style="font-size:10px;letter-spacing:.1em;color:#B08528;margin-bottom:3px">🎯 목표 <span style="opacity:.7">${_done}/${_tot}</span></div>`;
+    h+=`<div style="font-size:10px;letter-spacing:.1em;color:#B08528;margin-bottom:3px">${tr('label.goals')} <span style="opacity:.7">${_done}/${_tot}</span></div>`;
     { const _due=rentDue(p), _nextRent=(Math.floor(turn/RENT_PERIOD)+1)*RENT_PERIOD, _tl=Math.max(0,_nextRent-turn);
-      h+=`<div style="font-size:11px;line-height:1.6;color:${_due?'#B23A6B':'var(--muted)'}">🏨 이번 주 숙박료 ${_due?`<b>${_due}코인</b> (${Math.ceil(_tl/12)}일 내)`:'납부 완료'}</div>`; }
-    if(_act.length===0){ h+=`<div style="font-size:11px;color:var(--muted)">모든 목표 달성 — 리조트의 중심이 되었다 👑</div>`; }
-    else _act.slice(0,4).forEach(q=>{ h+=`<div style="font-size:11px;line-height:1.6">${q.icon} ${esc(q.desc)}</div>`; });
+      h+=`<div style="font-size:11px;line-height:1.6;color:${_due?'#B23A6B':'var(--muted)'}">${tr('label.weeklyRent')} ${_due?`<b>${_due}${tr('unit.coin')}</b> (${Math.ceil(_tl/12)}${tr('unit.days')}${tr('label.within')})`:tr('label.paidUp')}</div>`; }
+    if(_act.length===0){ h+=`<div style="font-size:11px;color:var(--muted)">${tr('label.allGoalsDone')}</div>`; }
+    else _act.slice(0,4).forEach(q=>{ h+=`<div style="font-size:11px;line-height:1.6">${q.icon} ${esc(LANG==='en'?(q.desc_en||q.desc):q.desc)}</div>`; });
     h+=`</div>`; }
   [['사교욕',p.needs.사교],['피로',p.needs.피로],['성취욕',p.needs.성취],['안정도',p.stability],['매력',p.매력||0],['노출도',p.노출도||0]].forEach(([k,v])=>{
-    h+=`<div class="bar"><span style="font-size:10.5px">${k}</span><span class="tr"><span class="fl" style="width:${v}%"></span></span><span class="bv">${Math.round(v)}</span></div>`});
+    h+=`<div class="bar"><span style="font-size:10.5px">${lbl('need',k)}</span><span class="tr"><span class="fl" style="width:${v}%"></span></span><span class="bv">${Math.round(v)}</span></div>`});
   if(RATING>=2){
     const rows=[['흥분',p.lewd.흥분],['취기',p.lewd.취기],['타락',p.lewd.타락]];
     if(RATING>=3)rows.push(['정력',p.lewd.정력],['체격',p.body.체격],['운동',p.body.운동]);
@@ -3932,28 +4102,29 @@ function renderPlayerPanel(){
       let maxVal = (k === '정력') ? p.lewd.max정력 : 100;
       let pct = Math.min(100, (v / maxVal) * 100);
       let text = (k === '정력') ? `${Math.round(v)}/${maxVal}` : Math.round(v);
-      h+=`<div class="bar"><span style="font-size:10.5px;color:var(--muted)">${k}</span><span class="tr"><span class="fl" style="width:${pct}%;opacity:.55"></span></span><span class="bv">${text}</span></div>`
+      h+=`<div class="bar"><span style="font-size:10.5px;color:var(--muted)">${lbl('sexstat',k)}</span><span class="tr"><span class="fl" style="width:${pct}%;opacity:.55"></span></span><span class="bv">${text}</span></div>`
     });
-    if(!p.corruptible)h+=`<div style="font-size:10px;color:var(--muted)">타락 잠금 상태</div>`;
+    if(!p.corruptible)h+=`<div style="font-size:10px;color:var(--muted)">${tr('label.corLockState')}</div>`;
   }
   if(p.hsex){
     const par=npcs.find(o=>o.id===p.hsex.with);
     const _lead=p.hsex.passive?npcs.find(o=>o.id===p.hsex.lead):p;
     const _cnt=(_lead&&_lead.hsex&&_lead.hsex.party)?_lead.hsex.party.length+1:2;
-    h+=`<div class="psec" style="color:${par?par.color:'inherit'}">H 진행 중 — ${par?esc(par.name):'?'}${_cnt>2?` <span style="color:#B23A6B">· ${_cnt}인 난교</span>`:''}</div>
-      <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:6px">정력 ${Math.round(p.lewd.정력)}/${par?Math.round(par.lewd.정력):'-'} · 흥분 ${Math.round(p.lewd.흥분)}/${par?Math.round(par.lewd.흥분):'-'} · 상대 반응단계 ${par?tier(par):'-'}</div>`;
-    
+    h+=`<div class="psec" style="color:${par?par.color:'inherit'}">${tr('label.hsexing')} ${par?esc(par.name):'?'}${_cnt>2?` <span style="color:#B23A6B">· ${_cnt}${tr('unit.person')} ${tr('label.orgyWord')}</span>`:''}</div>
+      <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:6px">${lbl('sexstat','정력')} ${Math.round(p.lewd.정력)}/${par?Math.round(par.lewd.정력):'-'} · ${lbl('sexstat','흥분')} ${Math.round(p.lewd.흥분)}/${par?Math.round(par.lewd.흥분):'-'} · ${tr('label.partnerTier')} ${par?tier(par):'-'}</div>`;
+
     if(p.hsex.passive){
       const _shN=(p.hsex.sharedGroup||[]).length;
-      h+=`<div style="font-size:11.5px;color:var(--muted)">${_shN>1?`<b style=\"color:#B23A6B\">${_shN}명</b>이 당신을 주도하고 있다.`:'상대가 주도하고 있다.'}</div>
+      const _leadTxt=_shN>1?(LANG==='en'?`<b style="color:#B23A6B">${_shN} people</b> are taking the lead on you.`:`<b style=\"color:#B23A6B\">${_shN}명</b>이 당신을 주도하고 있다.`):tr('label.partnerLeading');
+      h+=`<div style="font-size:11.5px;color:var(--muted)">${_leadTxt}</div>
           <div style="display:flex;gap:6px;margin-top:10px">
-            <button class="waitBtn" id="pWait" style="flex:1;margin-top:0">계속한다 ⏭</button>
-            <button class="waitBtn" id="pTake" style="flex:1;margin-top:0">주도권 빼앗기</button>
+            <button class="waitBtn" id="pWait" style="flex:1;margin-top:0">${tr('btn.continueWait')}</button>
+            <button class="waitBtn" id="pTake" style="flex:1;margin-top:0">${tr('btn.takeControl')}</button>
           </div>
-          <button class="waitBtn" id="pAuto" style="margin-top:6px;${autoH?'background:var(--ink);color:#fff':''}">자동 진행 ${autoH?'ON ▶ — 누르면 끔':'OFF — 누르면 자동재생'}</button>`;
+          <button class="waitBtn" id="pAuto" style="margin-top:6px;${autoH?'background:var(--ink);color:#fff':''}">${autoH?tr('btn.autoOn'):tr('btn.autoOff')}</button>`;
     }else{
       if((p.hsex.party||[]).length>1){
-        h+=`<div style="font-size:9.5px;color:var(--muted);margin:5px 0 2px;letter-spacing:.1em">상대 선택 (${p.hsex.party.length}명)</div><div class="chipRow">`;
+        h+=`<div style="font-size:9.5px;color:var(--muted);margin:5px 0 2px;letter-spacing:.1em">${tr('label.choosePartner')} (${p.hsex.party.length}${tr('unit.person')})</div><div class="chipRow">`;
         p.hsex.party.forEach(id=>{ const o=npcs.find(x=>x.id===id); if(!o)return;
           h+=`<button class="chip${p.hsex.with===id?' on':''}" data-hfocus="${id}" style="${p.hsex.with===id?`background:${o.color};border-color:${o.color};color:#fff`:`color:${o.color};border-color:${o.color}`}">${esc(o.name)}</button>`; });
         h+=`</div>`;
@@ -3968,7 +4139,7 @@ function renderPlayerPanel(){
         }
         h+=`</div>`;
       }
-      h+=`<button class="waitBtn" id="pWait">상대에게 맡긴다 ⏭</button>`;
+      h+=`<button class="waitBtn" id="pWait">${tr('btn.leaveToPartner')}</button>`;
     }
     PP.innerHTML=h;
     renderAvatarInto(document.getElementById('pAvatar'),p);
@@ -4026,16 +4197,16 @@ function renderPlayerPanel(){
     return;
   }
   if(RATING>=3){
-    h+=`<div class="psec">R18 성향</div><div class="chipRow">`;
-    for(const md of ['기본','부탁','강압','복종'])h+=`<button class="chip${p.r18Mode===md?' on':''}" data-r18mode="${md}">${md}</button>`;
+    h+=`<div class="psec">${tr('sec.r18mode')}</div><div class="chipRow">`;
+    for(const md of ['기본','부탁','강압','복종'])h+=`<button class="chip${p.r18Mode===md?' on':''}" data-r18mode="${md}">${lbl('r18mode',md)}</button>`;
     h+=`</div>`;
   }
-  h+=`<div class="psec">이동 — 인접 공간</div><div class="chipRow">`;
-  for(const adj of SPACES[p.space].adj)h+=`<button class="chip" data-move="${adj}">${SPACES[adj].n}<span style="opacity:.5;font-size:9px"> ${SPACES[adj].transit?2:1}T</span></button>`;
-  if(BUS_STOPS.includes(p.space))h+=`<button class="chip" id="pBus" style="border-color:#4A6FA5;color:#4A6FA5">🚌 셔틀 5코인</button>`;
-  if(p.flags['아이템:자전거'])h+=`<button class="chip" id="pBike" style="border-color:#3E7A4E;color:#3E7A4E">🚲 자전거</button>`;
-  h+=`</div><div class="psec">상호작용 — 상대 선택</div>`;
-  if(mates.length===0)h+=`<div style="font-size:11.5px;color:var(--muted)">이 공간에는 아무도 없다.</div>`;
+  h+=`<div class="psec">${tr('sec.move')}</div><div class="chipRow">`;
+  for(const adj of SPACES[p.space].adj)h+=`<button class="chip" data-move="${adj}">${lbl('space',SPACES[adj].n)}<span style="opacity:.5;font-size:9px"> ${SPACES[adj].transit?2:1}T</span></button>`;
+  if(BUS_STOPS.includes(p.space))h+=`<button class="chip" id="pBus" style="border-color:#4A6FA5;color:#4A6FA5">${tr('btn.shuttle')} 5${tr('unit.coin')}</button>`;
+  if(p.flags['아이템:자전거'])h+=`<button class="chip" id="pBike" style="border-color:#3E7A4E;color:#3E7A4E">${tr('btn.bike')}</button>`;
+  h+=`</div><div class="psec">${tr('sec.interact')}</div>`;
+  if(mates.length===0)h+=`<div style="font-size:11.5px;color:var(--muted)">${tr('label.noOneHere')}</div>`;
   else{
     h+=`<div class="chipRow">`;
     for(const m of mates)h+=`<button class="chip${pTarget===m.id?' on':''}" data-tgt="${m.id}" style="${pTarget===m.id?`background:${m.color};border-color:${m.color};color:#fff`:`color:${m.color};border-color:${m.color}`}">${esc(m.name)}</button>`;
@@ -4043,7 +4214,7 @@ function renderPlayerPanel(){
     if(pTarget){
       const t=npcs.find(n=>n.id===pTarget);
       const r=p.relations[t.id];
-      h+=`<div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin:4px 0">${relLabel(p,t)} · ${relNums(r)}</div>`;
+      h+=`<div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin:4px 0">${lbl('rellabel',relLabel(p,t))} · ${relNums(r)}</div>`;
       const groups={};
       for(const A of ACTIONS){
         if(A.solo||(A.minR||0)>RATING)continue;
@@ -4059,32 +4230,32 @@ function renderPlayerPanel(){
         }
         h+=`</div>`;
       }
-      h+=`<div style="font-size:9.5px;color:var(--muted);margin:5px 0 2px;letter-spacing:.1em">데려가기</div><div class="chipRow">`;
-      for(const adj of SPACES[p.space].adj)h+=`<button class="chip" data-lead="${adj}">잠깐 와줘 → ${SPACES[adj].n}</button>`;
+      h+=`<div style="font-size:9.5px;color:var(--muted);margin:5px 0 2px;letter-spacing:.1em">${tr('sec.bringAlong')}</div><div class="chipRow">`;
+      for(const adj of SPACES[p.space].adj)h+=`<button class="chip" data-lead="${adj}">잠깐 와줘 → ${lbl('space',SPACES[adj].n)}</button>`;
       h+=`</div>`;
       const _gifts=Object.keys(GIFTS).filter(it=>(p.flags['아이템:'+it]||0)>0 && (!GIFTS[it].minR||RATING>=GIFTS[it].minR));
       if(_gifts.length){
-        h+=`<div class="psec">선물하기 🎁</div><div class="chipRow">`;
+        h+=`<div class="psec">${tr('sec.giveGift')}</div><div class="chipRow">`;
         _gifts.forEach(it=>h+=`<button class="chip act" data-gift="${esc(it)}">${esc(it)} 주기 (${p.flags['아이템:'+it]})</button>`);
         h+=`</div>`;
       }
       const tdef=t.fixed?FIXED_DEF[t.fixedKey]:null;
       if(tdef){
-        h+=`<div style="font-size:9.5px;color:${t.color};margin:7px 0 2px;letter-spacing:.1em">✦ 특수 교류 · ${esc(t.name)}</div><div class="chipRow">`;
+        h+=`<div style="font-size:9.5px;color:${t.color};margin:7px 0 2px;letter-spacing:.1em">${tr('label.specialInteract')} · ${esc(t.name)}</div><div class="chipRow">`;
         tdef.specials.forEach((sp,i)=>{ const okS=!sp.req||sp.req(p,t);
-          h+=`<button class="chip act" data-special="${i}" ${okS?'':'disabled'} title="${okS?'':'관계를 더 쌓으면 열립니다'}">${okS?'':'🔒 '}${esc(sp.label)}</button>`; });
+          h+=`<button class="chip act" data-special="${i}" ${okS?'':'disabled'} title="${okS?'':tr('title.needMoreRel')}">${okS?'':'🔒 '}${esc(sp.label)}</button>`; });
         h+=`</div>`;
         if(tdef.story)h+=`<div style="font-size:9.5px;color:var(--muted);margin:3px 0;line-height:1.5">"${esc(tdef.story)}"</div>`;
       }
     }
   }
   if(!p.hsex&&JOBS[p.space]){
-    h+=`<div class="psec">일자리 · ${SPACES[p.space].n}</div><div class="chipRow"><button class="chip act" data-work="1">${esc(JOBS[p.space][0])} 하기<span style="opacity:.5;font-size:9px"> 3T</span></button></div>`;
+    h+=`<div class="psec">${tr('sec.job')} · ${lbl('space',SPACES[p.space].n)}</div><div class="chipRow"><button class="chip act" data-work="1">${esc(JOBS[p.space][0])} 하기<span style="opacity:.5;font-size:9px"> 3T</span></button></div>`;
   }
   if(!p.hsex&&SHOPS[p.space]){
-    h+=`<div class="psec">구매 · ${SPACES[p.space].n}</div><div class="chipRow">`;
+    h+=`<div class="psec">${tr('sec.shop')} · ${lbl('space',SPACES[p.space].n)}</div><div class="chipRow">`;
     SHOPS[p.space].forEach((it,i)=>{ if((it.minR||0)>RATING)return; if(it.fet&&!CFG[it.fet])return; if(it.once&&p.flags['아이템:'+it.once])return; const afford=p.money>=it.price;
-      h+=`<button class="chip act" data-buy="${i}" ${afford?'':'disabled'}>${esc(it.name)} · ${it.price}코인</button>`; });
+      h+=`<button class="chip act" data-buy="${i}" ${afford?'':'disabled'}>${esc(it.name)} · ${it.price}${tr('unit.coin')}</button>`; });
     h+=`</div>`;
   }
   if(!p.hsex && RATING>=3){
@@ -4094,24 +4265,24 @@ function renderPlayerPanel(){
   if(!p.hsex){
     const _wz=WARDROBE_ZONES.includes(p.space);
     if(_wz){
-    h+=`<div class="psec">속옷 🩲</div>`;
+    h+=`<div class="psec">${tr('sec.underwear')}</div>`;
     ['상','하'].forEach(sl=>{ h+=`<div class="chipRow" style="margin-bottom:2px">`;
       Object.keys(UNDERWEAR[sl]).forEach(u=>{ const def=UNDERWEAR[sl][u];
         if(def.need&&!p.flags['아이템:'+def.need])return;
-        h+=`<button class="chip${p.under[sl]===u?' on':''}" data-under="${sl}:${esc(u)}">${esc(u)}</button>`; });
+        h+=`<button class="chip${p.under[sl]===u?' on':''}" data-under="${sl}:${esc(u)}">${esc(lbl('under',u))}</button>`; });
       h+=`</div>`; });
-    h+=`<div class="psec">옷장 👗</div><div class="chipRow">`;
+    h+=`<div class="psec">${tr('sec.wardrobe')}</div><div class="chipRow">`;
     (p.wardrobe||['평상복']).forEach(w=>{ const o=OUTFITS[w]; if(!o)return; if((o.minR||0)>RATING&&p.outfit!==w)return;
-      h+=`<button class="chip${p.outfit===w?' on':''}" data-wear="${esc(w)}" title="${esc(o.desc)}">${o.emoji} ${esc(w)}</button>`; });
+      h+=`<button class="chip${p.outfit===w?' on':''}" data-wear="${esc(w)}" title="${esc(o.desc)}">${o.emoji} ${esc(lbl('outfit',w))}</button>`; });
     h+=`</div>`;
-    } else { h+=`<div style="font-size:10.5px;color:var(--muted);margin:4px 0">👗 옷을 갈아입으려면 옷장이 있는 곳(개인실·트레이닝룸)으로 가야 한다</div>`; }
-    h+=`<div class="chipRow" style="margin-top:4px"><button class="chip" id="pSleep">잠자기 💤</button><button class="chip${CFG.autoFaint?' on':''}" id="pAutoFaint">자동 기절 ${CFG.autoFaint?'ON':'OFF'}</button><button class="chip" id="pRep">평판 📊</button><button class="chip" id="pAdm">⚙ 일괄</button></div>`;
+    } else { h+=`<div style="font-size:10.5px;color:var(--muted);margin:4px 0">${tr('label.needWardrobe')}</div>`; }
+    h+=`<div class="chipRow" style="margin-top:4px"><button class="chip" id="pSleep">${tr('btn.sleep')}</button><button class="chip${CFG.autoFaint?' on':''}" id="pAutoFaint">${tr('btn.autoFaint')} ${CFG.autoFaint?'ON':'OFF'}</button><button class="chip" id="pRep">${tr('btn.reputation')}</button><button class="chip" id="pAdm">${tr('btn.batchAdmin')}</button></div>`;
   }
   { const _use=Object.keys(USABLES).filter(k=>(p.flags['아이템:'+k]||0)>0);
-    if(_use.length){ h+=`<div class="psec">아이템 사용 🧪</div><div class="chipRow">`;
+    if(_use.length){ h+=`<div class="psec">${tr('sec.useItem')}</div><div class="chipRow">`;
       _use.forEach(k=>h+=`<button class="chip act" data-use="${esc(k)}" title="${esc(USABLES[k].desc)}">${USABLES[k].emoji} ${esc(k)} (${p.flags['아이템:'+k]})</button>`);
       h+=`</div>`; } }
-  h+=`<div class="psec">혼자 하기</div><div class="chipRow">`;
+  h+=`<div class="psec">${tr('sec.solo')}</div><div class="chipRow">`;
   for(const A of ACTIONS){
     if(!A.solo||(A.minR||0)>RATING)continue;
     if(A.place&&A.place!==p.space)continue;
@@ -4119,7 +4290,7 @@ function renderPlayerPanel(){
     const bn=condMet(A,p);
     h+=`<button class="chip act" data-solo="${A.name}" ${okC?'':'disabled'}>${bn?'✦ ':''}${A.name}<span style="opacity:.5;font-size:9px"> ${A.turns||1}T</span></button>`;
   }
-  h+=`</div><button class="waitBtn" id="pWait">아무것도 하지 않고 지켜본다 ⏭</button>`;
+  h+=`</div><button class="waitBtn" id="pWait">${tr('btn.doNothing')}</button>`;
   PP.innerHTML=h;
   renderAvatarInto(document.getElementById('pAvatar'),p);
   PP.querySelectorAll('[data-r18mode]').forEach(b=>b.onclick=()=>{p.r18Mode=b.dataset.r18mode; renderPlayerPanel();});
@@ -4156,19 +4327,19 @@ function buildForm(){
   $('#cLookWrap').innerHTML=lookEditorHTML('c');
   getCLook=wireLookEditor('c',randomLook());
   const sel=$('#cArch');
-  Object.keys(ARCH).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k;sel.appendChild(o)});
+  Object.keys(ARCH).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=lbl('arch',k);sel.appendChild(o)});
   const S=$('#axSliders');
   AXES.forEach((a,i)=>{
     const row=document.createElement('div'); row.className='axRow';
-    row.innerHTML=`<span>${a}</span><input type="range" min="0" max="100" data-ax="${i}"><span class="val">50</span>`;
+    row.innerHTML=`<span>${lbl('axis',a)}</span><input type="range" min="0" max="100" data-ax="${i}"><span class="val">50</span>`;
     S.appendChild(row);
   });
   S.addEventListener('input',e=>{
     if(e.target.dataset.ax!==undefined)e.target.parentElement.querySelector('.val').textContent=e.target.value;
   });
   $('#cLewd0').oninput=e=>$('#cLewd0v').textContent=e.target.value;
-  $('#cMaxEng').oninput=e=>$('#cMaxEngV').textContent=e.target.value; 
-  $('#cSensRows').innerHTML=PARTS.map(p=>`<div class="axRow"><span style="font-size:11px">${p}</span><input type="range" min="0" max="100" value="40" data-csens="${p}"><span class="val">40</span></div>`).join('');
+  $('#cMaxEng').oninput=e=>$('#cMaxEngV').textContent=e.target.value;
+  $('#cSensRows').innerHTML=PARTS.map(p=>`<div class="axRow"><span style="font-size:11px">${lbl('part',p)}</span><input type="range" min="0" max="100" value="40" data-csens="${p}"><span class="val">40</span></div>`).join('');
   document.querySelectorAll('[data-csens]').forEach(inp=>inp.oninput=()=>inp.nextElementSibling.textContent=inp.value);
   const readSens=()=>{ const o={}; document.querySelectorAll('[data-csens]').forEach(inp=>o[inp.dataset.csens]=+inp.value); return o; };
   const setSens=o=>{ document.querySelectorAll('[data-csens]').forEach(inp=>{ inp.value=o[inp.dataset.csens]; inp.nextElementSibling.textContent=inp.value; }); };
@@ -4191,10 +4362,10 @@ function buildForm(){
     getCLook=wireLookEditor('c',randomLook());
   };
   $('#btnAdd').onclick=()=>{
-    if(npcs.length>=20){alert('최대 20명까지 가능합니다.');return;}
+    if(npcs.length>=20){alert(tr('alert.max20'));return;}
     let nm=$('#cName').value.trim();
     if(!nm){const used=npcs.map(n=>n.name); nm=NAMEPOOL.find(x=>!used.includes(x))||('N'+uid);}
-    if(npcs.some(n=>n.name===nm)){alert('같은 이름이 이미 있습니다.');return;}
+    if(npcs.some(n=>n.name===nm)){alert(tr('alert.dupName'));return;}
     const axes=[...document.querySelectorAll('#axSliders input')].map(i=>+i.value);
     const form=$('#cForm').value;
     const mix=form==='혼합'?{base:$('#cMixBase').value,trig:$('#cMixTrig').value}:null;
@@ -4221,7 +4392,7 @@ function serialize(){
     storyHTML:[...document.querySelectorAll('#story .lg')].slice(-150).map(e=>e.outerHTML)});
 }
 function applySave(data){
-  if(!data||!Array.isArray(data.npcs))throw new Error('형식이 올바르지 않은 저장 파일');
+  if(!data||!Array.isArray(data.npcs))throw new Error(tr('err.badSaveFile'));
   npcs=data.npcs; turn=data.turn||0; RATING=data.RATING||0;
   npcs.forEach(ensureSens);
   npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); equipOutfit(n,n.outfit); n.asleep=0; });
@@ -4248,14 +4419,14 @@ function applySave(data){
 }
 function saveLocal(silent){
   try{ localStorage.setItem(SAVE_KEY, serialize()); if(!silent)log('브라우저에 저장했다 💾 (12턴마다 자동 저장됨)','event'); return true; }
-  catch(e){ if(!silent)alert('이 환경에서는 브라우저 저장이 차단되어 있습니다.\n⬇ 버튼으로 파일 내보내기를 사용해 주세요.'); return false; }
+  catch(e){ if(!silent)alert(tr('alert.saveBlocked')); return false; }
 }
 function loadLocal(){
   try{
     const s=localStorage.getItem(SAVE_KEY);
-    if(!s){alert('브라우저 저장 데이터가 없습니다.');return;}
+    if(!s){alert(tr('alert.noSaveData'));return;}
     applySave(JSON.parse(s));
-  }catch(e){ alert('불러오기 실패: '+e.message); }
+  }catch(e){ alert(tr('alert.loadFailed')+e.message); }
 }
 function exportFile(){
   const data=serialize();
@@ -4277,7 +4448,7 @@ $('#btnImport').onclick=()=>$('#fileLoad').click();
 $('#fileLoad').onchange=e=>{
   const f=e.target.files[0]; if(!f)return;
   const r=new FileReader();
-  r.onload=()=>{ try{ applySave(JSON.parse(r.result)); }catch(err){ alert('파일을 읽을 수 없습니다: '+err.message); } };
+  r.onload=()=>{ try{ applySave(JSON.parse(r.result)); }catch(err){ alert(tr('alert.fileReadFailed')+err.message); } };
   r.readAsText(f);
   e.target.value='';
 };
@@ -4297,13 +4468,14 @@ $('#rateSel').onchange=e=>{
   if(RATING>=3)log('R18 행동 풀은 템플릿 상태(내용 미작성)입니다. 등급 3 행동은 캐릭터별 R18 참여 플래그 + 프라이버시 2 이상 공간이 조건입니다.','move');
   render();
 };
+$('#langSel').onchange=e=>setLang(e.target.value);
 function startPlay(){
   timer=setInterval(step,+$('#speedSel').value);
-  $('#btnPlay').textContent='∥ 정지';
+  $('#btnPlay').textContent=tr('btn.pause');
 }
 function stopPlay(){
   if(timer){clearInterval(timer);timer=null;}
-  $('#btnPlay').textContent='▶ 자동재생';
+  $('#btnPlay').textContent=tr('btn.play');
 }
 /* ── 강압/피동 H 자동 진행 토글 ── */
 function autoHLoop(){
@@ -4341,9 +4513,9 @@ function showSleepModal(){
   stopPlay();
   const ex=document.getElementById('modal'); if(ex)ex.remove();
   const m=document.createElement('div'); m.id='modal';
-  m.innerHTML=`<div class="card"><div class="who">잠자기</div>
-    <div class="say">몇 턴 동안 잘까? 자는 동안 턴이 자동으로 흐르고, 말을 걸어도 듣지 못한다.</div>
-    <div class="btns"><button data-slp="3">짧게 (3턴)</button><button data-slp="5">보통 (5턴)</button><button data-slp="8">깊이 (8턴)</button><button data-slp="r">랜덤</button><button id="slpCancel">취소</button></div></div>`;
+  m.innerHTML=`<div class="card"><div class="who">${tr('btn.sleep').replace(' 💤','')}</div>
+    <div class="say">${tr('modal.sleepPrompt')}</div>
+    <div class="btns"><button data-slp="3">${tr('modal.sleepShort')}</button><button data-slp="5">${tr('modal.sleepNormal')}</button><button data-slp="8">${tr('modal.sleepDeep')}</button><button data-slp="r">${tr('btn.random')}</button><button id="slpCancel">${tr('btn.cancel')}</button></div></div>`;
   document.body.appendChild(m);
   m.querySelectorAll('[data-slp]').forEach(b=>b.onclick=()=>{ m.remove(); const v=b.dataset.slp; startSleep(P(), v==='r'?ri(3,9):+v); });
   document.getElementById('slpCancel').onclick=()=>{ m.remove(); render(); };
@@ -4375,7 +4547,7 @@ function renderEventBeat(){
   let btns='';
   const choices=(typeof b.choices==='function')?b.choices(curEvent.data):b.choices;
   if(choices&&choices.length){ choices.forEach((c,i)=>{ const dis=c.enabled&&!c.enabled(curEvent.data); btns+=`<button data-ev="${i}" ${dis?'disabled':''}>${esc(c.label)}</button>`; }); curEvent._ch=choices; }
-  else { btns=`<button data-ev="0">${esc(b.next||'계속')}</button>`; curEvent._ch=null; }
+  else { btns=`<button data-ev="0">${esc(b.next||tr('btn.continue'))}</button>`; curEvent._ch=null; }
   const txt=(typeof b.text==='function')?b.text(curEvent.data):b.text;
   const m=document.createElement('div'); m.id='modal';
   m.innerHTML=`<div class="card" style="border-top-color:${col}"><div class="who" style="color:${col}">${esc(ev.title)}${ev.beats.length>1?` <span style="opacity:.5;font-size:11px">(${beat+1}/${ev.beats.length})</span>`:''}</div><div class="say">${txt}</div><div class="btns">${btns}</div></div>`;
