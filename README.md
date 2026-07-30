@@ -1,5 +1,7 @@
 # Persona Watch
 
+*[한국어](#persona-watch) | [English](#persona-watch-english)*
+
 브라우저에서 바로 실행되는 단일 HTML 파일 기반 페르소나 시뮬레이터입니다. 별도 설치나 서버 없이 파일을 다운로드해 **Chrome/Safari/Samsung Internet** 등으로 직접 열면 바로 플레이할 수 있습니다.
 
 > ⚠️ 카카오톡·메신저 내장 브라우저는 스크립트를 차단합니다. 반드시 파일을 저장한 뒤 일반 브라우저로 열어주세요.
@@ -26,6 +28,7 @@
 - **1인칭 이야기 로그 / 전체 로그 전환**: 우측 패널 헤더 버튼으로 "당신에게 직접 벌어지는 일만" 보여주는 이야기 모드와, 모든 인물의 행동을 기록하는 전체 로그를 언제든 전환할 수 있습니다.
 - **저장/불러오기**: 브라우저 로컬 저장, 파일로 내보내기/가져오기 지원. 자동 저장 간격은 설정에서 조절합니다.
 - **시스템 설정 콘솔**: 툴바의 ⚙ 버튼에서 기절/절정/난입 반응, 각종 확률·배율, 신규 캐릭터 기본값, R18+ 페티시 요소 토글 등을 세밀하게 조정할 수 있습니다.
+- **언어 전환 (한국어/English)**: `persona-watch-v39.html` 툴바에서 인터페이스 언어를 한국어/영어로 전환할 수 있습니다. 툴바·버튼·패널 라벨·설정 콘솔·퀘스트 설명 등 UI 전반이 번역되며, 선택은 브라우저에 저장됩니다. NPC 대사·이벤트·스토리 본문 등 서사 콘텐츠는 한국어로 고정되어 있습니다.
 
 ## 시작하기
 
@@ -35,3 +38,47 @@
 4. 관찰 등급을 필요에 따라 조정한 뒤, 1턴 진행 또는 자동재생으로 시뮬레이션을 시작합니다.
 
 이 프로젝트는 성인용(R18) 콘텐츠를 포함합니다. 성인 사용자만 이용해 주세요.
+
+---
+
+<a id="persona-watch-english"></a>
+# Persona Watch (English)
+
+*[한국어](#persona-watch) | [English](#persona-watch-english)*
+
+A persona life-simulator that runs entirely from a single HTML file in your browser. No install, no server — just download the file and open it directly in **Chrome/Safari/Samsung Internet**, etc.
+
+> ⚠️ In-app browsers (KakaoTalk, other messenger apps) block scripts. Save the file first and open it in a regular browser.
+
+## Files
+
+| File | Description |
+|---|---|
+| `persona-watch-v39.html` | **First-person R18 survival simulator.** Create a player character and act directly within the resort, driven by interactive story arcs and a first-person story log (focused on what happens directly to you). This is the actively developed main version, and the only one with a language toggle. |
+| `persona-watch-observer.html` | **Observer board.** A derivative version focused on watching the NPCs' ensemble drama unfold via auto-play alone, with no player character. Shows the unfiltered full log, with higher default event/spectate probabilities. Korean-only. |
+
+The two files keep separate save data and settings, so they never interfere with each other.
+
+## Key Features (as of v39)
+
+- **Content rating, 4 tiers (0–3)**: From All Ages to R18 — exposure and interaction content unlocks progressively by rating.
+- **Character customization**: Personality (archetype) sliders, body sensitivity, gender/genital type, 25+ outfits, plus a **pixel-art avatar** you build with skin tone, hairstyle, hair color, and eye color, previewed live.
+- **Interactive story arcs**: Fixed characters (the lookout keeper, the mart owner, the farm girl, the strip-club dancer, etc.) each have an independent multi-chapter storyline that advances only once relationship thresholds are met *and* you're actually at that character's location. Every chapter has branching choices that change the outcome.
+- **Everyday scripted moments**: Small slice-of-life events unrelated to the main plot (found items, chance encounters, minor weather-related happenings) are randomly sprinkled in.
+- **Weather system**: Clear / Cloudy / Rain / Windy / Heatwave / Cold Snap cycle through and meaningfully affect exposure, fatigue, stability, and more.
+- **Persistent status-effect system**: Certain events don't end in one shot — they leave a status (cold, slime infection, parasite, etc.) that keeps applying effects turn after turn until it runs its course.
+- **Relationship & H system (R18)**: Liking / Affection / Trust / Tension / Desire stats, genital-type-specific dialogue branches, a range of fetish events (bestiality, tentacles, watersports, bondage, exhibitionism, etc. — each individually toggleable in settings), group play, and R18 dispositions (default / plea / force / submit).
+- **Job system**: Work at the mart, cafe, dining hall, farm, gym, beach, strip club, adult shop, and more — many are multi-stage work minigames with R18 branches depending on your choices.
+- **First-person story log / full log toggle**: A header button on the right panel lets you switch anytime between Story mode (only what happens directly to you) and the Full Log (every character's actions recorded).
+- **Save / load**: Local browser save plus export/import to file. Autosave interval is adjustable in settings.
+- **System settings console**: The ⚙ toolbar button gives fine-grained control over fainting/climax/interruption reactions, various probabilities and multipliers, new-character defaults, and individual R18+ fetish content toggles.
+- **Language toggle (한국어/English)**: `persona-watch-v39.html`'s toolbar lets you switch the interface language between Korean and English. The toolbar, buttons, panel labels, settings console, quest descriptions, and the rest of the UI chrome are translated, and your choice is saved in the browser. NPC dialogue, events, and story text remain Korean-only.
+
+## Getting Started
+
+1. Download whichever version's HTML file you want.
+2. Open it directly in your browser (double-click, or use your browser's "Open File").
+3. Create a character from the left panel, or click "Start in First Person" in the right-hand player panel to create your control character.
+4. Adjust the content rating as needed, then start the simulation with a single turn or auto-play.
+
+This project contains adult (R18) content. For adult users only.
