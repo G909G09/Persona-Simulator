@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PERSONA WATCH v39</title>
+<title>PERSONA WATCH — OBSERVER</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
 <style>
@@ -280,7 +280,7 @@ h2.sec:first-child{margin-top:0}
 <div id="errOverlay"></div>
 
 <div id="toolbar">
-  <span class="title">PERSONA WATCH<small>성격 시뮬레이션 프로토타입 v39</small></span>
+  <span class="title">PERSONA WATCH<small>관찰판 — NPC 군상극 관찰 모드</small></span>
   <span id="clock">T000 · 아침</span>
   <select id="rateSel" title="관찰 등급">
     <option value="0">등급: 전체이용가</option><option value="1">등급: 15세</option>
@@ -931,15 +931,15 @@ const CLIMAX_RX = [
 ];
 
 /* ══════════════ 시스템 설정 (콘솔) ══════════════ */
-const CFG_KEY='personaWatchCfg';
+const CFG_KEY='personaWatchCfg_observer';
 const CFG_DEF={
   faint:true, climax:true, intrusion:true,
   se:true, seVol:100,
-  spectateP:40, sceneP:35, corruptX:100, arousalDecay:4, engRegen:100, sensX:100,
-  autosave:12, logMax:300,
-  defR18:true, defCor:true, autoFaint:false,
+  spectateP:60, sceneP:55, corruptX:100, arousalDecay:4, engRegen:100, sensX:100,
+  autosave:12, logMax:600,
+  defR18:true, defCor:true, autoFaint:true,
   fet_beast:false, fet_water:false, fet_tentacle:false, fet_bondage:false, fet_exhibition:false,
-  immersion:true
+  immersion:false
 };
 const CFG=Object.assign({},CFG_DEF);
 try{ Object.assign(CFG, JSON.parse(localStorage.getItem(CFG_KEY)||'{}')); }catch(e){}
@@ -2498,7 +2498,7 @@ function tickWorld(){
     if(pl.lewd.취기<90&&pl.flags._drowsy)delete pl.flags._drowsy;
     if(RATING>=2&&pl.lewd.취기>=100&&pl.asleep<=0&&!pl.hsex&&!pl.flags._drowsy&&!document.getElementById('modal')&&!document.getElementById('r18modal')){ setTimeout(showDrowsyModal,60); }
     checkQuests(pl);
-    checkMainStory(pl);
+    /* 관찰판은 플레이어 개인 서사보다 인물 군상극 관찰에 초점을 두므로 메인 스토리는 진행하지 않는다 */
     checkRent(pl);
     checkDrunkMishap(pl);
     checkFetishEvent(pl);
@@ -3712,7 +3712,7 @@ function setSliders(vals){
 }
 
 /* ══════════════ 저장 / 불러오기 ══════════════ */
-const SAVE_KEY='personaWatchSave';
+const SAVE_KEY='personaWatchSave_observer';
 function serialize(){
   return JSON.stringify({v:11, turn, RATING, uid, colorIdx, playerId, npcs, sceneCD, cfg:CFG,
     logHTML:[...document.querySelectorAll('#log .lg')].slice(-150).map(e=>e.outerHTML)});
@@ -4128,7 +4128,7 @@ syncSEBtn();
 render();
 syncMobile();
 document.getElementById('bootBanner').style.display='none';
-log('시뮬레이션 준비 완료 — 6인 프리셋 입주. ▶ 자동재생 또는 1턴으로 관찰을 시작하세요.','event');
+log('관찰판 준비 완료 — 6인 프리셋 입주. 플레이어 없이 ▶ 자동재생만으로도 인물 군상극을 지켜볼 수 있습니다. (1인칭 플레이는 좌측에서 선택)','event');
 try{ if(localStorage.getItem(SAVE_KEY))log('이전 저장 데이터가 있습니다 — 📂 버튼으로 이어할 수 있습니다.','move'); }catch(e){}
 </script>
 </body>
