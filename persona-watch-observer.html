@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PERSONA WATCH v39</title>
+<title>PERSONA WATCH — OBSERVER</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
 <style>
@@ -139,7 +139,7 @@ h2.sec:first-child{margin-top:0}
 .relLine .rv{font-family:var(--mono); color:var(--muted); margin-left:auto; font-size:10px}
 #logHead{padding:10px 14px 6px; font-size:11px; letter-spacing:.14em; color:var(--muted); font-weight:700; display:flex}
 #logHead button{margin-left:auto; font-size:10.5px; padding:2px 8px}
-#log{flex:1; overflow-y:auto; padding:4px 14px 14px; display:flex; flex-direction:column; gap:3px; font-size:12.5px; line-height:1.5; min-height:120px}
+#log{flex:1; overflow-y:auto; padding:4px 14px 14px; display:flex; flex-direction:column; gap:3px; font-size:12.5px; line-height:1.5}
 .lg{padding:3px 0; border-bottom:1px dashed var(--soft)}
 .lg .ts{font-family:var(--mono); font-size:10px; color:var(--muted); margin-right:6px}
 .lg.move{color:var(--muted); font-size:11.5px}
@@ -153,15 +153,9 @@ h2.sec:first-child{margin-top:0}
 .room .rname{font-size:9px}
 .lg q::before{content:'「'} .lg q::after{content:'」'}
 .lg .rx{color:var(--muted); font-size:11.5px}
-/* ── 이야기(1인칭 서사) 패널: 당신에게 직접 벌어지는 일만, 산문 형태로 ── */
-#story{flex:1; overflow-y:auto; padding:8px 18px 18px; display:flex; flex-direction:column; gap:12px; font-size:14.5px; line-height:1.8; min-height:120px}
-#story .lg{padding:0; border-bottom:none; margin:0}
-#story .lg.move{color:var(--ink); font-size:13px; letter-spacing:.04em; color:var(--muted); text-align:center}
-#story .lg.event{background:var(--soft); color:var(--ink); border:none; border-left:3px solid #B23A6B; padding:10px 12px; border-radius:2px; font-weight:500; margin:0}
-#story .lgDiv{margin:10px 0 2px}
 
 /* ── 플레이어 패널 ────── */
-#playerPanel{border-bottom:2px solid var(--wall); padding:12px 14px; background:var(--paper); max-height:46vh; overflow-y:auto; flex-shrink:0}
+#playerPanel{border-bottom:2px solid var(--wall); padding:12px 14px; background:var(--paper)}
 #playerPanel .phead{display:flex; align-items:center; gap:10px; margin-bottom:10px}
 #playerPanel .ptoken{width:38px;height:38px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;border-radius:4px;flex-shrink:0}
 #playerPanel .pname{font-weight:800;font-size:15px}
@@ -253,7 +247,7 @@ h2.sec:first-child{margin-top:0}
   #rightCol{max-height:none}
   #detail{max-height:none;overflow:visible}
   /* 로그 잘림 수정: flex 압축·내부 스크롤 해제, 컬럼이 단일 스크롤러가 됨 */
-  #log,#story{flex:none;overflow:visible;padding-bottom:80px}
+  #log{flex:none;overflow:visible;padding-bottom:80px}
   /* 행동 패널 → 하단 시트: 로그가 화면을 다 쓰고, 버튼은 ⚡로 항상 한 번에 접근 */
   #actFab{display:flex}
   #playerPanel{position:fixed;left:0;right:0;bottom:calc(52px + env(safe-area-inset-bottom));
@@ -277,7 +271,6 @@ h2.sec:first-child{margin-top:0}
   button,.chip{min-height:36px}
   .token{width:34px;height:34px}
   #log{font-size:13px}
-  #story{font-size:14px}
 }
 </style>
 </head>
@@ -287,7 +280,7 @@ h2.sec:first-child{margin-top:0}
 <div id="errOverlay"></div>
 
 <div id="toolbar">
-  <span class="title">PERSONA WATCH<small>성격 시뮬레이션 프로토타입 v39</small></span>
+  <span class="title">PERSONA WATCH<small>관찰판 — NPC 군상극 관찰 모드</small></span>
   <span id="clock">T000 · 아침</span>
   <select id="rateSel" title="관찰 등급">
     <option value="0">등급: 전체이용가</option><option value="1">등급: 15세</option>
@@ -324,7 +317,6 @@ h2.sec:first-child{margin-top:0}
 
     <h2 class="sec">캐릭터 추가</h2>
     <div id="createForm">
-      <div id="cLookWrap"></div>
       <div class="row"><label>이름</label><input type="text" id="cName" placeholder="비우면 자동" style="flex:1"></div>
       <div class="row"><label>성격</label>
         <select id="cArch" style="flex:1"></select>
@@ -367,12 +359,11 @@ h2.sec:first-child{margin-top:0}
     <div id="floorplan"></div>
   </div>
 
-  <!-- 우: 플레이어 + 상세 + 이야기(1인칭) / 전체 로그(백그라운드) -->
+  <!-- 우: 플레이어 + 상세 + 로그 -->
   <div class="col" id="rightCol">
     <div id="playerPanel"></div>
-    <div id="logHead"><span id="logHeadLabel">이야기</span><span id="logFilterTag"></span><button id="btnLogMode" title="당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환">전체 로그</button><button id="btnClearLog">비우기</button></div>
-    <div id="story"></div>
-    <div id="log" style="display:none"></div>
+    <div id="logHead">관찰 로그<span id="logFilterTag"></span><button id="btnClearLog">비우기</button></div>
+    <div id="log"></div>
   </div>
 </div>
 
@@ -940,15 +931,15 @@ const CLIMAX_RX = [
 ];
 
 /* ══════════════ 시스템 설정 (콘솔) ══════════════ */
-const CFG_KEY='personaWatchCfg';
+const CFG_KEY='personaWatchCfg_observer';
 const CFG_DEF={
   faint:true, climax:true, intrusion:true,
   se:true, seVol:100,
-  spectateP:40, sceneP:35, corruptX:100, arousalDecay:4, engRegen:100, sensX:100,
-  autosave:12, logMax:300,
-  defR18:true, defCor:true, autoFaint:false,
+  spectateP:60, sceneP:55, corruptX:100, arousalDecay:4, engRegen:100, sensX:100,
+  autosave:12, logMax:600,
+  defR18:true, defCor:true, autoFaint:true,
   fet_beast:false, fet_water:false, fet_tentacle:false, fet_bondage:false, fet_exhibition:false,
-  immersion:true
+  immersion:false
 };
 const CFG=Object.assign({},CFG_DEF);
 try{ Object.assign(CFG, JSON.parse(localStorage.getItem(CFG_KEY)||'{}')); }catch(e){}
@@ -981,7 +972,7 @@ const CFG_SCHEMA=[
  {k:'fet_bondage', t:'toggle', l:'R18+ 구속 요소',   d:'등급 3에서 밀실·창고 등에서 구속·조교 플레이 이벤트를 활성화합니다.'},
  {k:'fet_exhibition',t:'toggle', l:'R18+ 노출증 요소',d:'등급 3에서 공공장소 노출·관음 이벤트를 활성화합니다.'},
  {g:'1인칭 시점'},
- {k:'immersion', t:'toggle', l:'시작 시 이야기 모드',   d:'켜면 시작할 때 우측 패널이 [이야기](당신에게 직접 벌어지는 일만, 인터랙티브 스토리 형식) 모드로 열립니다. 끄면 [전체 로그](모든 인물의 행동을 기록하는 관찰용 로그)로 시작합니다. 플레이 중에는 로그 헤더의 전환 버튼으로 언제든 바꿀 수 있습니다.'}
+ {k:'immersion', t:'toggle', l:'1인칭 몰입 로그',   d:'켜면 당신과 무관하거나 당신이 없는 곳에서 벌어지는 사소한 행동 묘사는 로그에서 생략되고, 당신의 행동·주변에서 벌어지는 일·주요 사건(이정표·퀘스트·스토리)만 남습니다.'}
 ];
 
 function openConsole(){
@@ -1045,10 +1036,8 @@ function syncSEBtn(){
   if(CFG.se)seInit();
 }
 function trimLog(){
-  ['log','story'].forEach(id=>{
-    const L=document.getElementById(id);
-    if(L)while(L.children.length>CFG.logMax)L.removeChild(L.firstChild);
-  });
+  const L=document.getElementById('log');
+  if(L)while(L.children.length>CFG.logMax)L.removeChild(L.firstChild);
 }
 
 /* ══ 신체 민감도 ══ */
@@ -1148,8 +1137,8 @@ function gameTime(){ const d=Math.floor(turn/12)+1, h=(6+(turn%12)*2)%24; return
 function timeStr(){ const t=gameTime(); return `${t.day}일차 ${String(t.hour).padStart(2,'0')}:${String(t.min).padStart(2,'0')}`; }
 /* ── 날씨 컨트롤러 (시간 엔진 훅) ── */
 let WEATHER='맑음';
-const WEATHER_POOL=['맑음','맑음','맑음','흐림','흐림','비','비','강풍','무더위','한파'];
-const WEATHER_ICON={'맑음':'☀️','흐림':'☁️','비':'🌧️','강풍':'🌬️','무더위':'🥵','한파':'🥶'};
+const WEATHER_POOL=['맑음','맑음','맑음','흐림','흐림','비','강풍','강풍'];
+const WEATHER_ICON={'맑음':'☀️','흐림':'☁️','비':'🌧️','강풍':'🌬️'};
 function updateWeather(){ if(turn%6===0){ const w0=WEATHER; WEATHER=pick(WEATHER_POOL); if(WEATHER!==w0)log(`${WEATHER_ICON[WEATHER]} 날씨가 ${WEATHER}(으)로 바뀌었다`,'',null); } }
 /* ── R18 종합 평가: 노출·흥분·취기·타락 → 탐색 중 passive 이벤트율 스케일 ── */
 function r18Score(p){ return Math.round(clamp((p.노출도||0)*0.3+p.lewd.흥분*0.25+p.lewd.취기*0.2+p.lewd.타락*0.25,0,100)); }
@@ -1181,71 +1170,6 @@ function windCheck(p){
     aud.forEach(o=>{ arouse(o,5); d(o,p,'욕망',3); });
   }
 }
-/* 비: 야외에서 비를 맞으면 옷이 젖어 비치고, 우비가 없으면 계속 맞을수록 감기 기운(지속효과)이 붙는다 */
-function rainCheck(p){
-  if(WEATHER!=='비'||!p||p.hsex||p.asleep>0)return;
-  if(!SPACES[p.space]||!SPACES[p.space].tags.includes('야외'))return;
-  if(p.outfit==='우비'){ p.flags._wetStreak=0; return; }
-  if(Math.random()>=0.22)return;
-  const aud=npcs.filter(o=>o.id!==p.id&&o.space===p.space&&!o.hsex);
-  log(`🌧️ 비를 맞아 ${NM(p)}의 옷이 흠뻑 젖어 몸에 달라붙는다 — 속이 비쳐 보인다`,'',p.space);
-  p.노출도=clamp(p.노출도+9,0,100);
-  aud.forEach(o=>{ arouse(o,4); d(o,p,'욕망',2); });
-  p.flags._wetStreak=(p.flags._wetStreak||0)+1;
-  if(p.flags._wetStreak>=4 && !p.flags['status:감기']){
-    applyStatus(p,'감기',ri(10,16));
-    log(`🤧 계속 비를 맞은 탓에 오한이 든다 — 감기 기운이 붙었다`,'event',p.space);
-    p.flags._wetStreak=0;
-  }
-}
-/* 무더위: 더위에 지쳐 피로가 빨리 쌓이고, 달아오른 몸에 흥분도 슬쩍 오른다 */
-function heatCheck(p){
-  if(WEATHER!=='무더위'||!p||p.hsex||p.asleep>0)return;
-  const outdoor=SPACES[p.space]&&SPACES[p.space].tags.includes('야외');
-  p.needs.피로=clamp(p.needs.피로+(outdoor?2.2:0.8),0,100);
-  if(outdoor&&Math.random()<0.05){ arouse(p,3); log(`🥵 무더위에 달아오른 몸이 나른하게 늘어진다`,'',p.space); }
-}
-/* 한파: 추위에 피로가 쌓이고, 노출이 심한 차림이면 냉기에 안정도가 깎인다 */
-function coldCheck(p){
-  if(WEATHER!=='한파'||!p||p.hsex||p.asleep>0)return;
-  const outdoor=SPACES[p.space]&&SPACES[p.space].tags.includes('야외');
-  p.needs.피로=clamp(p.needs.피로+(outdoor?2.2:0.6),0,100);
-  if(outdoor&&(p.노출도||0)>=50&&Math.random()<0.12){
-    p.stability=clamp(p.stability-4,0,100);
-    log(`🥶 살을 에는 추위에 ${NM(p)}이(가) 몸을 웅크린다 — 이 차림으론 너무 춥다`,'',p.space);
-  }
-}
-/* ══════════════ 지속효과(상태) 시스템 ══════════════
-   페티시 이벤트를 한 번으로 끝나는 팝업이 아니라, DOL의 슬라임/기생충처럼 여러 턴에 걸쳐
-   주기적으로 효과를 일으키다 저절로(혹은 격하게) 끝나는 '상태'로 남긴다.
-   p.flags['status:이름'] = 남은 턴수. applyStatus로 부여, tickStatuses가 매 턴 소모·발동시킨다. */
-const STATUS_DEF={
-  '감기':{icon:'🤧', label:'감기 기운', tickEvery:1,
-    tick:n=>{ n.needs.피로=clamp(n.needs.피로+3,0,100); n.stability=clamp(n.stability-1,0,100); },
-    onEnd:n=>log(`${NM(n)}의 감기 기운이 가라앉았다`,'event',n.space)},
-  '점액감염':{icon:'🟢', label:'점액 감염', tickEvery:3,
-    tick:n=>{ arouse(n,14); if(n.corruptible)n.lewd.타락=clamp(n.lewd.타락+1,0,100);
-      log(`🟢 몸속에 남은 점액이 꿈틀대며 ${NM(n)}을(를) 안에서부터 자극한다`,'',n.space); },
-    onEnd:n=>log(`— ${NM(n)}의 몸에 남아있던 점액이 마침내 흡수되어 사라졌다 —`,'event',n.space)},
-  '기생체':{icon:'🪱', label:'기생체', tickEvery:4,
-    tick:n=>{ n.needs.피로=clamp(n.needs.피로+5,0,100); n.lewd.정력=clamp(n.lewd.정력-8,0,n.lewd.max정력); arouse(n,8);
-      log(`🪱 뱃속의 기생체가 꿈틀거리며 영양을 빨아들인다 — 아랫배가 미약하게 부풀어 오른 듯하다`,'',n.space); },
-    onEnd:n=>{ n.stability=clamp(n.stability-10,0,100); arouse(n,30);
-      log(`— ${NM(n)}이(가) 격통 끝에 몸속의 기생체를 게워내듯 배출해냈다 —`,'event',n.space); }}
-};
-function applyStatus(n,key,turns){ if(!n)return; n.flags=n.flags||{}; n.flags['status:'+key]=Math.max(n.flags['status:'+key]||0,turns); }
-function activeStatuses(n){ return Object.keys(STATUS_DEF).filter(k=>n.flags&&n.flags['status:'+k]>0); }
-function tickStatuses(n){
-  if(!n.flags)return;
-  for(const key in STATUS_DEF){
-    const fk='status:'+key; if(!n.flags[fk])continue;
-    const def=STATUS_DEF[key], ck='_stCounter:'+key;
-    n.flags[ck]=(n.flags[ck]||0)+1;
-    if(n.flags[ck]>=def.tickEvery){ n.flags[ck]=0; try{def.tick(n);}catch(e){} }
-    n.flags[fk]--;
-    if(n.flags[fk]<=0){ delete n.flags[fk]; delete n.flags[ck]; try{def.onEnd&&def.onEnd(n);}catch(e){} }
-  }
-}
 
 function newRel(){return{호감:ri(5,25),애정:0,신뢰:ri(5,20),긴장:ri(0,10),욕망:0}}
 /* ══════════════ 의상 시스템 (노출도·매력의 조절 수단) ══════════════ */
@@ -1266,14 +1190,6 @@ const OUTFITS={
   '가죽 의상':{노출:56,매력:15, price:85, minR:3, emoji:'🖤', desc:'도발적이고 관능적인 가죽 차림'},
   '메이드복': {노출:36,매력:20, price:80, minR:3, emoji:'🧹', desc:'프릴 가득한 봉사자 의상'},
   '바니걸':  {노출:76, 매력:18, price:90, minR:3, emoji:'🐰', desc:'밤무대의 바니걸 의상'},
-  '교복':    {노출:18, 매력:11, price:45, emoji:'🎒', desc:'단정한 학생 교복'},
-  '잠옷':    {노출:24, 매력:6,  price:20, emoji:'🌙', desc:'편안한 홈웨어, 방심한 차림'},
-  '우비':    {노출:4,  매력:3,  price:15, emoji:'☔', desc:'비를 막아 주는 헐렁한 우비'},
-  '집사복':  {노출:8,  매력:16, price:75, emoji:'🎩', desc:'격식을 갖춘 집사 복장'},
-  '무녀복':  {노출:30, 매력:18, price:75, minR:3, emoji:'⛩️', desc:'신성한 듯 은근히 파고드는 무녀 의상'},
-  '간호사복':{노출:40, 매력:19, price:78, minR:3, emoji:'💉', desc:'단정한 듯 아슬아슬한 간호사 복장'},
-  '스쿨 수영복':{노출:62,매력:14,price:40, minR:3, emoji:'🏊', desc:'교내 수영 수업용, 몸에 착 붙는 스쿨 수영복'},
-  '치어리더복':{노출:46,매력:17,price:65, minR:3, emoji:'📣', desc:'짧은 스커트가 팔랑이는 응원단 의상'},
   '알몸':    {노출:100,매력:6,  price:0,  minR:3, emoji:'🔞', desc:'아무것도 걸치지 않은 맨몸'}
 };
 const OUTFIT_H={
@@ -1289,14 +1205,6 @@ const OUTFIT_H={
   '차이나 드레스':'트인 옆선 사이로 드러난 다리를 따라 손이 오른다',
   '유카타':'느슨해진 옷고름을 풀자 어깨가 스르르 드러난다',
   '웨딩 드레스':'순백의 예복을 흐트러뜨리는 은밀한 손길이 감돈다',
-  '교복':'단정한 교복 셔츠 단추가 하나씩 풀려 나간다',
-  '잠옷':'방심한 잠옷 차림 그대로 손길이 파고든다',
-  '우비':'투박한 우비 속으로 손이 슬며시 미끄러져 든다',
-  '집사복':'흐트러짐 없던 집사복 옷깃이 처음으로 구겨진다',
-  '무녀복':'신성해야 할 무녀복 자락이 부끄럽게 걷어 올려진다',
-  '간호사복':'단정하던 간호사복 위로 손길이 노골적으로 훑는다',
-  '스쿨 수영복':'몸에 밀착된 스쿨 수영복 위로 손끝이 미끄러진다',
-  '치어리더복':'팔랑이던 치어리더 스커트 아래로 손이 파고든다',
   '알몸':'아무것도 걸치지 않은 맨몸이 그대로 품에 안긴다'
 };
 /* 다인 H 전용 — 리드가 한 명에 집중할 때 나머지 참여자의 묘사 */
@@ -1306,100 +1214,7 @@ function joinLine(j){
   if(j.axes[2]>=65)return pick(['부끄러워하면서도 이끌리듯 다가든다','머뭇거리다 조심스레 손을 얹는다','발갛게 달아오른 얼굴로 살며시 합류한다']);
   return pick(['달아오른 분위기에 홀린 듯 끼어든다','호기심 어린 손길로 합류한다','참지 못하고 몸을 밀어 넣는다']);
 }
-const OUTFIT_G={'드레스':'F','수영복':'F','란제리':'F','차이나 드레스':'F','웨딩 드레스':'F','비키니':'F','메이드복':'F','바니걸':'F','정장':'U','평상복':'U','캐주얼':'U','전신 코트':'U','노출 의상':'U','트레이닝복':'U','유카타':'U','가죽 의상':'U','알몸':'U',
-  '교복':'U','잠옷':'U','우비':'U','집사복':'U','무녀복':'F','간호사복':'F','스쿨 수영복':'F','치어리더복':'F'};
-/* ══════════════ 도트 캐릭터(서브컬쳐 아바타) ══════════════
-   각 인물의 look={skin,hairStyle,hairColor,eyeColor}을 작은 픽셀 그리드에 그려
-   커스터마이징을 실제로 눈에 보이게 만든다. 캔버스를 작게 그리고 CSS로 확대해
-   image-rendering:pixelated로 각지게 표시한다. */
-const AV_W=18, AV_H=22;
-const SKIN_TONES=['#FFE0BD','#F4C89B','#E0AC69','#C68642','#8D5524','#5C3A21'];
-const HAIR_COLORS=['#2B2B2B','#5A3825','#8B5A2B','#C9A227','#B23A6B','#3A5AA0','#EAEAEA','#7A3AA0','#3A7A5A','#D95B3F'];
-const EYE_COLORS=['#2B2B2B','#3A5AA0','#5A8A4A','#8B5A2B','#B23A6B','#7A3AA0','#3AA0A0'];
-const HAIR_STYLES=['숏컷','단발','포니테일','트윈테일','롱헤어','대머리'];
-function randomLook(){
-  return {skin:pick(SKIN_TONES), hairStyle:pick(HAIR_STYLES), hairColor:pick(HAIR_COLORS), eyeColor:pick(EYE_COLORS)};
-}
-function ensureLook(n){ if(!n.look)n.look=randomLook(); return n.look; }
-const OUTFIT_COLOR={
- '평상복':'#8B8B87','캐주얼':'#4E7FA8','전신 코트':'#33333B','정장':'#20222A','수영복':'#2E6E90',
- '드레스':'#8A4A6E','노출 의상':'#B23A6B','란제리':'#C9789A','트레이닝복':'#3E7A52','유카타':'#5F8A6E',
- '차이나 드레스':'#A02E3E','웨딩 드레스':'#F2F0EC','비키니':'#D9607A','가죽 의상':'#2A2320','메이드복':'#2B2B33',
- '바니걸':'#1F1F24','교복':'#2C3E6B','잠옷':'#C9A6C0','우비':'#E0B23A','집사복':'#26262E','무녀복':'#B2372E',
- '간호사복':'#EAEAF0','스쿨 수영복':'#1F3E6B','치어리더복':'#C9282E'
-};
-function pRow(ctx,y,width,color){ if(!color)return; const x0=Math.floor((AV_W-width)/2); ctx.fillStyle=color; ctx.fillRect(x0,y,width,1); }
-const AV_HEAD_W=[4,8,11,12,13,13,13,12,10,7];
-function drawHair(ctx,style,color){
-  if(style==='대머리')return;
-  ctx.fillStyle=color;
-  for(let y=0;y<3;y++)pRow(ctx,y,(AV_HEAD_W[y]||6)+2,color);
-  if(style==='단발'){
-    for(let y=3;y<7;y++){ const w=(AV_HEAD_W[y]||10)+2, x0=Math.floor((AV_W-w)/2); ctx.fillRect(x0,y,1,1); ctx.fillRect(x0+w-1,y,1,1); }
-  }else if(style==='롱헤어'){
-    for(let y=3;y<16;y++){ const w=(y<10?(AV_HEAD_W[y]||10):18)+2, x0=Math.floor((AV_W-w)/2); ctx.fillRect(x0,y,1,1); ctx.fillRect(x0+w-1,y,1,1); }
-  }else if(style==='포니테일'){
-    for(let y=2;y<11;y++)ctx.fillRect(AV_W-2,y,2,1);
-  }else if(style==='트윈테일'){
-    for(let y=3;y<11;y++){ ctx.fillRect(0,y,2,1); ctx.fillRect(AV_W-2,y,2,1); }
-  }
-}
-function drawAvatarCtx(ctx,n){
-  ctx.clearRect(0,0,AV_W,AV_H);
-  const look=ensureLook(n);
-  AV_HEAD_W.forEach((w,y)=>pRow(ctx,y,w,look.skin));
-  pRow(ctx,10,6,look.skin);
-  const outColor=(n.outfit==='알몸')?look.skin:(OUTFIT_COLOR[n.outfit]||'#8B8B87');
-  const torsoW=[14,16,17,18,18,18,18,18,18,18,18];
-  torsoW.forEach((w,i)=>pRow(ctx,11+i,w,outColor));
-  drawHair(ctx,look.hairStyle,look.hairColor);
-  const cx=AV_W/2;
-  ctx.fillStyle=look.eyeColor;
-  ctx.fillRect(cx-4,6,2,1); ctx.fillRect(cx+2,6,2,1);
-  ctx.fillStyle='rgba(0,0,0,.35)';
-  ctx.fillRect(cx-1,8,2,1);
-  ctx.fillStyle='rgba(255,140,160,.35)';
-  ctx.fillRect(cx-6,7,1,1); ctx.fillRect(cx+5,7,1,1);
-}
-function renderAvatarInto(canvasEl,n){
-  if(!canvasEl||!canvasEl.getContext)return;
-  const ctx=canvasEl.getContext('2d'); ctx.imageSmoothingEnabled=false;
-  drawAvatarCtx(ctx,n);
-}
-function avatarCanvasHTML(id,size){ size=size||96; return `<canvas id="${id}" width="${AV_W}" height="${AV_H}" style="width:${size}px;height:${Math.round(size*AV_H/AV_W)}px;image-rendering:pixelated;border:1px solid var(--line);border-radius:4px;background:var(--soft);flex-shrink:0"></canvas>`; }
-/* 외형 커스터마이징 UI: 미리보기 캔버스 + 피부/헤어스타일/머리색/눈동자색 스와치.
-   생성 폼·수정 폼·플레이어 시작 화면에서 공통으로 재사용한다. */
-function lookEditorHTML(idp){
-  const sw=(id,colors,round)=>`<div class="chipRow" id="${id}">${colors.map(c=>`<button data-c="${c}" style="width:20px;height:20px;padding:0;border-radius:${round?'50%':'3px'};background:${c};border:1.5px solid var(--line)"></button>`).join('')}</div>`;
-  return `<div class="psec">외형(도트 캐릭터)</div>
-    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
-      ${avatarCanvasHTML(idp+'Prev',84)}
-      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
-        <div><span style="font-size:10.5px;color:var(--muted)">피부</span>${sw(idp+'Skin',SKIN_TONES,true)}</div>
-        <div><span style="font-size:10.5px;color:var(--muted)">헤어스타일</span><select id="${idp}HStyle" style="width:100%">${HAIR_STYLES.map(s=>`<option>${s}</option>`).join('')}</select></div>
-        <div><span style="font-size:10.5px;color:var(--muted)">머리색</span>${sw(idp+'HColor',HAIR_COLORS,false)}</div>
-        <div><span style="font-size:10.5px;color:var(--muted)">눈동자색</span>${sw(idp+'EColor',EYE_COLORS,false)}</div>
-      </div>
-    </div>`;
-}
-function wireLookEditor(idp,look,outfitName){
-  const cur=Object.assign({},randomLook(),look);
-  const canvas=document.getElementById(idp+'Prev');
-  const redraw=()=>renderAvatarInto(canvas,{look:cur,outfit:outfitName||'평상복'});
-  const bindSwatchGroup=(gid,key)=>{
-    const g=document.getElementById(gid); if(!g)return;
-    const mark=()=>g.querySelectorAll('button').forEach(x=>x.style.outline=x.dataset.c===cur[key]?'2px solid var(--ink)':'none');
-    mark();
-    g.querySelectorAll('button').forEach(b=>{ b.onclick=()=>{ cur[key]=b.dataset.c; mark(); redraw(); }; });
-  };
-  bindSwatchGroup(idp+'Skin','skin');
-  bindSwatchGroup(idp+'HColor','hairColor');
-  bindSwatchGroup(idp+'EColor','eyeColor');
-  const hsSel=document.getElementById(idp+'HStyle');
-  if(hsSel){ hsSel.value=cur.hairStyle; hsSel.onchange=()=>{ cur.hairStyle=hsSel.value; redraw(); }; }
-  redraw();
-  return ()=>cur;
-}
+const OUTFIT_G={'드레스':'F','수영복':'F','란제리':'F','차이나 드레스':'F','웨딩 드레스':'F','비키니':'F','메이드복':'F','바니걸':'F','정장':'U','평상복':'U','캐주얼':'U','전신 코트':'U','노출 의상':'U','트레이닝복':'U','유카타':'U','가죽 의상':'U','알몸':'U'};
 const WARDROBE_ZONES=['roomA','roomB','roomC','roomD','gym'];   /* 옷장이 있는 안전 공간 */
 const UNDERWEAR={상:{'브라':{노출:0},'레이스 브라':{노출:4,매력:2,need:'레이스 속옷'},'착용 안 함':{노출:10}},
                  하:{'팬티':{노출:0},'레이스 팬티':{노출:4,매력:2,need:'레이스 속옷'},'착용 안 함':{노출:12}}};
@@ -1441,7 +1256,7 @@ function makeNpc(name,arch,axes,form,mix,isPlayer=false,r18=false,cor=true,lewd0
     body:{체격:ri(35,75),운동:ri(30,70)},
     lewd:{흥분:0,취기:0,타락:clamp(lewd0,0,100),정력:maxEng, max정력:maxEng},
     corruptible:cor,r18Mode:'기본',money:isPlayer?60:ri(0,30),매력base:ri(30,70),매력:50,노출도:5,outfit:'평상복',wardrobe:['평상복','알몸'],asleep:0,
-    gender:'여성',genital:'여성기',under:{상:'브라',하:'팬티'},look:randomLook(),
+    gender:'여성',genital:'여성기',under:{상:'브라',하:'팬티'},
     sens:sens?Object.assign(defSens(),sens):defSens(),
     hsex:null,
     relations:{},flags:{},r18log:{},lastAct:null};
@@ -1807,330 +1622,69 @@ function checkQuests(p){
     if(QUESTS.every(x=>p.flags['Q:'+x.id]||(x.minR&&RATING<x.minR)))log(`👑 <b style="color:#C9922A">모든 목표를 달성했다 — 리조트는 이제 당신을 중심으로 돈다</b>`,'event',p.space);
   });
 }
-/* ══════════════ 메인 스토리 (복수 아크) — 1인칭 시점 서사 ══════════════
-   고정 인물별로 독립된 짧은 연작을 둔다. 각 챕터는 "직전 챕터가 이미 열렸을 것"을
-   조건에 명시적으로 포함해 인과관계상 순서가 뒤섞이지 않도록 하며(관계 수치는 어떤
-   순서로도 오를 수 있으므로), 아크마다 관계 임계값으로 열리는 3막 구조(도입→갈등/선택→
-   결말) + 선택 분기를 공통 골격으로 쓴다. startEvent 팝업 엔진을 그대로 활용한다.
-   arc.npcKey로 주인공 NPC를, 필요하면 chapter.extraKey로 아크를 가로지르는 조연을
-   구한다(예: 전망대 아크의 숲지기 유안 — 다른 인물과 쌓은 관계가 이 아크에 실마리를
-   보태는 인과 구조). extraKey가 있는데 그 인물이 로스터에 없으면 조용히 건너뛴다.
-   각 챕터는 해당 인물의 장소(그 챕터가 extraKey를 쓰면 조연의 장소)에 플레이어가
-   있을 때만 진행되며, 대부분의 챕터에 작은 대화 선택지를 넣어 그냥 다음으로 넘기는
-   슬라이드가 아니라 매 장면 반응을 고르는 인터랙티브 진행이 되도록 했다. */
-const STORY_ARCS=[
- { id:'lookout', npcKey:'lookout', color:'#3B4E6B', finaleIcon:'🌅', finaleLabel:'전망대의 기다림, 그 끝에서',
-   chapters:[
-    {id:'1', title:'표류하는 첫날', trig:()=>turn>=6,
-     beats:[
-      {text:'리조트에 도착한 지 얼마 되지 않았다. 파도 소리와 낯선 공기 속에서, 아직 이곳의 시간에 몸이 익숙해지지 않는다.', next:'…'},
-      {text:d=>`문득 올려다본 전망대 위, ${NM(d.npc)}이(가) 미동도 없이 바다를 바라보고 서 있다. 그 뒷모습이 이상하게 마음에 오래 남는다.`, next:'…'},
-      {text:'묵고 있는 숙소동 사람들 사이에는, 이 바다에 관한 오래된 미신이 남아있다는 소문을 얼핏 들은 것도 같다.', next:'…'},
-      {text:'왠지 그 뒷모습에 자꾸 눈길이 간다.', advance:false,
-       choices:dd=>[
-        {label:'다가가서 인사를 건네 본다', fx:dd=>{ d(dd.npc,dd.p,'호감',3); }, go:4},
-        {label:'방해하고 싶지 않아 조용히 지나친다', fx:dd=>{}, go:5}
-       ]},
-      {text:d=>`인기척에 놀란 ${NM(d.npc)}이(가) 살짝 고개 숙여 인사한다. "...아, 네. 안녕하세요." 낯선 사람에게도 예의는 잃지 않는다.`, next:'…', go:99},
-      {text:'말없이 발걸음을 옮긴다. 그래도 그 뒷모습은 자꾸 눈에 밟힌다.', next:'…', go:99}
-     ]},
-    {id:'2', title:'기다리는 사람', trig:p=>p.flags['STORY:lookout:1']&&turn>=45,
-     beats:[
-      {text:'마트에 들른 어느 날, 주인 도한이 지나가듯 말을 흘린다. "저 전망대 아가씨 말이야... 벌써 몇 년째 저러고 있어. 뭘 기다리는지 원."', next:'…'},
-      {text:'"사람들 말로는 무슨 약속을 했다던데... 파도가 어쩌고, 뭐 그런 미신 같은 거 말이야." 도한은 대수롭지 않다는 듯 웃어넘긴다.', next:'…'},
-      {text:'문득 궁금해진다. 매일 같은 자리, 같은 시간. 대체 누구를, 무엇을 걸고 기다리고 있는 걸까.', advance:false,
-       choices:[
-        {label:'"뭘 기다리는지 좀 더 아세요?"', fx:()=>{}, go:3},
-        {label:'괜히 남의 사정을 캐묻는 것 같아 그만둔다', fx:()=>{}, go:4}
-       ]},
-      {text:'"글쎄, 나도 자세힌 몰라. 여기 워낙 오래 산 사람이니까 그냥 지켜만 봤지." 도한이 어깨를 으쓱한다.', next:'…', go:99},
-      {text:'괜한 걸 물었다가 실례가 될까 싶어 화제를 돌린다.', next:'…', go:99}
-     ]},
-    {id:'3', title:'낡은 사진', trig:(p,npc)=>p.flags['STORY:lookout:2']&&npc.relations[p.id]&&npc.relations[p.id].호감>=25,
-     beats:[
-      {text:d=>`전망대 구석, 바람에 날아갈 뻔한 낡은 사진 한 장을 우연히 주웠다. 빛바랜 사진 속엔 젊은 시절의 ${NM(d.npc)}과(와), 얼굴이 닳아 흐려진 누군가가 나란히 웃고 있다.`, next:'…'},
-      {text:'자세히 보니 이상하다. 파도가 발목까지 차오른 자리에 서 있는데도, 그 사람의 발밑에는 물살에 젖은 흔적도, 그림자도 남아 있지 않다.', next:'…'},
-      {text:d=>`인기척에 돌아본 ${NM(d.npc)}이(가) 사진을 발견하곤 화들짝 놀라 낚아채듯 가져간다. "...보, 보여드리려던 건 아니었어요." 귓가가 붉다.`, next:'…'},
-      {text:'무슨 말이라도 해야 할지, 그냥 넘어가야 할지 망설여진다.', advance:false,
-       choices:dd=>[
-        {label:'"무슨 사진이었는지 물어봐도 될까요?"', fx:dd=>{ d(dd.npc,dd.p,'긴장',3); }, go:4},
-        {label:'"...못 본 걸로 할게요" 하고 넘어간다', fx:dd=>{ d(dd.npc,dd.p,'신뢰',3); }, go:5}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 시선을 피하며 얼버무린다. "...그냥, 오래된 거예요." 더 캐물을 분위기는 아니다.`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 안도한 듯 어깨에 힘을 뺀다. "...고마워요, 그렇게 넘어가 줘서."`, next:'…', go:99}
-     ]},
-    {id:'4', title:'파수꾼의 전설', extraKey:'forest',
-     trig:(p,npc,extra)=>p.flags['STORY:lookout:3']&&extra&&extra.relations[p.id]&&extra.relations[p.id].신뢰>=25,
-     skipIf:(p,npc,extra)=>!extra,
-     beats:[
-      {text:d=>`숲을 거닐다 ${NM(d.extra)}에게 지나가듯 전망대의 그 사람 이야기를 꺼내 본다. 그의 손이 잠시 멈춘다.`, next:'…'},
-      {text:'"...바다의 파수꾼 이야기, 들어보셨습니까." 유안이 나직이 입을 연다. "무언가를 영영 붙들고 싶다면, 끝없는 기다림을 대가로 바칠 수 있다는... 오래된 약속이죠."', next:'…'},
-      {text:'"그 약속은 아무 때나 끝나지 않습니다. 조수가 핏빛으로 물드는 아주 드문 밤 — 그날에만, 파수꾼은 대가를 거두어 갑니다." 그가 낮게 덧붙인다. "미신이라기엔... 이 숲엔 이상한 것들이 너무 많이 있어요.', next:'…'},
-      {text:'믿기 힘든 이야기지만, 유안의 눈빛은 진지하다.', advance:false,
-       choices:dd=>[
-        {label:'"그 이야기, 믿으시는 거예요?"', fx:dd=>{ d(dd.extra,dd.p,'신뢰',4); }, go:4},
-        {label:'그냥 조용히 고개를 끄덕이며 듣는다', fx:dd=>{ d(dd.extra,dd.p,'호감',3); }, go:5}
-       ]},
-      {text:d=>`${NM(d.extra)}이(가) 옅게 웃는다. "...숲에 오래 있다 보면, 안 믿을 수가 없어지죠."`, next:'…', go:99},
-      {text:d=>`${NM(d.extra)}이(가) 조용히 고개를 끄덕이는 당신을 물끄러미 바라본다. "...쉽게 믿어주는 사람은, 드문데요."`, next:'…', go:99}
-     ]},
-    {id:'5', title:'밤의 이야기', trig:(p,npc)=>p.flags['STORY:lookout:4']&&npc.relations[p.id]&&npc.relations[p.id].신뢰>=40,
-     beats:[
-      {text:d=>`드물게 먼저 말을 건 ${NM(d.npc)}이(가), 바다를 향한 채 낮은 목소리로 입을 연다. "...파수꾼의 전설, 알게 되셨나 보네요."`, next:'…'},
-      {text:'"그 사람을 삼킨 파도에게 빌었어요. 영영 기다려도 좋으니, 완전히 데려가지만은 말아 달라고." 담담한 목소리가 오히려 더 아프게 들린다.', next:'…'},
-      {text:'"조수가 핏빛으로 물드는 밤이 오면... 그때만 대가를 치를 수 있대요. 그런데 그게 언제인지는, 파수꾼 말고는 아무도 몰라요." 그 약속이 이미 몇 번의 여름을 지나쳤다는 걸, 굳이 묻지 않아도 알 것 같다.', next:'…'},
-      {text:'무슨 말을 해줘야 할지 몰라, 그저 곁에 서 있는다.', advance:false,
-       choices:dd=>[
-        {label:'"많이 힘드셨겠어요" 하고 어깨를 다독인다', fx:dd=>{ d(dd.npc,dd.p,'애정',5); }, go:4},
-        {label:'아무 말 없이 그저 옆을 지킨다', fx:dd=>{ d(dd.npc,dd.p,'신뢰',5); }, go:5}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 놀란 듯 눈을 크게 뜨더니, 이내 눈시울이 붉어진다. "...그런 말, 처음 들어봐요."`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 옆에 선 온기를 느끼며 조금씩 긴장을 푼다. "...아무 말 안 해줘도, 괜찮네요."`, next:'…', go:99}
-     ]},
-    {id:'6', title:'선택의 순간', choiceKey:'lookout', trig:(p,npc)=>p.flags['STORY:lookout:5']&&npc.relations[p.id]&&npc.relations[p.id].애정>=45,
-     beats:[
-      {text:'노을이 유난히 붉게 내려앉은 저녁, 전망대에 둘만 남았다. 무슨 말이든 해야 할 것 같은 침묵이 흐른다.', advance:false,
-       choices:dd=>[
-        {label:'"이제 그만 기다려도 되지 않을까요"', fx:dd=>{ dd.p.flags['STORY:lookout선택']='let'; d(dd.npc,dd.p,'신뢰',6); dd.npc.stability=clamp(dd.npc.stability+8,0,100); }, go:1},
-        {label:'"저도 같이 기다려 볼게요"', fx:dd=>{ dd.p.flags['STORY:lookout선택']='wait'; d(dd.npc,dd.p,'애정',8); d(dd.p,dd.npc,'애정',5); }, go:2}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 한참 말이 없다가, 옅게 웃는다. "...그럴지도 모르겠네요. 이상하게, 당신 말은 그렇게 들려요."`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 놀란 눈으로 돌아본다. "...혼자가 아니라고 생각하니, 조금은 덜 막막하네요." 그 말이 끝나자, 저 멀리 수평선이 아주 잠깐 붉게 일렁인 것도 같다.`, next:'…', go:99}
-     ]},
-    {id:'7', title:'전망대에 지는 노을', finale:true, trig:p=>!!p.flags['STORY:lookout선택']&&turn>=(p.flags['STORY:lookout:6']||0)+20,
-     beats:[
-      {text:d=>d.choice==='let'
-        ?`${NM(d.npc)}이(가) 목에 걸려 있던 낡은 목걸이를 조심스레 풀어낸다. 그 순간, 잔잔하던 바다가 이유 없이 크게 한 번 일렁이더니 다시 고요해진다.`
-        :`오늘따라 노을이 유독 붉다. 핏빛으로 물든 조수 — 유안이 말했던 그 밤이, 마침내 온 것인지도 모른다.`, next:'…'},
-      {text:d=>d.choice==='let'
-        ?'"고마워요. 덕분에... 이제 여기 서 있는 이유가, 기다림이 아니어도 될 것 같아요." 목걸이가 파도에 실려 사라진 자리에, 옅은 빛 한 줄기가 잠시 떠올랐다 스러진다.'
-        :'수평선 끝, 파도 사이로 사람의 형체 같은 것이 흔들린다. 눈을 비비고 다시 보면, 그저 부서지는 물보라뿐이다. 그러나 옆에 선 세라의 눈에서는, 오래 참았던 눈물이 소리 없이 흐르고 있다.', next:'…'},
-      {text:d=>d.choice==='let'
-        ?'"이젠 됐어요. 당신이 있어서, 마지막까지 혼자는 아니었네요."'
-        :'"...왔었던 걸까요, 정말로." 세라가 젖은 눈으로 웃는다. "확실한 건 하나예요 — 이제 이 자리는, 더 이상 기다림만으로 채워지지 않는다는 것."', next:'…'}
-     ]}
-   ]},
- { id:'mart', npcKey:'mart', color:'#6E5A3A', finaleIcon:'🏪', finaleLabel:'마트의 갈림길, 그 결말',
-   chapters:[
-    {id:'1', title:'닫힌 셔터', trig:()=>turn>=15,
-     beats:[
-      {text:'아침 산책길에 들른 마트, 평소보다 셔터가 늦게 올라가 있다. 이상하다 싶어 들여다보니 카운터 위에 반쯤 가려둔 종이가 눈에 띈다 — "폐업 정리"라는 글자가 얼핏 보인다.', next:'…'},
-      {text:d=>`인기척에 ${NM(d.npc)}이(가) 황급히 종이를 뒤집어 놓는다. "...아무것도 아니야. 뭐 필요한 거 있나?" 평소보다 목소리가 무겁다.`, next:'…'},
-      {text:'무슨 사정인지 물어봐도 될지 망설여진다.', advance:false,
-       choices:dd=>[
-        {label:'"무슨 일 있으세요?" 하고 물어본다', fx:dd=>{ d(dd.npc,dd.p,'호감',3); }, go:3},
-        {label:'더 캐묻지 않고 필요한 것만 사서 나온다', fx:dd=>{}, go:4}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 손사래를 친다. "아니, 별거 아니야. ...신경 써줘서 고맙군."`, next:'…', go:99},
-      {text:'괜히 마음이 쓰이지만, 오늘은 그냥 넘어가기로 한다.', next:'…', go:99}
-     ]},
-    {id:'2', title:'40년의 무게', trig:(p,npc)=>p.flags['STORY:mart:1']&&npc.relations[p.id]&&npc.relations[p.id].호감>=20,
-     beats:[
-      {text:d=>`${NM(d.npc)}이(가) 진열대를 정리하다 문득 흘리듯 말한다. "이 자리, 아내랑 같이 일으킨 가게야. 벌써 40년이 다 됐군."`, next:'…'},
-      {text:'"요즘 그 대기업 편의점에서 자꾸 땅을 팔라고 연락이 와. 값은 후하게 쳐준다는데..." 그가 씁쓸하게 웃는다.', next:'…'},
-      {text:'뭐라고 대답해야 할지 잠시 고민된다.', advance:false,
-       choices:dd=>[
-        {label:'"정말 오래됐네요, 대단하세요"', fx:dd=>{ d(dd.npc,dd.p,'호감',4); }, go:3},
-        {label:'"힘드시면 파실 수도 있는 거죠" 담담하게 말한다', fx:dd=>{ d(dd.npc,dd.p,'신뢰',4); }, go:4}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 쑥스러운 듯 헛기침을 한다. "...그런가. 오래되긴 했지."`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 잠시 멈칫하더니, 의외로 담담한 그 말에 마음이 편해진 듯하다. "...그렇게 말해주니, 오히려 홀가분하군."`, next:'…', go:99}
-     ]},
-    {id:'3', title:'자식들의 성화', trig:(p,npc)=>p.flags['STORY:mart:2']&&npc.relations[p.id]&&npc.relations[p.id].신뢰>=30,
-     beats:[
-      {text:d=>`"자식들은 이제 그만 정리하고 도시로 올라오라고 성화야." ${NM(d.npc)}이(가) 낡은 계산대를 손끝으로 쓸어본다.`, next:'…'},
-      {text:'"근데... 여기 서 있으면, 아직도 그 사람 목소리가 들리는 것 같아서 말이지." 그는 애써 헛기침을 하며 말끝을 흐린다.', next:'…'},
-      {text:'도한의 표정이 복잡해 보인다.', advance:false,
-       choices:dd=>[
-        {label:'"아내분 생각이 많이 나시나 봐요"', fx:dd=>{ d(dd.npc,dd.p,'애정',4); }, go:3},
-        {label:'말없이 그의 이야기를 끝까지 들어준다', fx:dd=>{ d(dd.npc,dd.p,'신뢰',4); }, go:4}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 순간 말을 잃었다가, 힘없이 웃는다. "...티가 많이 나나."`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 묵묵히 들어주는 것만으로 위안이 된 듯, 나직이 한숨을 내쉰다. "...들어줘서 고맙군."`, next:'…', go:99}
-     ]},
-    {id:'4', title:'갈림길에서', choiceKey:'mart', trig:(p,npc)=>p.flags['STORY:mart:3']&&npc.relations[p.id]&&npc.relations[p.id].애정>=35,
-     beats:[
-      {text:'계산대 앞, 도한이 말없이 손님을 기다리는 얼굴로 서 있다. 무슨 말이든 해주고 싶어진다.', advance:false,
-       choices:dd=>[
-        {label:'"계속하셔야죠, 여기 단골이 얼마나 많은데요"', fx:dd=>{ dd.p.flags['STORY:mart선택']='keep'; d(dd.npc,dd.p,'신뢰',6); }, go:1},
-        {label:'"이제 좀 쉬셔도 되지 않을까요"', fx:dd=>{ dd.p.flags['STORY:mart선택']='rest'; d(dd.npc,dd.p,'애정',5); }, go:2}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 한참 말없이 있다가 픽 웃는다. "...그렇지? 아직은 좀 이르지."`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 눈을 크게 뜨더니, 이내 편안한 얼굴이 된다. "...그런 말, 오랜만에 듣는군. 나쁘지 않네."`, next:'…', go:99}
-     ]},
-    {id:'5', title:'가게 문 앞에서', finale:true, trig:p=>!!p.flags['STORY:mart선택']&&turn>=(p.flags['STORY:mart:4']||0)+20,
-     beats:[
-      {text:d=>d.choice==='keep'
-        ?`며칠 뒤 마트에 가보니, ${NM(d.npc)}이(가) 젊은 아르바이트생과 함께 진열대를 정리하고 있다. "자식 놈 하나가 방학 동안 도와주기로 했어. 덕분에 좀 숨통 트이는군." 가게 문 위엔 새로 닦은 간판이 반짝인다.`
-        :`마트 문에 "주 3일 단축 영업"이라는 안내문이 붙어 있다. ${NM(d.npc)}이(가) 한결 가벼운 얼굴로 손님을 맞는다. "다 접은 건 아니야. 그냥... 나한테도 좀 여유를 주기로 했어."`, next:'…'},
-      {text:d=>d.choice==='keep' ? '"이제 좀 더 버텨볼 만하겠어. 자네 말이 맞았어."' : '"자네 덕에 용기 냈어. 고맙네."', next:'…'}
-     ]}
-   ]},
- { id:'farm', npcKey:'farm', color:'#4E7A3A', finaleIcon:'🌾', finaleLabel:'첫 수확의 계절',
-   chapters:[
-    {id:'1', title:'서툰 손', trig:()=>turn>=15,
-     beats:[
-      {text:d=>`농장에 들르니 ${NM(d.npc)}이(가) 물이 새는 관개 호스를 붙들고 낑낑대고 있다. 서툰 손길이지만 포기하지 않는다.`, next:'…'},
-      {text:'"아, 안녕하세요! ...이거 왜 자꾸 새는지 모르겠어요." 그녀가 머쓱하게 웃는다.', next:'…'},
-      {text:'도와줄지 그냥 지켜볼지 잠시 고민된다.', advance:false,
-       choices:dd=>[
-        {label:'"제가 좀 도와드릴까요?"', fx:dd=>{ d(dd.npc,dd.p,'호감',4); grow(dd.p,'체격',0.4); }, go:3},
-        {label:'방해되지 않게 지켜만 본다', fx:dd=>{}, go:4}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 반색한다. "정말요? 완전 좋아요, 손이 부족했거든요!" 둘이 매달리니 금세 호스가 고쳐진다.`, next:'…', go:99},
-      {text:d=>`한참을 씨름한 끝에 ${NM(d.npc)}이(가) 결국 혼자 해낸다. "됐다!" 뿌듯한 얼굴이다.`, next:'…', go:99}
-     ]},
-    {id:'2', title:'할머니의 노트', trig:(p,npc)=>p.flags['STORY:farm:1']&&npc.relations[p.id]&&npc.relations[p.id].호감>=20,
-     beats:[
-      {text:d=>`${NM(d.npc)}이(가) 낡은 노트 한 권을 조심스레 꺼내 보여준다. "할머니가 남기신 농사 노트예요. 근데 글씨가 너무 흐려져서..."`, next:'…'},
-      {text:'"솔직히 무서워요. 제가 망치면, 할머니 할아버지가 평생 일군 밭이..." 그녀의 목소리가 잠시 흔들린다.', next:'…'},
-      {text:'무슨 말을 해줘야 할지 고민된다.', advance:false,
-       choices:dd=>[
-        {label:'"같이 읽어볼까요? 둘이 보면 더 낫지 않을까요"', fx:dd=>{ d(dd.npc,dd.p,'신뢰',5); }, go:3},
-        {label:'"천천히 하면 돼요, 조급해하지 말아요"', fx:dd=>{ d(dd.npc,dd.p,'애정',4); }, go:4}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 눈을 반짝인다. "그래 줄래요? 왠지 든든하네요."`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 긴장이 풀린 듯 숨을 내쉰다. "...그 말, 오늘 하루 종일 듣고 싶었어요."`, next:'…', go:99}
-     ]},
-    {id:'3', title:'장마 걱정', trig:(p,npc)=>p.flags['STORY:farm:2']&&npc.relations[p.id]&&npc.relations[p.id].신뢰>=30,
-     beats:[
-      {text:d=>`${NM(d.npc)}이(가) 하늘을 올려다보며 걱정스러운 얼굴을 한다. "일기예보에서 곧 장마가 온다던데, 수확 전에 밭이 잠기면 어떡하죠..."`, next:'…'},
-      {text:'뭐라고 답해줘야 할지 고민된다.', advance:false,
-       choices:dd=>[
-        {label:'"미리 배수로부터 점검해볼까요?"', fx:dd=>{ d(dd.npc,dd.p,'신뢰',4); }, go:2},
-        {label:'"어떻게든 될 거예요" 하고 다독인다', fx:dd=>{ d(dd.npc,dd.p,'애정',4); }, go:3}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 눈이 커진다. "그거 좋은 생각이네요! 같이 봐줄래요?"`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 옅게 웃는다. "...그렇게 말해주니까 좀 낫네요, 고마워요."`, next:'…', go:99}
-     ]},
-    {id:'4', title:'폭풍 전야', choiceKey:'farm', trig:(p,npc)=>p.flags['STORY:farm:3']&&npc.relations[p.id]&&npc.relations[p.id].애정>=35,
-     beats:[
-      {text:'먹구름이 몰려오는 하늘 아래, 새로가 발을 동동 구르고 있다. 무언가 해줄 수 있을 것 같다.', advance:false,
-       choices:dd=>[
-        {label:'일손을 보태 배수로를 함께 정비한다', fx:dd=>{ dd.p.flags['STORY:farm선택']='help'; d(dd.npc,dd.p,'신뢰',6); grow(dd.p,'체격',1); }, go:1},
-        {label:'걱정 말라고, 잘 해낼 거라고 다독인다', fx:dd=>{ dd.p.flags['STORY:farm선택']='comfort'; d(dd.npc,dd.p,'애정',5); }, go:2}
-       ]},
-      {text:'함께 흙투성이가 되어 배수로를 파낸다. "손발이 척척 맞네요! 진짜 큰 도움 됐어요."', next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 눈을 깜빡이다 픽 웃는다. "...그런 말 들으니까, 진짜 할 수 있을 것 같아요."`, next:'…', go:99}
-     ]},
-    {id:'5', title:'첫 수확', finale:true, trig:p=>!!p.flags['STORY:farm선택']&&turn>=(p.flags['STORY:farm:4']||0)+20,
-     beats:[
-      {text:d=>d.choice==='help'
-        ?`장마가 지나간 자리, 밭은 무사했다. ${NM(d.npc)}이(가) 환하게 웃으며 첫 수확물을 한아름 안겨준다. "당신 아니었으면 다 떠내려갈 뻔했어요. 이 채소들, 다 당신 덕분이에요."`
-        :`장마 속에서도 ${NM(d.npc)}은(는) 매일같이 밭을 돌보았다. 마침내 갠 하늘 아래, 그녀가 자랑스러운 얼굴로 첫 수확물을 들어 보인다. "해냈어요. 당신이 응원해 준 덕분에, 포기하지 않을 수 있었어요."`, next:'…'}
-     ]}
-   ]},
- { id:'strip', npcKey:'strip', color:'#8A3A6E', finaleIcon:'🎭', finaleLabel:'무대 뒤의 진심',
-   chapters:[
-    {id:'1', title:'화려한 가면', trig:()=>turn>=15,
-     beats:[
-      {text:d=>`화려한 조명 아래, ${NM(d.npc)}의 무대는 오늘도 시선을 사로잡는다. 그러나 무대 뒤로 돌아온 얼굴에서, 아주 잠깐 지친 기색이 스친다.`, next:'…'},
-      {text:'인기척을 느낀 그녀가 순식간에 다시 여유로운 미소를 되찾는다. "어머, 봤어? 오늘 컨디션 죽여주지?"', next:'…'},
-      {text:'모른 척할지, 방금 본 걸 말할지 잠시 고민된다.', advance:false,
-       choices:dd=>[
-        {label:'"방금 좀 지쳐 보였는데, 괜찮아?"', fx:dd=>{ d(dd.npc,dd.p,'신뢰',3); }, go:3},
-        {label:'못 본 척 장단을 맞춰준다', fx:dd=>{ d(dd.npc,dd.p,'호감',4); }, go:4}
-       ]},
-      {text:d=>`${NM(d.npc)}의 미소가 살짝 굳는다. "...무슨 소리야, 나 완전 쌩쌩한데?" 대답이 너무 빠르다.`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 씩 웃는다. "그치? 눈치는 있네." 장단을 맞춰주는 게 편한 모양이다.`, next:'…', go:99}
-     ]},
-    {id:'2', title:'농담 뒤에', trig:(p,npc)=>p.flags['STORY:strip:1']&&npc.relations[p.id]&&npc.relations[p.id].호감>=20,
-     beats:[
-      {text:'무심코 던진 개인적인 질문에, 리라가 장난스러운 농담으로 슬쩍 화제를 돌린다. 능숙하게, 마치 연습이라도 한 것처럼.', next:'…'},
-      {text:'그 매끄러운 회피가 오히려 마음에 걸린다.', advance:false,
-       choices:dd=>[
-        {label:'웃어넘기지 않고 한 번 더 진지하게 물어본다', fx:dd=>{ d(dd.npc,dd.p,'긴장',4); }, go:2},
-        {label:'분위기를 살려 함께 웃어넘긴다', fx:dd=>{ d(dd.npc,dd.p,'호감',4); }, go:3}
-       ]},
-      {text:d=>`${NM(d.npc)}의 웃음이 한 박자 늦게 따라온다. "...끈질기네, 자기." 살짝 당황한 기색이 스친다.`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 만족스러운 듯 웃는다. "그렇지, 그렇게 가볍게 노는 게 좋은 거야."`, next:'…', go:99}
-     ]},
-    {id:'3', title:'오래된 상처', trig:(p,npc)=>p.flags['STORY:strip:2']&&npc.relations[p.id]&&npc.relations[p.id].신뢰>=30,
-     beats:[
-      {text:'드물게 취기가 오른 리라가 평소와 다른 목소리로 입을 연다. "예전에... \'진짜 나\'를 좋아한다던 놈이 있었어."', next:'…'},
-      {text:'"근데 화장 지운 얼굴 보여주니까 바로 발 빼더라. 그 뒤로는... 그냥 무대 위 나로만 사는 게 편해." 씁쓸한 웃음.', next:'…'},
-      {text:'뭐라고 반응해야 할지 조심스럽다.', advance:false,
-       choices:dd=>[
-        {label:'"그 사람이 잘못한 거야, 네 잘못이 아니라"', fx:dd=>{ d(dd.npc,dd.p,'애정',5); }, go:3},
-        {label:'아무 말 없이 술 한 잔을 채워준다', fx:dd=>{ d(dd.npc,dd.p,'신뢰',5); }, go:4}
-       ]},
-      {text:d=>`${NM(d.npc)}이(가) 순간 멍하니 있다가, 픽 웃는다. "...그런 말 해주는 사람, 오랜만이네."`, next:'…', go:99},
-      {text:d=>`${NM(d.npc)}이(가) 잔을 받으며 옅게 웃는다. "...말 안 해도 되는 게, 가끔은 제일 편해."`, next:'…', go:99}
-     ]},
-    {id:'4', title:'무대 뒤에서', choiceKey:'strip', trig:(p,npc)=>p.flags['STORY:strip:3']&&npc.relations[p.id]&&npc.relations[p.id].애정>=35,
-     beats:[
-      {text:'공연이 끝난 뒤, 리라가 화장을 반쯤 지운 채 거울 앞에 앉아 있다. 평소의 여유가 조금 벗겨져 있다.', advance:false,
-       choices:dd=>[
-        {label:'"무대 위든 아니든, 지금 이대로도 괜찮아"', fx:dd=>{ dd.p.flags['STORY:strip선택']='affirm'; d(dd.npc,dd.p,'애정',6); }, go:1},
-        {label:'"천천히 해도 돼, 서두르지 않을게"', fx:dd=>{ dd.p.flags['STORY:strip선택']='patient'; d(dd.npc,dd.p,'신뢰',6); }, go:2}
-       ]},
-      {text:'리라가 잠시 멍하니 있다가, 낯설게 수줍은 미소를 짓는다. "...그런 말, 진짜 오랜만에 듣네."', next:'…', go:99},
-      {text:'리라가 피식 웃는다. "...재촉 안 하는 사람은 또 오랜만이네. 나쁘지 않은데?"', next:'…', go:99}
-     ]},
-    {id:'5', title:'맨얼굴', finale:true, trig:p=>!!p.flags['STORY:strip선택']&&turn>=(p.flags['STORY:strip:4']||0)+20,
-     beats:[
-      {text:d=>d.choice==='affirm'
-        ?'무대가 끝난 뒤, 리라가 화장을 지운 맨얼굴로 조용히 다가온다. "오늘은... 그냥 나로 있고 싶어서." 처음 보는 그녀의 진짜 미소다.'
-        :'여느 때처럼 능청스럽던 리라가, 어느 순간 슬쩍 진심을 흘린다. "기다려줘서 고마워... 라고 하면, 너무 오글거리려나." 귀 끝이 살짝 붉다.', next:'…'}
-     ]}
-   ]}
+/* ══════════════ 메인 스토리 — 「전망대의 기다림」 (1인칭 시점 서사) ══════════════
+   전망대의 세라를 중심으로 진행되는 짧은 연작. 턴 경과·세라와의 관계 수치를 조건으로
+   순서대로 한 챕터씩 열리며, startEvent 팝업 엔진을 그대로 활용한다. */
+const STORY_TITLE={ms1:'표류하는 첫날',ms2:'기다리는 사람',ms3:'낡은 사진',ms4:'밤의 이야기',ms5:'선택의 순간',ms6:'전망대에 지는 노을'};
+const MAINSTORY=[
+ {id:'ms1', trig:()=>turn>=6,
+  beats:[
+   {text:'리조트에 도착한 지 얼마 되지 않았다. 파도 소리와 낯선 공기 속에서, 아직 이곳의 시간에 몸이 익숙해지지 않는다.', next:'…'},
+   {text:d=>`문득 올려다본 전망대 위, ${NM(d.sera)}이(가) 미동도 없이 바다를 바라보고 서 있다. 그 뒷모습이 이상하게 마음에 오래 남는다.`, next:'…'}
+  ]},
+ {id:'ms2', trig:()=>turn>=45,
+  beats:[
+   {text:'마트에 들른 어느 날, 주인 도한이 지나가듯 말을 흘린다. "저 전망대 아가씨 말이야... 벌써 몇 년째 저러고 있어. 뭘 기다리는지 원."', next:'…'},
+   {text:'문득 궁금해진다. 매일 같은 자리, 같은 시간. 대체 누구를, 얼마나 오래 기다리고 있는 걸까.', next:'…'}
+  ]},
+ {id:'ms3', trig:(p,sera)=>(sera.relations[p.id]&&sera.relations[p.id].호감>=25),
+  beats:[
+   {text:d=>`전망대 구석, 바람에 날아갈 뻔한 낡은 사진 한 장을 우연히 주웠다. 빛바랜 사진 속엔 젊은 시절의 ${NM(d.sera)}과(와), 얼굴이 닳아 흐려진 누군가가 나란히 웃고 있다.`, next:'…'},
+   {text:d=>`인기척에 돌아본 ${NM(d.sera)}이(가) 사진을 발견하곤 화들짝 놀라 낚아채듯 가져간다. "...보, 보여드리려던 건 아니었어요." 귓가가 붉다.`, next:'…'}
+  ]},
+ {id:'ms4', trig:(p,sera)=>(sera.relations[p.id]&&sera.relations[p.id].신뢰>=40),
+  beats:[
+   {text:d=>`드물게 먼저 말을 건 ${NM(d.sera)}이(가), 바다를 향한 채 낮은 목소리로 입을 연다. "...다음 여름 조수가 바뀔 때 돌아온다고 했어요. 그 사람."`, next:'…'},
+   {text:'그 약속이 이미 몇 번의 여름을 지나쳤다는 걸, 굳이 묻지 않아도 알 것 같다.', next:'…'}
+  ]},
+ {id:'ms5', trig:(p,sera)=>(sera.relations[p.id]&&sera.relations[p.id].애정>=45),
+  beats:[
+   {text:'노을이 유난히 붉게 내려앉은 저녁, 전망대에 둘만 남았다. 무슨 말이든 해야 할 것 같은 침묵이 흐른다.', advance:false,
+    choices:dd=>[
+     {label:'"이제 그만 기다려도 되지 않을까요"', fx:dd=>{ dd.p.flags['STORY:ms5선택']='let'; d(dd.sera,dd.p,'신뢰',6); dd.sera.stability=clamp(dd.sera.stability+8,0,100); }, go:1},
+     {label:'"저도 같이 기다려 볼게요"', fx:dd=>{ dd.p.flags['STORY:ms5선택']='wait'; d(dd.sera,dd.p,'애정',8); d(dd.p,dd.sera,'애정',5); }, go:2}
+    ]},
+   {text:d=>`${NM(d.sera)}이(가) 한참 말이 없다가, 옅게 웃는다. "...그럴지도 모르겠네요. 이상하게, 당신 말은 그렇게 들려요."`, next:'…', go:99},
+   {text:d=>`${NM(d.sera)}이(가) 놀란 눈으로 돌아본다. "...혼자가 아니라고 생각하니, 조금은 덜 막막하네요."`, next:'…', go:99}
+  ]},
+ {id:'ms6', trig:(p,sera)=>!!p.flags['STORY:ms5선택']&&turn>=(p.flags['STORY:ms5턴']||0)+20,
+  beats:[
+   {text:d=>d.choice==='let'
+     ?`${NM(d.sera)}이(가) 목에 걸려 있던 낡은 목걸이를 조심스레 풀어낸다. 오래 쥐고 있던 숨을 내려놓듯, 바람에 실려 보내듯.`
+     :`${NM(d.sera)}이(가) 여전히 바다를 바라보고 있다. 하지만 그 눈빛은 더 이상 예전처럼 아득하지 않다.`, next:'…'},
+   {text:d=>d.choice==='let'
+     ?'"고마워요. 덕분에... 이제 여기 서 있는 이유가, 기다림이 아니어도 될 것 같아요."'
+     :'"어쩌면 저는, 누군가 함께 기다려 주기를 기다렸던 건지도 몰라요. 당신이라서, 다행이에요."', next:'…'}
+  ]}
 ];
-function runStoryArc(p,arc){
-  const npc=npcs.find(n=>n.fixedKey===arc.npcKey); if(!npc)return false;
-  for(const ch of arc.chapters){
-    const key='STORY:'+arc.id+':'+ch.id;
-    if(p.flags[key])continue;
-    const extra=ch.extraKey?npcs.find(n=>n.fixedKey===ch.extraKey):null;
-    if(ch.skipIf){ let skip=false; try{skip=ch.skipIf(p,npc,extra);}catch(e){} if(skip){ p.flags[key]=turn; continue; } }
-    const homeOwner=ch.extraKey?extra:npc;
-    if(homeOwner&&p.space!==homeOwner.home)continue;   /* 그 인물의 장소에 있을 때만 이야기가 진행된다 */
-    let ok=false; try{ok=ch.trig(p,npc,extra);}catch(e){}
-    if(!ok)continue;
-    p.flags[key]=turn;
-    if(ch.onFire)try{ch.onFire(p,npc,extra);}catch(e){}
-    startEvent({ title:'📖 '+ch.title, color:arc.color||'#3B4E6B',
-      data:{p,npc,extra,choice:p.flags['STORY:'+arc.id+'선택']},
-      beats:ch.beats,
-      onEnd:d=>{ if(ch.finale){ p.stability=clamp(p.stability+10,0,100); p.money+=20;
-        log(`${arc.finaleIcon||'📖'} <b style="color:${arc.color||'#3B4E6B'}">${esc(arc.finaleLabel||ch.title)}</b> — 이야기가 하나의 매듭을 지었다`,'event',p.space); } }
-    });
-    return true;
-  }
-  return false;
-}
 function checkMainStory(p){
   if(!p||p.hsex||p.asleep>0||curEvent||document.getElementById('modal')||document.getElementById('r18modal'))return;
-  for(const arc of STORY_ARCS){ if(runStoryArc(p,arc))return; }
-}
-/* ══════════════ 일상 스크립트 — 아크에 속하지 않는 짧은 하루의 순간들 ══════════════
-   큰 줄거리와 무관하게, 가끔씩 스치는 소소한 하루를 문장 하나로 남긴다. 팝업 없이
-   로그(및 이야기 패널)에 곧바로 남기며, 대부분 가벼운 상태 변화만 동반한다.
-   조건(cond)에 맞는 것 중 하나를 골라 발동하고, needMate가 있으면 같은 공간의
-   다른 인물을 상대로 삼는다(없으면 건너뜀). */
-const DAILY_EVENTS=[
- {cond:p=>p.space==='beach', txt:p=>`${NM(p)}이(가) 해변을 걷다 예쁜 조개껍데기를 하나 주웠다. 괜히 기분이 좋아진다.`, fx:p=>{p.stability=clamp(p.stability+4,0,100);}},
- {cond:p=>SPACES[p.space]&&SPACES[p.space].tags.includes('야외'), txt:p=>`어디선가 나타난 고양이 한 마리가 ${NM(p)}의 발치에 앉아 가만히 올려다본다.`, fx:p=>{p.stability=clamp(p.stability+5,0,100);}},
- {cond:p=>p.space==='libr', txt:p=>`${NM(p)}이(가) 서가에서 우연히 집어든 책 한 권을 단숨에 다 읽어버렸다. 뿌듯하다.`, fx:p=>{p.needs.성취=clamp(p.needs.성취-10,0,100);}},
- {cond:p=>slot()==='밤'&&SPACES[p.space]&&SPACES[p.space].tags.includes('경치'), txt:p=>`${NM(p)}이(가) 밤하늘을 올려다보다 별똥별 하나가 스치는 걸 보았다. 무심코 소원을 빈다.`, fx:p=>{p.stability=clamp(p.stability+8,0,100);}},
- {cond:p=>slot()==='아침'&&SPACES[p.space]&&SPACES[p.space].tags.includes('야외'), txt:p=>`${NM(p)}이(가) 상쾌한 아침 공기를 마시며 가볍게 몸을 풀었다.`, fx:p=>{grow(p,'운동',0.8); p.needs.피로=clamp(p.needs.피로-4,0,100);}},
- {cond:p=>WEATHER==='비'&&SPACES[p.space]&&!SPACES[p.space].tags.includes('야외'), txt:p=>`${NM(p)}이(가) 창밖으로 빗소리를 들으며 잠시 멍하니 앉아 있었다. 마음이 차분해진다.`, fx:p=>{p.stability=clamp(p.stability+6,0,100);}},
- {cond:p=>WEATHER==='무더위', txt:p=>`${NM(p)}이(가) 시원한 그늘을 찾아 잠시 더위를 식혔다.`, fx:p=>{p.needs.피로=clamp(p.needs.피로-5,0,100);}},
- {cond:p=>WEATHER==='한파', txt:p=>`${NM(p)}이(가) 손을 호호 불며 몸을 웅크렸다. 따뜻한 곳이 그리워진다.`, fx:p=>{p.stability=clamp(p.stability+2,0,100);}},
- {cond:()=>true, needMate:true, txt:(p,m)=>`계단에서 발을 헛디딜 뻔했는데, 지나가던 ${NM(m)}이(가) 재빨리 ${NM(p)}의 손을 잡아 주었다.`, fx:(p,m)=>{d(m,p,'호감',3);d(p,m,'호감',2);}},
- {cond:()=>WEATHER==='비', needMate:true, txt:(p,m)=>`우산이 없어 난감해하던 ${NM(p)}에게, ${NM(m)}이(가) 슬쩍 우산을 씌워 준다.`, fx:(p,m)=>{d(m,p,'호감',4);d(p,m,'호감',3);}},
- {cond:p=>p.space==='mart', needMate:true, txt:(p,m)=>`짐이 많아 보이자 ${NM(m)}이(가) 말없이 상자 하나를 대신 들어 준다.`, fx:(p,m)=>{d(m,p,'호감',3);}},
- {cond:()=>true, txt:p=>`${NM(p)}에게는 별일 없는 하루였지만, 이런 잔잔한 하루도 나쁘지 않다고 생각했다.`, fx:p=>{p.stability=clamp(p.stability+2,0,100);}}
-];
-function checkDailyEvent(p){
-  if(!p||p.hsex||p.asleep>0||curEvent||document.getElementById('modal'))return;
-  if(turn%5!==0||Math.random()<0.55)return;
-  const pool=DAILY_EVENTS.filter(e=>{ try{return e.cond(p);}catch(err){return false;} });
-  if(!pool.length)return;
-  const ev=pick(pool);
-  let mate=null;
-  if(ev.needMate){ mate=npcs.find(o=>o.id!==p.id&&o.space===p.space&&!o.hsex&&!(o.asleep>0)); if(!mate)return; }
-  log(`🌤 ${ev.txt(p,mate)}`,'',p.space);
-  if(ev.fx)try{ev.fx(p,mate);}catch(e){}
+  const sera=npcs.find(n=>n.fixedKey==='lookout'); if(!sera)return;
+  for(const ch of MAINSTORY){
+    const key='STORY:'+ch.id;
+    if(p.flags[key])continue;
+    let ok=false; try{ok=ch.trig(p,sera);}catch(e){}
+    if(!ok)continue;
+    p.flags[key]=turn;
+    if(ch.id==='ms5')p.flags['STORY:ms5턴']=turn;
+    startEvent({ title:'📖 '+(STORY_TITLE[ch.id]||'전망대의 기다림'), color:'#3B4E6B',
+      data:{p,sera,choice:p.flags['STORY:ms5선택']},
+      beats:ch.beats,
+      onEnd:d=>{ if(ch.id==='ms6'){ p.stability=clamp(p.stability+10,0,100); p.money+=20;
+        log('🌅 <b style="color:#3B4E6B">전망대의 기다림, 그 끝에서</b> — 이야기가 하나의 매듭을 지었다','event',p.space); } }
+    });
+    return;
+  }
 }
 function d(a,b,k,v){
   const r=(a&&a.relations)?a.relations[b.id]:null;
@@ -2921,7 +2475,7 @@ function fireScene(S,a,b){
   else if(SCENE3TXT[S.id])txt=SCENE3TXT[S.id](a,b);
   else txt=`— 이벤트 ${S.id} 발동 (${NM(a)}${b?' · '+NM(b):''}) · 텍스트 미작성 —`;
   /* R18급(s3*) 장면이거나 플레이어가 관여하는 장면만 '중요 사건'으로 남기고,
-     그 외 타인들끼리의 사소한 감정선 장면은 이야기 패널에는 나오지 않고 전체 로그에만 쌓이도록 급을 낮춘다 */
+     그 외 타인들끼리의 사소한 감정선 장면은 1인칭 몰입 로그에서 걸러지도록 급을 낮춘다 */
   const major=S.r>=3||a.isPlayer||(b&&b.isPlayer);
   log(`◆ ${txt}`,major?'event':'',a.space);
 }
@@ -2944,15 +2498,11 @@ function tickWorld(){
     if(pl.lewd.취기<90&&pl.flags._drowsy)delete pl.flags._drowsy;
     if(RATING>=2&&pl.lewd.취기>=100&&pl.asleep<=0&&!pl.hsex&&!pl.flags._drowsy&&!document.getElementById('modal')&&!document.getElementById('r18modal')){ setTimeout(showDrowsyModal,60); }
     checkQuests(pl);
-    checkMainStory(pl);
-    checkDailyEvent(pl);
+    /* 관찰판은 플레이어 개인 서사보다 인물 군상극 관찰에 초점을 두므로 메인 스토리는 진행하지 않는다 */
     checkRent(pl);
     checkDrunkMishap(pl);
     checkFetishEvent(pl);
     windCheck(pl);
-    rainCheck(pl);
-    heatCheck(pl);
-    coldCheck(pl);
     checkHarass(pl);
     /* 진행성 피로: 잠 없이 버틴 시간에 비례해 피로가 가속 */
     if(pl.asleep>0){ pl.flags._awake=0; pl.needs.피로=clamp(pl.needs.피로-14,0,100); }
@@ -2974,8 +2524,7 @@ function tickWorld(){
     checkSoloClimax(n);   /* 감쇠 전에 판정해야 100 도달이 소실되지 않음 */
     n.lewd.흥분=Math.max(0,n.lewd.흥분-CFG.arousalDecay); n.lewd.취기=Math.max(0,n.lewd.취기-6);
     if(!n.hsex)n.lewd.정력=clamp(n.lewd.정력+(slot()==='밤'&&n.space===n.home?4:1.5)*(CFG.engRegen/100)*(0.5+n.lewd.max정력/200),0,n.lewd.max정력);
-    if(n.needs.피로>=85)n.body.운동=clamp(n.body.운동-0.15,0,100);
-    tickStatuses(n);
+    if(n.needs.피로>=85)n.body.운동=clamp(n.body.운동-0.15,0,100); 
   }
   checkScenes();
   if(CFG.autosave>0&&turn%CFG.autosave===0)saveLocal(true);
@@ -3097,22 +2646,19 @@ function resolveConfession(accept){
 const $=q=>document.querySelector(q);
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 let logFilter=null;
-let storyMode=CFG.immersion;   /* true = 이야기(1인칭 직접 상황만) 패널 표시, false = 전체 로그(백그라운드) 표시. #btnLogMode로 언제든 전환 */
-/* ── 이야기 모드: '중요 사건'(event)이거나, 텍스트에 플레이어 본인이 직접 등장하는
-   상황만 "당신에게 직접 벌어지는 일"로 보아 #story에 인터랙티브 스토리 형식으로 남긴다.
-   #log(전체 로그)는 필터 없이 언제나 모든 것을 기록하며 화면 뒤에서 계속 작동한다.
-   ※ 플레이어 이름이 '하늘'·'새벽' 등 흔한 낱말인 경우가 많아, 이름 단순 포함 여부만
-   보면 "하늘을 보며"처럼 무관한 문장까지 오탐한다 — 실제로 인물을 가리킬 때만 쓰이는
-   표기(NM() 스타일 래핑, '이름이(가)' 서술, '이름 → 이동') 패턴으로 좁혀 확인한다. */
-function isDirectToPlayer(html,cls,sp){
-  if(cls==='event')return true;
+/* ── 1인칭 몰입 로그: '중요 사건'(event)이 아닌 잡담·이동·행동 묘사는
+   플레이어 본인이 관여하거나(이름 포함) 플레이어와 같은 공간일 때만 남긴다 ── */
+function logImportant(html,cls,sp){
+  if(!CFG.immersion||cls==='event')return true;
   const p=P();
-  if(!p)return false;
-  return html.indexOf(NM(p))!==-1 || html.indexOf(p.name+'이(가)')!==-1 || html.indexOf(p.name+' →')!==-1;
+  if(!p)return true;                                    /* 순수 관찰(플레이어 없음)이면 필터 없음 */
+  if(sp&&sp===p.space)return true;                       /* 지금 있는 공간에서 벌어지는 일은 보인다 */
+  return html.indexOf(p.name)!==-1;                      /* 텍스트에 플레이어 본인이 등장하면 유지 */
 }
-function appendEntry(id,html,cls,sp,trackerKey,narrative){
-  const L0=document.getElementById(id); if(!L0)return;
-  if(window[trackerKey]!==turn){ window[trackerKey]=turn;
+function log(html,cls='',sp=null){
+  if(!logImportant(html,cls,sp))return;
+  const L0=$('#log');
+  if(L0 && window._llt!==turn){ window._llt=turn;
     const dv=document.createElement('div'); dv.className='lgDiv';
     dv.textContent=`── ${timeStr()} · ${slot()} ──`;
     L0.appendChild(dv); }
@@ -3120,30 +2666,14 @@ function appendEntry(id,html,cls,sp,trackerKey,narrative){
   el.className='lg'+(cls?' '+cls:'');
   if(sp)el.dataset.space=sp;
   if(logFilter&&sp&&sp!==logFilter)el.style.display='none';
-  if(narrative){
-    el.innerHTML=html;   /* 이야기 패널: 시각 배지·이동 아이콘 없이 문장 자체로 흐르게 */
-  }else{
-    const _ic=cls.includes('event')?'✦ ':cls.includes('move')?'🚶 ':'';
-    el.innerHTML=`<span class="ts">T${String(turn).padStart(3,'0')}</span>${_ic}${html}`;
-  }
-  L0.appendChild(el);
-  while(L0.children.length>CFG.logMax)L0.removeChild(L0.firstChild);
-}
-function log(html,cls='',sp=null){
-  appendEntry('log',html,cls,sp,'_lltLog',false);            /* 전체 로그 — 항상 기록(백그라운드) */
-  if(isDirectToPlayer(html,cls,sp))appendEntry('story',html,cls,sp,'_lltStory',true);  /* 이야기 — 직접 상황만 */
-  scrollLog();
-}
-function setStoryMode(v){
-  storyMode=v;
-  $('#story').style.display=v?'flex':'none';
-  $('#log').style.display=v?'none':'flex';
-  $('#logHeadLabel').textContent=v?'이야기':'전체 로그';
-  $('#btnLogMode').textContent=v?'전체 로그':'이야기로';
+  const _ic=cls.includes('event')?'✦ ':cls.includes('move')?'🚶 ':'';
+  el.innerHTML=`<span class="ts">T${String(turn).padStart(3,'0')}</span>${_ic}${html}`;
+  const L=$('#log'); L.appendChild(el);
+  while(L.children.length>CFG.logMax)L.removeChild(L.firstChild);
   scrollLog();
 }
 function scrollLog(){
-  const L=storyMode?$('#story'):$('#log');
+  const L=$('#log');
   if(window.innerWidth<=900){
     const rc=document.getElementById('rightCol');
     /* 사용자가 위쪽(플레이어 패널 등)을 보고 있으면 위치 유지, 하단 근처면 따라감 */
@@ -3167,7 +2697,7 @@ function buildMap(){
 function toggleLogFilter(spId){
   logFilter=(logFilter===spId?null:spId);
   document.querySelectorAll('.room').forEach(r=>r.classList.toggle('watch',r.dataset.space===logFilter));
-  document.querySelectorAll('#log .lg, #story .lg').forEach(el=>{
+  document.querySelectorAll('#log .lg').forEach(el=>{
     el.style.display=(!logFilter||!el.dataset.space||el.dataset.space===logFilter)?'':'none';
   });
   const tag=$('#logFilterTag');
@@ -3314,11 +2844,8 @@ function renderDetail(){
   if(dTab==='rel'){ renderRelTab(n,D); D.innerHTML=tabs+D.innerHTML;
     D.querySelectorAll('[data-pair]').forEach(el=>el.onclick=()=>{sel=[n.id,el.dataset.pair]; render();});
     bind(); return; }
-  let h=tabs+`<div style="display:flex;gap:9px;align-items:flex-start">${avatarCanvasHTML('detAvatar',60)}<div style="flex:1;min-width:0">
-    <div class="dname" style="color:${n.color}">${n.fixed?'✦ ':''}${esc(n.name)}</div>
-    <div class="dsub">${n.arch} · ${n.form}${n.form==='혼합'?`(기본 ${n.mix.base}, ${n.mix.trig})`:''} · 현재 ${SPACES[n.space].n} · ${OUTFITS[n.outfit]?OUTFITS[n.outfit].emoji:''}${esc(n.outfit||'평상복')} · 개인실 ${SPACES[n.home].n.slice(-1)}${RATING>=3?` · R18 ${n.r18?'참여':'미참여'}`:''}</div></div></div>`;
-  { const sts=activeStatuses(n);
-    if(sts.length)h+=`<div style="font-size:11px;margin:-2px 0 8px">${sts.map(k=>`<span style="border:1px solid #B23A6B;color:#B23A6B;border-radius:2px;padding:1px 6px;margin-right:4px;display:inline-block">${STATUS_DEF[k].icon} ${STATUS_DEF[k].label} <span style="opacity:.7">(${n.flags['status:'+k]}턴)</span></span>`).join('')}</div>`; }
+  let h=tabs+`<div class="dname" style="color:${n.color}">${n.fixed?'✦ ':''}${esc(n.name)}</div>
+    <div class="dsub">${n.arch} · ${n.form}${n.form==='혼합'?`(기본 ${n.mix.base}, ${n.mix.trig})`:''} · 현재 ${SPACES[n.space].n} · ${OUTFITS[n.outfit]?OUTFITS[n.outfit].emoji:''}${esc(n.outfit||'평상복')} · 개인실 ${SPACES[n.home].n.slice(-1)}${RATING>=3?` · R18 ${n.r18?'참여':'미참여'}`:''}</div>`;
   AXES.forEach((a,i)=>{h+=`<div class="bar"><span>${a}</span><span class="tr"><span class="fl" style="width:${n.axes[i]}%"></span></span><span class="bv">${n.axes[i]}</span></div>`});
   h+=`<div style="height:8px"></div>`;
   [['사교욕',n.needs.사교],['피로',n.needs.피로],['성취욕',n.needs.성취],['안정도',n.stability],['매력',n.매력||0],['노출도',n.노출도||0]].forEach(([k,v])=>{
@@ -3339,7 +2866,6 @@ function renderDetail(){
   }
   h+=`<button class="chip" id="btnEdit" style="margin-top:8px;width:100%">설정 변경</button>`;
   D.innerHTML=h;
-  renderAvatarInto(document.getElementById('detAvatar'),n);
   $('#btnEdit').onclick=()=>{editId=n.id; drawEditForm();};
   bind();
 }
@@ -3352,7 +2878,6 @@ function drawEditForm(){
   const sw=n.isPlayer?'':`<div class="psec">테마색</div><div class="chipRow">${PALETTE.map(c=>`<button class="chip" data-col="${c}" style="width:22px;height:22px;padding:0;background:${c};border-color:${c};outline:${c===n.color?'2px solid var(--ink)':'none'}"></button>`).join('')}</div>`;
   D.innerHTML=`<div class="psec">설정 변경 — ${esc(n.name)}${n.isPlayer?' (플레이어)':''}</div>
    <div style="display:flex;flex-direction:column;gap:7px">
-   ${lookEditorHTML('e')}
    <input type="text" id="eName" value="${esc(n.name)}">
    <select id="eArch">${opts}</select>
    ${axRows}
@@ -3376,9 +2901,8 @@ function drawEditForm(){
    ${sw}
    <div style="display:flex;gap:6px"><button class="primary" id="eSave" style="flex:1">저장</button><button id="eCancel" style="flex:1">취소</button></div>
    </div>`;
-  const getLook=wireLookEditor('e',n.look,n.outfit);
   D.querySelectorAll('input[type=range]').forEach(inp=>inp.oninput=e=>e.target.parentElement.querySelector('.val').textContent=e.target.value);
-  $('#eArch').onchange=e=>{
+  $('#eArch').onchange=e=>{ 
     D.querySelectorAll('[data-eax]').forEach((inp,i)=>{inp.value=ARCH[e.target.value][i]; inp.parentElement.querySelector('.val').textContent=inp.value;});
   };
   $('#eForm').onchange=e=>$('#eMix').style.display=e.target.value==='혼합'?'flex':'none';
@@ -3406,7 +2930,6 @@ function drawEditForm(){
     n.body.체격=+$('#eBody').value; n.body.운동=+$('#eAth').value;
     n.매력=+$('#eCharm').value; n.노출도=+$('#eExpose').value;
     n.r18Mode=$('#eR18Mode').value;
-    n.look=getLook();
     if(!n.isPlayer)n.color=pickedCol;
     editId=null;
     log(`${NM(n)}의 설정이 변경되었다`,'move');
@@ -3459,11 +2982,7 @@ const SHOPS={
     {name:'의상: 트레이닝복',price:25,fx:p=>{buyOutfit(p,'트레이닝복');}},
     {name:'의상: 유카타',price:70,fx:p=>{buyOutfit(p,'유카타');}},
     {name:'의상: 차이나 드레스',price:95,fx:p=>{buyOutfit(p,'차이나 드레스');}},
-    {name:'의상: 웨딩 드레스',price:160,fx:p=>{buyOutfit(p,'웨딩 드레스');}},
-    {name:'의상: 교복',price:45,fx:p=>{buyOutfit(p,'교복');}},
-    {name:'의상: 잠옷',price:20,fx:p=>{buyOutfit(p,'잠옷');}},
-    {name:'의상: 우비',price:15,fx:p=>{buyOutfit(p,'우비');}},
-    {name:'의상: 집사복',price:75,fx:p=>{buyOutfit(p,'집사복');}}
+    {name:'의상: 웨딩 드레스',price:160,fx:p=>{buyOutfit(p,'웨딩 드레스');}}
   ],
   cafe:[
     {name:'커피',price:5,fx:p=>{p.needs.피로=clamp(p.needs.피로-10,0,100);p.stability=clamp(p.stability+4,0,100);}},
@@ -3487,10 +3006,6 @@ const SHOPS={
     {name:'의상: 가죽 의상',price:85,minR:3,fx:p=>{buyOutfit(p,'가죽 의상');}},
     {name:'의상: 메이드복',price:80,minR:3,fx:p=>{buyOutfit(p,'메이드복');}},
     {name:'의상: 바니걸',price:90,minR:3,fx:p=>{buyOutfit(p,'바니걸');}},
-    {name:'의상: 무녀복',price:75,minR:3,fx:p=>{buyOutfit(p,'무녀복');}},
-    {name:'의상: 간호사복',price:78,minR:3,fx:p=>{buyOutfit(p,'간호사복');}},
-    {name:'의상: 스쿨 수영복',price:40,minR:3,fx:p=>{buyOutfit(p,'스쿨 수영복');}},
-    {name:'의상: 치어리더복',price:65,minR:3,fx:p=>{buyOutfit(p,'치어리더복');}},
     {name:'의상: 알몸(탈의)',price:0,minR:3,fx:p=>{buyOutfit(p,'알몸');}}
   ]
 };
@@ -3542,14 +3057,7 @@ function checkFetishEvent(p){
         {text:pick(FET_TENT_MID), fx:d=>{d.p.lewd.타락=clamp(d.p.lewd.타락+4,0,100);}, next:'…'},
         {text:pick(FET_TENT_LATE), fx:d=>{arouse(d.p,14);}, next:'…'}
       ],
-      onEnd:d=>{ arouse(d.p,50); d.p.needs.피로=clamp(d.p.needs.피로+20,0,100); log(pick(FET_TENT_END),'event',d.p.space);
-        /* 한 번으로 끝나지 않는 지속효과: 일정 확률로 점액이나 기생체가 몸에 남는다 */
-        const roll=Math.random();
-        if(roll<0.12){ applyStatus(d.p,'기생체',ri(3,5));
-          log(`🪱 <b style="color:#5A7A3A">이상 감각</b> — 뭔가 몸속 깊이 남겨진 듯한 불길한 이물감이 가시지 않는다...`,'event',d.p.space); }
-        else if(roll<0.45){ applyStatus(d.p,'점액감염',ri(15,25));
-          log(`🟢 <b style="color:#3A7A5A">점액 감염</b> — 씻어내도 몸 안쪽에 점액의 잔재가 남은 듯한 찝찝함이 가시지 않는다`,'event',d.p.space); }
-      }});
+      onEnd:d=>{ arouse(d.p,50); d.p.needs.피로=clamp(d.p.needs.피로+20,0,100); log(pick(FET_TENT_END),'event',d.p.space); }});
   } else if(kind==='bond'){
     const nb=npcs.find(o=>o.id!==p.id&&o.space===p.space&&!o.hsex&&o.r18);
     startEvent({title:'⛓ 풀리지 않는 매듭', color:'#4A3B52', data:{p,nb},
@@ -3857,7 +3365,6 @@ function renderPlayerPanel(){
     const opts=Object.keys(ARCH).map(k=>`<option>${k}</option>`).join('');
     PP.innerHTML=`<div class="psec">컨트롤 캐릭터 만들기</div>
       <div style="display:flex;flex-direction:column;gap:6px">
-      ${lookEditorHTML('p')}
       <input type="text" id="pName" placeholder="이름 (비우면 자동)">
       <div style="display:flex;gap:6px"><select id="pGender" style="flex:1"><option>여성</option><option>남성</option></select>
       <select id="pGenital" style="flex:1"><option>여성기</option><option>남성기</option><option>양성</option></select></div>
@@ -3872,7 +3379,6 @@ function renderPlayerPanel(){
       <button class="primary" id="pStart">1인칭으로 시작</button></div>
       <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">플레이어를 만들면 행동·이동·대기 하나가 1턴이 되고, 그 뒤에 다른 인물들이 움직입니다. 자동재생은 계속 대기하며 지켜보는 관찰 모드가 됩니다.</p>`;
     $('#pForm').onchange=e=>$('#pMix').style.display=e.target.value==='혼합'?'flex':'none';
-    const getPLook=wireLookEditor('p',randomLook());
     $('#pStart').onclick=()=>{
       if(npcs.length>=20){alert('최대 20명까지 가능합니다.');return;}
       let nm=$('#pName').value.trim();
@@ -3880,9 +3386,9 @@ function renderPlayerPanel(){
       if(npcs.some(n=>n.name===nm)){alert('같은 이름이 이미 있습니다.');return;}
       const form=$('#pForm').value;
       const mix=form==='혼합'?{base:$('#pMixBase').value,trig:$('#pMixTrig').value}:null;
-      const gender=$('#pGender').value, genital=$('#pGenital').value, look=getPLook();   /* render()가 폼을 지우기 전에 값을 미리 읽어 둔다 */
+      const gender=$('#pGender').value, genital=$('#pGenital').value;   /* render()가 폼을 지우기 전에 값을 미리 읽어 둔다 */
       makePlayer(nm,$('#pArch').value,ARCH[$('#pArch').value],form,mix,$('#pR18').checked,$('#pCor').checked);
-      { const p=P(); if(p){ p.gender=gender; p.genital=genital; p.look=look; equipOutfit(p,p.outfit); } }
+      { const p=P(); if(p){ p.gender=gender; p.genital=genital; equipOutfit(p,p.outfit); } }
     };
     return;
   }
@@ -3905,15 +3411,13 @@ function renderPlayerPanel(){
   }
   const mates=npcs.filter(o=>o.id!==p.id&&o.space===p.space);
   if(pTarget&&!mates.some(m=>m.id===pTarget))pTarget=null;
-  let h=`<div class="phead">${avatarCanvasHTML('pAvatar',38)}
+  let h=`<div class="phead"><div class="ptoken">${p.name[0]}</div>
     <div><div class="pname">${p.name}</div>
     <div class="ploc">${p.arch} · ${p.form} — 현재 ${SPACES[p.space].n}</div></div></div>`;
   const _inv=[...Object.keys(GIFTS),...Object.keys(USABLES)].filter(it=>(p.flags['아이템:'+it]||0)>0).map(it=>`${it}×${p.flags['아이템:'+it]}`).join(' · ');
   const _day=Math.floor(turn/12)+1, _sl=slot();
   h+=`<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin:1px 0">📅 ${timeStr()} (${_sl}) · ${WEATHER_ICON[WEATHER]||''}${WEATHER} · ${OUTFITS[p.outfit]?OUTFITS[p.outfit].emoji:''} ${esc(p.outfit||'평상복')} <span style="opacity:.7">(노출 ${p.노출도})</span>${p.flags['크로스드레싱']?' · <b style="color:#7A5AA5">[크로스드레싱]</b>':''}${RATING>=3?` · <span style="color:#B23A6B">🔞${r18Score(p)}</span>`:''}</div>`;
   if(p.outfit!=='알몸')h+=`<div style="font-family:var(--mono);font-size:10.5px;color:var(--muted);margin:1px 0">속옷 — 상: ${esc(p.under.상)} · 하: ${esc(p.under.하)}</div>`;
-  { const sts=activeStatuses(p);
-    if(sts.length)h+=`<div style="font-size:11px;margin:3px 0 5px">${sts.map(k=>`<span style="border:1px solid #B23A6B;color:#B23A6B;border-radius:2px;padding:1px 6px;margin-right:4px;display:inline-block">${STATUS_DEF[k].icon} ${STATUS_DEF[k].label} <span style="opacity:.7">(${p.flags['status:'+k]}턴)</span></span>`).join('')}</div>`; }
   h+=`<div style="font-family:var(--mono);font-size:11px;color:#8A6A1F;margin:1px 0 6px">💰 ${p.money||0} 코인${_inv?' · 🎒 '+_inv:''}</div>`;
   { const _act=activeQuests(p), _tot=QUESTS.filter(q=>!q.minR||RATING>=q.minR).length, _done=_tot-_act.length;
     h+=`<div style="border:1px solid var(--line);border-radius:8px;padding:6px 9px;margin:2px 0 8px;background:rgba(201,146,42,.05)">`;
@@ -3971,7 +3475,7 @@ function renderPlayerPanel(){
       h+=`<button class="waitBtn" id="pWait">상대에게 맡긴다 ⏭</button>`;
     }
     PP.innerHTML=h;
-    renderAvatarInto(document.getElementById('pAvatar'),p);
+    
     PP.querySelectorAll('[data-hact]').forEach(b=>{
       if(!b.disabled) b.onclick=()=>{
         const ph=P().hsex; const par2=npcs.find(o=>o.id===ph.with);
@@ -4121,7 +3625,6 @@ function renderPlayerPanel(){
   }
   h+=`</div><button class="waitBtn" id="pWait">아무것도 하지 않고 지켜본다 ⏭</button>`;
   PP.innerHTML=h;
-  renderAvatarInto(document.getElementById('pAvatar'),p);
   PP.querySelectorAll('[data-r18mode]').forEach(b=>b.onclick=()=>{p.r18Mode=b.dataset.r18mode; renderPlayerPanel();});
   PP.querySelectorAll('[data-move]').forEach(b=>b.onclick=()=>playerMove(b.dataset.move));
   if($('#pBus'))$('#pBus').onclick=()=>travelModal('bus');
@@ -4151,10 +3654,7 @@ function renderPlayerPanel(){
 }
 
 /* ══════════════ 캐릭터 생성 UI ══════════════ */
-let getCLook=null;
 function buildForm(){
-  $('#cLookWrap').innerHTML=lookEditorHTML('c');
-  getCLook=wireLookEditor('c',randomLook());
   const sel=$('#cArch');
   Object.keys(ARCH).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k;sel.appendChild(o)});
   const S=$('#axSliders');
@@ -4188,7 +3688,6 @@ function buildForm(){
     $('#cLewd0').value=ri(0,70); $('#cLewd0v').textContent=$('#cLewd0').value;
     $('#cMaxEng').value=ri(10,30)*10; $('#cMaxEngV').textContent=$('#cMaxEng').value;
     window.__setSens(randSens());
-    getCLook=wireLookEditor('c',randomLook());
   };
   $('#btnAdd').onclick=()=>{
     if(npcs.length>=20){alert('최대 20명까지 가능합니다.');return;}
@@ -4199,7 +3698,6 @@ function buildForm(){
     const form=$('#cForm').value;
     const mix=form==='혼합'?{base:$('#cMixBase').value,trig:$('#cMixTrig').value}:null;
     const n=makeNpc(nm,$('#cArch').value,axes,form,mix,false,$('#cR18').checked,$('#cCor').checked,+$('#cLewd0').value,+$('#cMaxEng').value,window.__readSens());
-    if(getCLook)n.look=getCLook();
     $('#cR18').checked=CFG.defR18; $('#cCor').checked=CFG.defCor; $('#cLewd0').value=0; window.__setSens(defSens()); $('#cLewd0v').textContent='0';
     $('#cMaxEng').value=100; $('#cMaxEngV').textContent='100'; 
     $('#cName').value='';
@@ -4214,17 +3712,16 @@ function setSliders(vals){
 }
 
 /* ══════════════ 저장 / 불러오기 ══════════════ */
-const SAVE_KEY='personaWatchSave';
+const SAVE_KEY='personaWatchSave_observer';
 function serialize(){
   return JSON.stringify({v:11, turn, RATING, uid, colorIdx, playerId, npcs, sceneCD, cfg:CFG,
-    logHTML:[...document.querySelectorAll('#log .lg')].slice(-150).map(e=>e.outerHTML),
-    storyHTML:[...document.querySelectorAll('#story .lg')].slice(-150).map(e=>e.outerHTML)});
+    logHTML:[...document.querySelectorAll('#log .lg')].slice(-150).map(e=>e.outerHTML)});
 }
 function applySave(data){
   if(!data||!Array.isArray(data.npcs))throw new Error('형식이 올바르지 않은 저장 파일');
   npcs=data.npcs; turn=data.turn||0; RATING=data.RATING||0;
   npcs.forEach(ensureSens);
-  npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); equipOutfit(n,n.outfit); n.asleep=0; });
+  npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); equipOutfit(n,n.outfit); n.asleep=0; });
   autoH=false;
   uid=data.uid||(npcs.length+1); colorIdx=data.colorIdx||0;
   playerId=data.playerId||null; pTarget=null; sel=[]; editId=null; logFilter=null; workState=null;
@@ -4235,14 +3732,7 @@ function applySave(data){
   $('#rateSel').value=String(RATING);
   document.querySelectorAll('.room').forEach(r=>r.classList.remove('watch'));
   $('#logFilterTag').textContent='';
-  $('#log').innerHTML=(data.logHTML||[]).join('');
-  /* 구버전 저장 파일 등 storyHTML이 없으면 전체 로그에서 '직접 상황'만 골라 이야기 패널을 복원 */
-  const p0=P();
-  $('#story').innerHTML=(data.storyHTML||(data.logHTML||[]).filter(h=>{
-    const cls=(h.match(/class="lg( ([^"]*))?"/)||[])[2]||'';
-    return cls.includes('event')||(p0&&(h.indexOf(NM(p0))!==-1||h.indexOf(p0.name+'이(가)')!==-1||h.indexOf(p0.name+' →')!==-1));
-  })).join('');
-  setStoryMode(storyMode); scrollLog();
+  const L=$('#log'); L.innerHTML=(data.logHTML||[]).join(''); scrollLog();
   stopPlay(); render();
   log('저장 데이터를 불러왔다 (T'+turn+')','event');
 }
@@ -4288,8 +3778,7 @@ $('#btnConsole').onclick=()=>openConsole();
 $('#btnStep').onclick=()=>{stopPlay(); step();};
 $('#btnPlay').onclick=()=>{timer?stopPlay():startPlay();};
 $('#speedSel').onchange=()=>{if(timer){stopPlay();startPlay();}};
-$('#btnClearLog').onclick=()=>{ $('#log').innerHTML=''; $('#story').innerHTML=''; };
-$('#btnLogMode').onclick=()=>setStoryMode(!storyMode);
+$('#btnClearLog').onclick=()=>$('#log').innerHTML='';
 $('#rateSel').onchange=e=>{
   RATING=+e.target.value;
   const names=['전체이용가','15세','성인','R18'];
@@ -4636,11 +4125,10 @@ window.addEventListener('resize',syncMobile);
 
 $('#cR18').checked=CFG.defR18; $('#cCor').checked=CFG.defCor;
 syncSEBtn();
-setStoryMode(storyMode);
 render();
 syncMobile();
 document.getElementById('bootBanner').style.display='none';
-log('시뮬레이션 준비 완료 — 6인 프리셋 입주. ▶ 자동재생 또는 1턴으로 관찰을 시작하세요.','event');
+log('관찰판 준비 완료 — 6인 프리셋 입주. 플레이어 없이 ▶ 자동재생만으로도 인물 군상극을 지켜볼 수 있습니다. (1인칭 플레이는 좌측에서 선택)','event');
 try{ if(localStorage.getItem(SAVE_KEY))log('이전 저장 데이터가 있습니다 — 📂 버튼으로 이어할 수 있습니다.','move'); }catch(e){}
 </script>
 </body>
