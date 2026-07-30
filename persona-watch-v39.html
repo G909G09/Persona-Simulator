@@ -1814,7 +1814,10 @@ function checkQuests(p){
    결말) + 선택 분기를 공통 골격으로 쓴다. startEvent 팝업 엔진을 그대로 활용한다.
    arc.npcKey로 주인공 NPC를, 필요하면 chapter.extraKey로 아크를 가로지르는 조연을
    구한다(예: 전망대 아크의 숲지기 유안 — 다른 인물과 쌓은 관계가 이 아크에 실마리를
-   보태는 인과 구조). extraKey가 있는데 그 인물이 로스터에 없으면 조용히 건너뛴다. */
+   보태는 인과 구조). extraKey가 있는데 그 인물이 로스터에 없으면 조용히 건너뛴다.
+   각 챕터는 해당 인물의 장소(그 챕터가 extraKey를 쓰면 조연의 장소)에 플레이어가
+   있을 때만 진행되며, 대부분의 챕터에 작은 대화 선택지를 넣어 그냥 다음으로 넘기는
+   슬라이드가 아니라 매 장면 반응을 고르는 인터랙티브 진행이 되도록 했다. */
 const STORY_ARCS=[
  { id:'lookout', npcKey:'lookout', color:'#3B4E6B', finaleIcon:'🌅', finaleLabel:'전망대의 기다림, 그 끝에서',
    chapters:[
@@ -1822,19 +1825,39 @@ const STORY_ARCS=[
      beats:[
       {text:'리조트에 도착한 지 얼마 되지 않았다. 파도 소리와 낯선 공기 속에서, 아직 이곳의 시간에 몸이 익숙해지지 않는다.', next:'…'},
       {text:d=>`문득 올려다본 전망대 위, ${NM(d.npc)}이(가) 미동도 없이 바다를 바라보고 서 있다. 그 뒷모습이 이상하게 마음에 오래 남는다.`, next:'…'},
-      {text:'묵고 있는 숙소동 사람들 사이에는, 이 바다에 관한 오래된 미신이 남아있다는 소문을 얼핏 들은 것도 같다.', next:'…'}
+      {text:'묵고 있는 숙소동 사람들 사이에는, 이 바다에 관한 오래된 미신이 남아있다는 소문을 얼핏 들은 것도 같다.', next:'…'},
+      {text:'왠지 그 뒷모습에 자꾸 눈길이 간다.', advance:false,
+       choices:dd=>[
+        {label:'다가가서 인사를 건네 본다', fx:dd=>{ d(dd.npc,dd.p,'호감',3); }, go:4},
+        {label:'방해하고 싶지 않아 조용히 지나친다', fx:dd=>{}, go:5}
+       ]},
+      {text:d=>`인기척에 놀란 ${NM(d.npc)}이(가) 살짝 고개 숙여 인사한다. "...아, 네. 안녕하세요." 낯선 사람에게도 예의는 잃지 않는다.`, next:'…', go:99},
+      {text:'말없이 발걸음을 옮긴다. 그래도 그 뒷모습은 자꾸 눈에 밟힌다.', next:'…', go:99}
      ]},
     {id:'2', title:'기다리는 사람', trig:p=>p.flags['STORY:lookout:1']&&turn>=45,
      beats:[
       {text:'마트에 들른 어느 날, 주인 도한이 지나가듯 말을 흘린다. "저 전망대 아가씨 말이야... 벌써 몇 년째 저러고 있어. 뭘 기다리는지 원."', next:'…'},
       {text:'"사람들 말로는 무슨 약속을 했다던데... 파도가 어쩌고, 뭐 그런 미신 같은 거 말이야." 도한은 대수롭지 않다는 듯 웃어넘긴다.', next:'…'},
-      {text:'문득 궁금해진다. 매일 같은 자리, 같은 시간. 대체 누구를, 무엇을 걸고 기다리고 있는 걸까.', next:'…'}
+      {text:'문득 궁금해진다. 매일 같은 자리, 같은 시간. 대체 누구를, 무엇을 걸고 기다리고 있는 걸까.', advance:false,
+       choices:[
+        {label:'"뭘 기다리는지 좀 더 아세요?"', fx:()=>{}, go:3},
+        {label:'괜히 남의 사정을 캐묻는 것 같아 그만둔다', fx:()=>{}, go:4}
+       ]},
+      {text:'"글쎄, 나도 자세힌 몰라. 여기 워낙 오래 산 사람이니까 그냥 지켜만 봤지." 도한이 어깨를 으쓱한다.', next:'…', go:99},
+      {text:'괜한 걸 물었다가 실례가 될까 싶어 화제를 돌린다.', next:'…', go:99}
      ]},
     {id:'3', title:'낡은 사진', trig:(p,npc)=>p.flags['STORY:lookout:2']&&npc.relations[p.id]&&npc.relations[p.id].호감>=25,
      beats:[
       {text:d=>`전망대 구석, 바람에 날아갈 뻔한 낡은 사진 한 장을 우연히 주웠다. 빛바랜 사진 속엔 젊은 시절의 ${NM(d.npc)}과(와), 얼굴이 닳아 흐려진 누군가가 나란히 웃고 있다.`, next:'…'},
       {text:'자세히 보니 이상하다. 파도가 발목까지 차오른 자리에 서 있는데도, 그 사람의 발밑에는 물살에 젖은 흔적도, 그림자도 남아 있지 않다.', next:'…'},
-      {text:d=>`인기척에 돌아본 ${NM(d.npc)}이(가) 사진을 발견하곤 화들짝 놀라 낚아채듯 가져간다. "...보, 보여드리려던 건 아니었어요." 귓가가 붉다.`, next:'…'}
+      {text:d=>`인기척에 돌아본 ${NM(d.npc)}이(가) 사진을 발견하곤 화들짝 놀라 낚아채듯 가져간다. "...보, 보여드리려던 건 아니었어요." 귓가가 붉다.`, next:'…'},
+      {text:'무슨 말이라도 해야 할지, 그냥 넘어가야 할지 망설여진다.', advance:false,
+       choices:dd=>[
+        {label:'"무슨 사진이었는지 물어봐도 될까요?"', fx:dd=>{ d(dd.npc,dd.p,'긴장',3); }, go:4},
+        {label:'"...못 본 걸로 할게요" 하고 넘어간다', fx:dd=>{ d(dd.npc,dd.p,'신뢰',3); }, go:5}
+       ]},
+      {text:d=>`${NM(d.npc)}이(가) 시선을 피하며 얼버무린다. "...그냥, 오래된 거예요." 더 캐물을 분위기는 아니다.`, next:'…', go:99},
+      {text:d=>`${NM(d.npc)}이(가) 안도한 듯 어깨에 힘을 뺀다. "...고마워요, 그렇게 넘어가 줘서."`, next:'…', go:99}
      ]},
     {id:'4', title:'파수꾼의 전설', extraKey:'forest',
      trig:(p,npc,extra)=>p.flags['STORY:lookout:3']&&extra&&extra.relations[p.id]&&extra.relations[p.id].신뢰>=25,
@@ -1842,13 +1865,27 @@ const STORY_ARCS=[
      beats:[
       {text:d=>`숲을 거닐다 ${NM(d.extra)}에게 지나가듯 전망대의 그 사람 이야기를 꺼내 본다. 그의 손이 잠시 멈춘다.`, next:'…'},
       {text:'"...바다의 파수꾼 이야기, 들어보셨습니까." 유안이 나직이 입을 연다. "무언가를 영영 붙들고 싶다면, 끝없는 기다림을 대가로 바칠 수 있다는... 오래된 약속이죠."', next:'…'},
-      {text:'"그 약속은 아무 때나 끝나지 않습니다. 조수가 핏빛으로 물드는 아주 드문 밤 — 그날에만, 파수꾼은 대가를 거두어 갑니다." 그가 낮게 덧붙인다. "미신이라기엔... 이 숲엔 이상한 것들이 너무 많이 있어요.', next:'…'}
+      {text:'"그 약속은 아무 때나 끝나지 않습니다. 조수가 핏빛으로 물드는 아주 드문 밤 — 그날에만, 파수꾼은 대가를 거두어 갑니다." 그가 낮게 덧붙인다. "미신이라기엔... 이 숲엔 이상한 것들이 너무 많이 있어요.', next:'…'},
+      {text:'믿기 힘든 이야기지만, 유안의 눈빛은 진지하다.', advance:false,
+       choices:dd=>[
+        {label:'"그 이야기, 믿으시는 거예요?"', fx:dd=>{ d(dd.extra,dd.p,'신뢰',4); }, go:4},
+        {label:'그냥 조용히 고개를 끄덕이며 듣는다', fx:dd=>{ d(dd.extra,dd.p,'호감',3); }, go:5}
+       ]},
+      {text:d=>`${NM(d.extra)}이(가) 옅게 웃는다. "...숲에 오래 있다 보면, 안 믿을 수가 없어지죠."`, next:'…', go:99},
+      {text:d=>`${NM(d.extra)}이(가) 조용히 고개를 끄덕이는 당신을 물끄러미 바라본다. "...쉽게 믿어주는 사람은, 드문데요."`, next:'…', go:99}
      ]},
     {id:'5', title:'밤의 이야기', trig:(p,npc)=>p.flags['STORY:lookout:4']&&npc.relations[p.id]&&npc.relations[p.id].신뢰>=40,
      beats:[
       {text:d=>`드물게 먼저 말을 건 ${NM(d.npc)}이(가), 바다를 향한 채 낮은 목소리로 입을 연다. "...파수꾼의 전설, 알게 되셨나 보네요."`, next:'…'},
       {text:'"그 사람을 삼킨 파도에게 빌었어요. 영영 기다려도 좋으니, 완전히 데려가지만은 말아 달라고." 담담한 목소리가 오히려 더 아프게 들린다.', next:'…'},
-      {text:'"조수가 핏빛으로 물드는 밤이 오면... 그때만 대가를 치를 수 있대요. 그런데 그게 언제인지는, 파수꾼 말고는 아무도 몰라요." 그 약속이 이미 몇 번의 여름을 지나쳤다는 걸, 굳이 묻지 않아도 알 것 같다.', next:'…'}
+      {text:'"조수가 핏빛으로 물드는 밤이 오면... 그때만 대가를 치를 수 있대요. 그런데 그게 언제인지는, 파수꾼 말고는 아무도 몰라요." 그 약속이 이미 몇 번의 여름을 지나쳤다는 걸, 굳이 묻지 않아도 알 것 같다.', next:'…'},
+      {text:'무슨 말을 해줘야 할지 몰라, 그저 곁에 서 있는다.', advance:false,
+       choices:dd=>[
+        {label:'"많이 힘드셨겠어요" 하고 어깨를 다독인다', fx:dd=>{ d(dd.npc,dd.p,'애정',5); }, go:4},
+        {label:'아무 말 없이 그저 옆을 지킨다', fx:dd=>{ d(dd.npc,dd.p,'신뢰',5); }, go:5}
+       ]},
+      {text:d=>`${NM(d.npc)}이(가) 놀란 듯 눈을 크게 뜨더니, 이내 눈시울이 붉어진다. "...그런 말, 처음 들어봐요."`, next:'…', go:99},
+      {text:d=>`${NM(d.npc)}이(가) 옆에 선 온기를 느끼며 조금씩 긴장을 푼다. "...아무 말 안 해줘도, 괜찮네요."`, next:'…', go:99}
      ]},
     {id:'6', title:'선택의 순간', choiceKey:'lookout', trig:(p,npc)=>p.flags['STORY:lookout:5']&&npc.relations[p.id]&&npc.relations[p.id].애정>=45,
      beats:[
@@ -1878,17 +1915,38 @@ const STORY_ARCS=[
     {id:'1', title:'닫힌 셔터', trig:()=>turn>=15,
      beats:[
       {text:'아침 산책길에 들른 마트, 평소보다 셔터가 늦게 올라가 있다. 이상하다 싶어 들여다보니 카운터 위에 반쯤 가려둔 종이가 눈에 띈다 — "폐업 정리"라는 글자가 얼핏 보인다.', next:'…'},
-      {text:d=>`인기척에 ${NM(d.npc)}이(가) 황급히 종이를 뒤집어 놓는다. "...아무것도 아니야. 뭐 필요한 거 있나?" 평소보다 목소리가 무겁다.`, next:'…'}
+      {text:d=>`인기척에 ${NM(d.npc)}이(가) 황급히 종이를 뒤집어 놓는다. "...아무것도 아니야. 뭐 필요한 거 있나?" 평소보다 목소리가 무겁다.`, next:'…'},
+      {text:'무슨 사정인지 물어봐도 될지 망설여진다.', advance:false,
+       choices:dd=>[
+        {label:'"무슨 일 있으세요?" 하고 물어본다', fx:dd=>{ d(dd.npc,dd.p,'호감',3); }, go:3},
+        {label:'더 캐묻지 않고 필요한 것만 사서 나온다', fx:dd=>{}, go:4}
+       ]},
+      {text:d=>`${NM(d.npc)}이(가) 손사래를 친다. "아니, 별거 아니야. ...신경 써줘서 고맙군."`, next:'…', go:99},
+      {text:'괜히 마음이 쓰이지만, 오늘은 그냥 넘어가기로 한다.', next:'…', go:99}
      ]},
     {id:'2', title:'40년의 무게', trig:(p,npc)=>p.flags['STORY:mart:1']&&npc.relations[p.id]&&npc.relations[p.id].호감>=20,
      beats:[
       {text:d=>`${NM(d.npc)}이(가) 진열대를 정리하다 문득 흘리듯 말한다. "이 자리, 아내랑 같이 일으킨 가게야. 벌써 40년이 다 됐군."`, next:'…'},
-      {text:'"요즘 그 대기업 편의점에서 자꾸 땅을 팔라고 연락이 와. 값은 후하게 쳐준다는데..." 그가 씁쓸하게 웃는다.', next:'…'}
+      {text:'"요즘 그 대기업 편의점에서 자꾸 땅을 팔라고 연락이 와. 값은 후하게 쳐준다는데..." 그가 씁쓸하게 웃는다.', next:'…'},
+      {text:'뭐라고 대답해야 할지 잠시 고민된다.', advance:false,
+       choices:dd=>[
+        {label:'"정말 오래됐네요, 대단하세요"', fx:dd=>{ d(dd.npc,dd.p,'호감',4); }, go:3},
+        {label:'"힘드시면 파실 수도 있는 거죠" 담담하게 말한다', fx:dd=>{ d(dd.npc,dd.p,'신뢰',4); }, go:4}
+       ]},
+      {text:d=>`${NM(d.npc)}이(가) 쑥스러운 듯 헛기침을 한다. "...그런가. 오래되긴 했지."`, next:'…', go:99},
+      {text:d=>`${NM(d.npc)}이(가) 잠시 멈칫하더니, 의외로 담담한 그 말에 마음이 편해진 듯하다. "...그렇게 말해주니, 오히려 홀가분하군."`, next:'…', go:99}
      ]},
     {id:'3', title:'자식들의 성화', trig:(p,npc)=>p.flags['STORY:mart:2']&&npc.relations[p.id]&&npc.relations[p.id].신뢰>=30,
      beats:[
       {text:d=>`"자식들은 이제 그만 정리하고 도시로 올라오라고 성화야." ${NM(d.npc)}이(가) 낡은 계산대를 손끝으로 쓸어본다.`, next:'…'},
-      {text:'"근데... 여기 서 있으면, 아직도 그 사람 목소리가 들리는 것 같아서 말이지." 그는 애써 헛기침을 하며 말끝을 흐린다.', next:'…'}
+      {text:'"근데... 여기 서 있으면, 아직도 그 사람 목소리가 들리는 것 같아서 말이지." 그는 애써 헛기침을 하며 말끝을 흐린다.', next:'…'},
+      {text:'도한의 표정이 복잡해 보인다.', advance:false,
+       choices:dd=>[
+        {label:'"아내분 생각이 많이 나시나 봐요"', fx:dd=>{ d(dd.npc,dd.p,'애정',4); }, go:3},
+        {label:'말없이 그의 이야기를 끝까지 들어준다', fx:dd=>{ d(dd.npc,dd.p,'신뢰',4); }, go:4}
+       ]},
+      {text:d=>`${NM(d.npc)}이(가) 순간 말을 잃었다가, 힘없이 웃는다. "...티가 많이 나나."`, next:'…', go:99},
+      {text:d=>`${NM(d.npc)}이(가) 묵묵히 들어주는 것만으로 위안이 된 듯, 나직이 한숨을 내쉰다. "...들어줘서 고맙군."`, next:'…', go:99}
      ]},
     {id:'4', title:'갈림길에서', choiceKey:'mart', trig:(p,npc)=>p.flags['STORY:mart:3']&&npc.relations[p.id]&&npc.relations[p.id].애정>=35,
      beats:[
@@ -1913,16 +1971,37 @@ const STORY_ARCS=[
     {id:'1', title:'서툰 손', trig:()=>turn>=15,
      beats:[
       {text:d=>`농장에 들르니 ${NM(d.npc)}이(가) 물이 새는 관개 호스를 붙들고 낑낑대고 있다. 서툰 손길이지만 포기하지 않는다.`, next:'…'},
-      {text:'"아, 안녕하세요! ...이거 왜 자꾸 새는지 모르겠어요." 그녀가 머쓱하게 웃는다.', next:'…'}
+      {text:'"아, 안녕하세요! ...이거 왜 자꾸 새는지 모르겠어요." 그녀가 머쓱하게 웃는다.', next:'…'},
+      {text:'도와줄지 그냥 지켜볼지 잠시 고민된다.', advance:false,
+       choices:dd=>[
+        {label:'"제가 좀 도와드릴까요?"', fx:dd=>{ d(dd.npc,dd.p,'호감',4); grow(dd.p,'체격',0.4); }, go:3},
+        {label:'방해되지 않게 지켜만 본다', fx:dd=>{}, go:4}
+       ]},
+      {text:d=>`${NM(d.npc)}이(가) 반색한다. "정말요? 완전 좋아요, 손이 부족했거든요!" 둘이 매달리니 금세 호스가 고쳐진다.`, next:'…', go:99},
+      {text:d=>`한참을 씨름한 끝에 ${NM(d.npc)}이(가) 결국 혼자 해낸다. "됐다!" 뿌듯한 얼굴이다.`, next:'…', go:99}
      ]},
     {id:'2', title:'할머니의 노트', trig:(p,npc)=>p.flags['STORY:farm:1']&&npc.relations[p.id]&&npc.relations[p.id].호감>=20,
      beats:[
       {text:d=>`${NM(d.npc)}이(가) 낡은 노트 한 권을 조심스레 꺼내 보여준다. "할머니가 남기신 농사 노트예요. 근데 글씨가 너무 흐려져서..."`, next:'…'},
-      {text:'"솔직히 무서워요. 제가 망치면, 할머니 할아버지가 평생 일군 밭이..." 그녀의 목소리가 잠시 흔들린다.', next:'…'}
+      {text:'"솔직히 무서워요. 제가 망치면, 할머니 할아버지가 평생 일군 밭이..." 그녀의 목소리가 잠시 흔들린다.', next:'…'},
+      {text:'무슨 말을 해줘야 할지 고민된다.', advance:false,
+       choices:dd=>[
+        {label:'"같이 읽어볼까요? 둘이 보면 더 낫지 않을까요"', fx:dd=>{ d(dd.npc,dd.p,'신뢰',5); }, go:3},
+        {label:'"천천히 하면 돼요, 조급해하지 말아요"', fx:dd=>{ d(dd.npc,dd.p,'애정',4); }, go:4}
+       ]},
+      {text:d=>`${NM(d.npc)}이(가) 눈을 반짝인다. "그래 줄래요? 왠지 든든하네요."`, next:'…', go:99},
+      {text:d=>`${NM(d.npc)}이(가) 긴장이 풀린 듯 숨을 내쉰다. "...그 말, 오늘 하루 종일 듣고 싶었어요."`, next:'…', go:99}
      ]},
     {id:'3', title:'장마 걱정', trig:(p,npc)=>p.flags['STORY:farm:2']&&npc.relations[p.id]&&npc.relations[p.id].신뢰>=30,
      beats:[
-      {text:d=>`${NM(d.npc)}이(가) 하늘을 올려다보며 걱정스러운 얼굴을 한다. "일기예보에서 곧 장마가 온다던데, 수확 전에 밭이 잠기면 어떡하죠..."`, next:'…'}
+      {text:d=>`${NM(d.npc)}이(가) 하늘을 올려다보며 걱정스러운 얼굴을 한다. "일기예보에서 곧 장마가 온다던데, 수확 전에 밭이 잠기면 어떡하죠..."`, next:'…'},
+      {text:'뭐라고 답해줘야 할지 고민된다.', advance:false,
+       choices:dd=>[
+        {label:'"미리 배수로부터 점검해볼까요?"', fx:dd=>{ d(dd.npc,dd.p,'신뢰',4); }, go:2},
+        {label:'"어떻게든 될 거예요" 하고 다독인다', fx:dd=>{ d(dd.npc,dd.p,'애정',4); }, go:3}
+       ]},
+      {text:d=>`${NM(d.npc)}이(가) 눈이 커진다. "그거 좋은 생각이네요! 같이 봐줄래요?"`, next:'…', go:99},
+      {text:d=>`${NM(d.npc)}이(가) 옅게 웃는다. "...그렇게 말해주니까 좀 낫네요, 고마워요."`, next:'…', go:99}
      ]},
     {id:'4', title:'폭풍 전야', choiceKey:'farm', trig:(p,npc)=>p.flags['STORY:farm:3']&&npc.relations[p.id]&&npc.relations[p.id].애정>=35,
      beats:[
@@ -1946,17 +2025,37 @@ const STORY_ARCS=[
     {id:'1', title:'화려한 가면', trig:()=>turn>=15,
      beats:[
       {text:d=>`화려한 조명 아래, ${NM(d.npc)}의 무대는 오늘도 시선을 사로잡는다. 그러나 무대 뒤로 돌아온 얼굴에서, 아주 잠깐 지친 기색이 스친다.`, next:'…'},
-      {text:'인기척을 느낀 그녀가 순식간에 다시 여유로운 미소를 되찾는다. "어머, 봤어? 오늘 컨디션 죽여주지?"', next:'…'}
+      {text:'인기척을 느낀 그녀가 순식간에 다시 여유로운 미소를 되찾는다. "어머, 봤어? 오늘 컨디션 죽여주지?"', next:'…'},
+      {text:'모른 척할지, 방금 본 걸 말할지 잠시 고민된다.', advance:false,
+       choices:dd=>[
+        {label:'"방금 좀 지쳐 보였는데, 괜찮아?"', fx:dd=>{ d(dd.npc,dd.p,'신뢰',3); }, go:3},
+        {label:'못 본 척 장단을 맞춰준다', fx:dd=>{ d(dd.npc,dd.p,'호감',4); }, go:4}
+       ]},
+      {text:d=>`${NM(d.npc)}의 미소가 살짝 굳는다. "...무슨 소리야, 나 완전 쌩쌩한데?" 대답이 너무 빠르다.`, next:'…', go:99},
+      {text:d=>`${NM(d.npc)}이(가) 씩 웃는다. "그치? 눈치는 있네." 장단을 맞춰주는 게 편한 모양이다.`, next:'…', go:99}
      ]},
     {id:'2', title:'농담 뒤에', trig:(p,npc)=>p.flags['STORY:strip:1']&&npc.relations[p.id]&&npc.relations[p.id].호감>=20,
      beats:[
       {text:'무심코 던진 개인적인 질문에, 리라가 장난스러운 농담으로 슬쩍 화제를 돌린다. 능숙하게, 마치 연습이라도 한 것처럼.', next:'…'},
-      {text:'그 매끄러운 회피가 오히려 마음에 걸린다.', next:'…'}
+      {text:'그 매끄러운 회피가 오히려 마음에 걸린다.', advance:false,
+       choices:dd=>[
+        {label:'웃어넘기지 않고 한 번 더 진지하게 물어본다', fx:dd=>{ d(dd.npc,dd.p,'긴장',4); }, go:2},
+        {label:'분위기를 살려 함께 웃어넘긴다', fx:dd=>{ d(dd.npc,dd.p,'호감',4); }, go:3}
+       ]},
+      {text:d=>`${NM(d.npc)}의 웃음이 한 박자 늦게 따라온다. "...끈질기네, 자기." 살짝 당황한 기색이 스친다.`, next:'…', go:99},
+      {text:d=>`${NM(d.npc)}이(가) 만족스러운 듯 웃는다. "그렇지, 그렇게 가볍게 노는 게 좋은 거야."`, next:'…', go:99}
      ]},
     {id:'3', title:'오래된 상처', trig:(p,npc)=>p.flags['STORY:strip:2']&&npc.relations[p.id]&&npc.relations[p.id].신뢰>=30,
      beats:[
       {text:'드물게 취기가 오른 리라가 평소와 다른 목소리로 입을 연다. "예전에... \'진짜 나\'를 좋아한다던 놈이 있었어."', next:'…'},
-      {text:'"근데 화장 지운 얼굴 보여주니까 바로 발 빼더라. 그 뒤로는... 그냥 무대 위 나로만 사는 게 편해." 씁쓸한 웃음.', next:'…'}
+      {text:'"근데 화장 지운 얼굴 보여주니까 바로 발 빼더라. 그 뒤로는... 그냥 무대 위 나로만 사는 게 편해." 씁쓸한 웃음.', next:'…'},
+      {text:'뭐라고 반응해야 할지 조심스럽다.', advance:false,
+       choices:dd=>[
+        {label:'"그 사람이 잘못한 거야, 네 잘못이 아니라"', fx:dd=>{ d(dd.npc,dd.p,'애정',5); }, go:3},
+        {label:'아무 말 없이 술 한 잔을 채워준다', fx:dd=>{ d(dd.npc,dd.p,'신뢰',5); }, go:4}
+       ]},
+      {text:d=>`${NM(d.npc)}이(가) 순간 멍하니 있다가, 픽 웃는다. "...그런 말 해주는 사람, 오랜만이네."`, next:'…', go:99},
+      {text:d=>`${NM(d.npc)}이(가) 잔을 받으며 옅게 웃는다. "...말 안 해도 되는 게, 가끔은 제일 편해."`, next:'…', go:99}
      ]},
     {id:'4', title:'무대 뒤에서', choiceKey:'strip', trig:(p,npc)=>p.flags['STORY:strip:3']&&npc.relations[p.id]&&npc.relations[p.id].애정>=35,
      beats:[
@@ -1983,6 +2082,8 @@ function runStoryArc(p,arc){
     if(p.flags[key])continue;
     const extra=ch.extraKey?npcs.find(n=>n.fixedKey===ch.extraKey):null;
     if(ch.skipIf){ let skip=false; try{skip=ch.skipIf(p,npc,extra);}catch(e){} if(skip){ p.flags[key]=turn; continue; } }
+    const homeOwner=ch.extraKey?extra:npc;
+    if(homeOwner&&p.space!==homeOwner.home)continue;   /* 그 인물의 장소에 있을 때만 이야기가 진행된다 */
     let ok=false; try{ok=ch.trig(p,npc,extra);}catch(e){}
     if(!ok)continue;
     p.flags[key]=turn;
