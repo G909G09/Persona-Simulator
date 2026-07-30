@@ -153,6 +153,12 @@ h2.sec:first-child{margin-top:0}
 .room .rname{font-size:9px}
 .lg q::before{content:'「'} .lg q::after{content:'」'}
 .lg .rx{color:var(--muted); font-size:11.5px}
+/* ── 이야기(1인칭 서사) 패널: 당신에게 직접 벌어지는 일만, 산문 형태로 ── */
+#story{flex:1; overflow-y:auto; padding:8px 18px 18px; display:flex; flex-direction:column; gap:12px; font-size:14.5px; line-height:1.8}
+#story .lg{padding:0; border-bottom:none; margin:0}
+#story .lg.move{color:var(--ink); font-size:13px; letter-spacing:.04em; color:var(--muted); text-align:center}
+#story .lg.event{background:var(--soft); color:var(--ink); border:none; border-left:3px solid #B23A6B; padding:10px 12px; border-radius:2px; font-weight:500; margin:0}
+#story .lgDiv{margin:10px 0 2px}
 
 /* ── 플레이어 패널 ────── */
 #playerPanel{border-bottom:2px solid var(--wall); padding:12px 14px; background:var(--paper)}
@@ -247,7 +253,7 @@ h2.sec:first-child{margin-top:0}
   #rightCol{max-height:none}
   #detail{max-height:none;overflow:visible}
   /* 로그 잘림 수정: flex 압축·내부 스크롤 해제, 컬럼이 단일 스크롤러가 됨 */
-  #log{flex:none;overflow:visible;padding-bottom:80px}
+  #log,#story{flex:none;overflow:visible;padding-bottom:80px}
   /* 행동 패널 → 하단 시트: 로그가 화면을 다 쓰고, 버튼은 ⚡로 항상 한 번에 접근 */
   #actFab{display:flex}
   #playerPanel{position:fixed;left:0;right:0;bottom:calc(52px + env(safe-area-inset-bottom));
@@ -271,6 +277,7 @@ h2.sec:first-child{margin-top:0}
   button,.chip{min-height:36px}
   .token{width:34px;height:34px}
   #log{font-size:13px}
+  #story{font-size:14px}
 }
 </style>
 </head>
@@ -359,11 +366,12 @@ h2.sec:first-child{margin-top:0}
     <div id="floorplan"></div>
   </div>
 
-  <!-- 우: 플레이어 + 상세 + 로그 -->
+  <!-- 우: 플레이어 + 상세 + 이야기(1인칭) / 전체 로그(백그라운드) -->
   <div class="col" id="rightCol">
     <div id="playerPanel"></div>
-    <div id="logHead">관찰 로그<span id="logFilterTag"></span><button id="btnClearLog">비우기</button></div>
-    <div id="log"></div>
+    <div id="logHead"><span id="logHeadLabel">이야기</span><span id="logFilterTag"></span><button id="btnLogMode" title="당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환">전체 로그</button><button id="btnClearLog">비우기</button></div>
+    <div id="story"></div>
+    <div id="log" style="display:none"></div>
   </div>
 </div>
 
@@ -972,7 +980,7 @@ const CFG_SCHEMA=[
  {k:'fet_bondage', t:'toggle', l:'R18+ 구속 요소',   d:'등급 3에서 밀실·창고 등에서 구속·조교 플레이 이벤트를 활성화합니다.'},
  {k:'fet_exhibition',t:'toggle', l:'R18+ 노출증 요소',d:'등급 3에서 공공장소 노출·관음 이벤트를 활성화합니다.'},
  {g:'1인칭 시점'},
- {k:'immersion', t:'toggle', l:'1인칭 몰입 로그',   d:'켜면 당신과 무관하거나 당신이 없는 곳에서 벌어지는 사소한 행동 묘사는 로그에서 생략되고, 당신의 행동·주변에서 벌어지는 일·주요 사건(이정표·퀘스트·스토리)만 남습니다.'}
+ {k:'immersion', t:'toggle', l:'시작 시 이야기 모드',   d:'켜면 시작할 때 우측 패널이 [이야기](당신에게 직접 벌어지는 일만, 인터랙티브 스토리 형식) 모드로 열립니다. 끄면 [전체 로그](모든 인물의 행동을 기록하는 관찰용 로그)로 시작합니다. 플레이 중에는 로그 헤더의 전환 버튼으로 언제든 바꿀 수 있습니다.'}
 ];
 
 function openConsole(){
@@ -1036,8 +1044,10 @@ function syncSEBtn(){
   if(CFG.se)seInit();
 }
 function trimLog(){
-  const L=document.getElementById('log');
-  if(L)while(L.children.length>CFG.logMax)L.removeChild(L.firstChild);
+  ['log','story'].forEach(id=>{
+    const L=document.getElementById(id);
+    if(L)while(L.children.length>CFG.logMax)L.removeChild(L.firstChild);
+  });
 }
 
 /* ══ 신체 민감도 ══ */
@@ -2475,7 +2485,7 @@ function fireScene(S,a,b){
   else if(SCENE3TXT[S.id])txt=SCENE3TXT[S.id](a,b);
   else txt=`— 이벤트 ${S.id} 발동 (${NM(a)}${b?' · '+NM(b):''}) · 텍스트 미작성 —`;
   /* R18급(s3*) 장면이거나 플레이어가 관여하는 장면만 '중요 사건'으로 남기고,
-     그 외 타인들끼리의 사소한 감정선 장면은 1인칭 몰입 로그에서 걸러지도록 급을 낮춘다 */
+     그 외 타인들끼리의 사소한 감정선 장면은 이야기 패널에는 나오지 않고 전체 로그에만 쌓이도록 급을 낮춘다 */
   const major=S.r>=3||a.isPlayer||(b&&b.isPlayer);
   log(`◆ ${txt}`,major?'event':'',a.space);
 }
@@ -2646,19 +2656,22 @@ function resolveConfession(accept){
 const $=q=>document.querySelector(q);
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 let logFilter=null;
-/* ── 1인칭 몰입 로그: '중요 사건'(event)이 아닌 잡담·이동·행동 묘사는
-   플레이어 본인이 관여하거나(이름 포함) 플레이어와 같은 공간일 때만 남긴다 ── */
-function logImportant(html,cls,sp){
-  if(!CFG.immersion||cls==='event')return true;
+let storyMode=CFG.immersion;   /* true = 이야기(1인칭 직접 상황만) 패널 표시, false = 전체 로그(백그라운드) 표시. #btnLogMode로 언제든 전환 */
+/* ── 이야기 모드: '중요 사건'(event)이거나, 텍스트에 플레이어 본인이 직접 등장하는
+   상황만 "당신에게 직접 벌어지는 일"로 보아 #story에 인터랙티브 스토리 형식으로 남긴다.
+   #log(전체 로그)는 필터 없이 언제나 모든 것을 기록하며 화면 뒤에서 계속 작동한다.
+   ※ 플레이어 이름이 '하늘'·'새벽' 등 흔한 낱말인 경우가 많아, 이름 단순 포함 여부만
+   보면 "하늘을 보며"처럼 무관한 문장까지 오탐한다 — 실제로 인물을 가리킬 때만 쓰이는
+   표기(NM() 스타일 래핑, '이름이(가)' 서술, '이름 → 이동') 패턴으로 좁혀 확인한다. */
+function isDirectToPlayer(html,cls,sp){
+  if(cls==='event')return true;
   const p=P();
-  if(!p)return true;                                    /* 순수 관찰(플레이어 없음)이면 필터 없음 */
-  if(sp&&sp===p.space)return true;                       /* 지금 있는 공간에서 벌어지는 일은 보인다 */
-  return html.indexOf(p.name)!==-1;                      /* 텍스트에 플레이어 본인이 등장하면 유지 */
+  if(!p)return false;
+  return html.indexOf(NM(p))!==-1 || html.indexOf(p.name+'이(가)')!==-1 || html.indexOf(p.name+' →')!==-1;
 }
-function log(html,cls='',sp=null){
-  if(!logImportant(html,cls,sp))return;
-  const L0=$('#log');
-  if(L0 && window._llt!==turn){ window._llt=turn;
+function appendEntry(id,html,cls,sp,trackerKey,narrative){
+  const L0=document.getElementById(id); if(!L0)return;
+  if(window[trackerKey]!==turn){ window[trackerKey]=turn;
     const dv=document.createElement('div'); dv.className='lgDiv';
     dv.textContent=`── ${timeStr()} · ${slot()} ──`;
     L0.appendChild(dv); }
@@ -2666,14 +2679,30 @@ function log(html,cls='',sp=null){
   el.className='lg'+(cls?' '+cls:'');
   if(sp)el.dataset.space=sp;
   if(logFilter&&sp&&sp!==logFilter)el.style.display='none';
-  const _ic=cls.includes('event')?'✦ ':cls.includes('move')?'🚶 ':'';
-  el.innerHTML=`<span class="ts">T${String(turn).padStart(3,'0')}</span>${_ic}${html}`;
-  const L=$('#log'); L.appendChild(el);
-  while(L.children.length>CFG.logMax)L.removeChild(L.firstChild);
+  if(narrative){
+    el.innerHTML=html;   /* 이야기 패널: 시각 배지·이동 아이콘 없이 문장 자체로 흐르게 */
+  }else{
+    const _ic=cls.includes('event')?'✦ ':cls.includes('move')?'🚶 ':'';
+    el.innerHTML=`<span class="ts">T${String(turn).padStart(3,'0')}</span>${_ic}${html}`;
+  }
+  L0.appendChild(el);
+  while(L0.children.length>CFG.logMax)L0.removeChild(L0.firstChild);
+}
+function log(html,cls='',sp=null){
+  appendEntry('log',html,cls,sp,'_lltLog',false);            /* 전체 로그 — 항상 기록(백그라운드) */
+  if(isDirectToPlayer(html,cls,sp))appendEntry('story',html,cls,sp,'_lltStory',true);  /* 이야기 — 직접 상황만 */
+  scrollLog();
+}
+function setStoryMode(v){
+  storyMode=v;
+  $('#story').style.display=v?'flex':'none';
+  $('#log').style.display=v?'none':'flex';
+  $('#logHeadLabel').textContent=v?'이야기':'전체 로그';
+  $('#btnLogMode').textContent=v?'전체 로그':'이야기로';
   scrollLog();
 }
 function scrollLog(){
-  const L=$('#log');
+  const L=storyMode?$('#story'):$('#log');
   if(window.innerWidth<=900){
     const rc=document.getElementById('rightCol');
     /* 사용자가 위쪽(플레이어 패널 등)을 보고 있으면 위치 유지, 하단 근처면 따라감 */
@@ -2697,7 +2726,7 @@ function buildMap(){
 function toggleLogFilter(spId){
   logFilter=(logFilter===spId?null:spId);
   document.querySelectorAll('.room').forEach(r=>r.classList.toggle('watch',r.dataset.space===logFilter));
-  document.querySelectorAll('#log .lg').forEach(el=>{
+  document.querySelectorAll('#log .lg, #story .lg').forEach(el=>{
     el.style.display=(!logFilter||!el.dataset.space||el.dataset.space===logFilter)?'':'none';
   });
   const tag=$('#logFilterTag');
@@ -3715,7 +3744,8 @@ function setSliders(vals){
 const SAVE_KEY='personaWatchSave';
 function serialize(){
   return JSON.stringify({v:11, turn, RATING, uid, colorIdx, playerId, npcs, sceneCD, cfg:CFG,
-    logHTML:[...document.querySelectorAll('#log .lg')].slice(-150).map(e=>e.outerHTML)});
+    logHTML:[...document.querySelectorAll('#log .lg')].slice(-150).map(e=>e.outerHTML),
+    storyHTML:[...document.querySelectorAll('#story .lg')].slice(-150).map(e=>e.outerHTML)});
 }
 function applySave(data){
   if(!data||!Array.isArray(data.npcs))throw new Error('형식이 올바르지 않은 저장 파일');
@@ -3732,7 +3762,14 @@ function applySave(data){
   $('#rateSel').value=String(RATING);
   document.querySelectorAll('.room').forEach(r=>r.classList.remove('watch'));
   $('#logFilterTag').textContent='';
-  const L=$('#log'); L.innerHTML=(data.logHTML||[]).join(''); scrollLog();
+  $('#log').innerHTML=(data.logHTML||[]).join('');
+  /* 구버전 저장 파일 등 storyHTML이 없으면 전체 로그에서 '직접 상황'만 골라 이야기 패널을 복원 */
+  const p0=P();
+  $('#story').innerHTML=(data.storyHTML||(data.logHTML||[]).filter(h=>{
+    const cls=(h.match(/class="lg( ([^"]*))?"/)||[])[2]||'';
+    return cls.includes('event')||(p0&&(h.indexOf(NM(p0))!==-1||h.indexOf(p0.name+'이(가)')!==-1||h.indexOf(p0.name+' →')!==-1));
+  })).join('');
+  setStoryMode(storyMode); scrollLog();
   stopPlay(); render();
   log('저장 데이터를 불러왔다 (T'+turn+')','event');
 }
@@ -3778,7 +3815,8 @@ $('#btnConsole').onclick=()=>openConsole();
 $('#btnStep').onclick=()=>{stopPlay(); step();};
 $('#btnPlay').onclick=()=>{timer?stopPlay():startPlay();};
 $('#speedSel').onchange=()=>{if(timer){stopPlay();startPlay();}};
-$('#btnClearLog').onclick=()=>$('#log').innerHTML='';
+$('#btnClearLog').onclick=()=>{ $('#log').innerHTML=''; $('#story').innerHTML=''; };
+$('#btnLogMode').onclick=()=>setStoryMode(!storyMode);
 $('#rateSel').onchange=e=>{
   RATING=+e.target.value;
   const names=['전체이용가','15세','성인','R18'];
@@ -4125,6 +4163,7 @@ window.addEventListener('resize',syncMobile);
 
 $('#cR18').checked=CFG.defR18; $('#cCor').checked=CFG.defCor;
 syncSEBtn();
+setStoryMode(storyMode);
 render();
 syncMobile();
 document.getElementById('bootBanner').style.display='none';
