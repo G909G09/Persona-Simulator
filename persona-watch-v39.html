@@ -492,7 +492,9 @@ Object.assign(I18N.ko,{
  'btn.randStat':'스탯 랜덤화','btn.randRel':'관계 랜덤화','btn.calmAll':'욕구·상태 초기화','btn.r18allToggle':'전원 R18 토글','btn.purifyAll':'전원 타락 0',
  'modal.repMatrixTitle':'📊 평판 매트릭스','modal.repMatrixSub':'(행→열 호감)',
  'modal.busTitle':'🚌 셔틀버스 (5코인)','modal.bikeTitle':'🚲 자전거로 이동',
- 'modal.busDesc':'노선을 따라 원하는 곳까지 한 번에. 낯선 승객과 밀착될 수도 있다...','modal.bikeDesc':'페달을 밟아 어디든 빠르고 안전하게.'
+ 'modal.busDesc':'노선을 따라 원하는 곳까지 한 번에. 낯선 승객과 밀착될 수도 있다...','modal.bikeDesc':'페달을 밟아 어디든 빠르고 안전하게.',
+ 'err.badSaveFile':'형식이 올바르지 않은 저장 파일','alert.saveBlocked':'이 환경에서는 브라우저 저장이 차단되어 있습니다.\n⬇ 버튼으로 파일 내보내기를 사용해 주세요.',
+ 'alert.noSaveData':'브라우저 저장 데이터가 없습니다.','alert.loadFailed':'불러오기 실패: ','alert.fileReadFailed':'파일을 읽을 수 없습니다: ','btn.delete':'삭제'
 });
 Object.assign(I18N.en,{
  'tab.stat':'Stats','tab.rel':'Relations','btn.pairEditDone':'Done Adjusting','btn.pairEdit':'Adjust Relation ✎',
@@ -525,7 +527,9 @@ Object.assign(I18N.en,{
  'btn.randStat':'Randomize Stats','btn.randRel':'Randomize Relations','btn.calmAll':'Reset Needs/Status','btn.r18allToggle':'Toggle R18 for All','btn.purifyAll':'Zero Corruption for All',
  'modal.repMatrixTitle':'📊 Reputation Matrix','modal.repMatrixSub':'(row → column liking)',
  'modal.busTitle':'🚌 Shuttle Bus (5 coins)','modal.bikeTitle':'🚲 Travel by Bike',
- 'modal.busDesc':'Ride the route straight to your destination in one go. You might end up pressed against a stranger...','modal.bikeDesc':'Pedal your way anywhere, fast and safe.'
+ 'modal.busDesc':'Ride the route straight to your destination in one go. You might end up pressed against a stranger...','modal.bikeDesc':'Pedal your way anywhere, fast and safe.',
+ 'err.badSaveFile':'Malformed save file','alert.saveBlocked':'Browser storage is blocked in this environment.\nPlease use the ⬇ Export to File button instead.',
+ 'alert.noSaveData':'No browser save data found.','alert.loadFailed':'Load failed: ','alert.fileReadFailed':'Could not read file: ','btn.delete':'Delete'
 });
 Object.assign(I18N.en,{
  'title.sub':'Persona Simulation Prototype v39',
@@ -3381,7 +3385,7 @@ function renderRoster(){
     const it=document.createElement('div');
     const isSel=sel.includes(n.id);
     it.className='rosterItem'+(isSel?' sel':'');
-    it.innerHTML=`<span class="mini" style="${isSel?'':`border-color:${n.color};color:${n.color}`}">${n.name[0]}</span><span class="nm">${n.fixed?'<span style="color:#C9A227">✦</span>':''}${esc(n.name)}${n.isPlayer?' <small style="opacity:.5">P</small>':''}</span><span class="at">${lbl('arch',n.arch)}·${lbl('form',n.form)}</span><button class="del" title="삭제">×</button>`;
+    it.innerHTML=`<span class="mini" style="${isSel?'':`border-color:${n.color};color:${n.color}`}">${n.name[0]}</span><span class="nm">${n.fixed?'<span style="color:#C9A227">✦</span>':''}${esc(n.name)}${n.isPlayer?' <small style="opacity:.5">P</small>':''}</span><span class="at">${lbl('arch',n.arch)}·${lbl('form',n.form)}</span><button class="del" title="${tr('btn.delete')}">×</button>`;
     it.onclick=e=>{if(e.target.className==='del'){removeNpc(n.id)}else select(n.id)};
     R.appendChild(it);
   }
@@ -4357,10 +4361,10 @@ function buildForm(){
     getCLook=wireLookEditor('c',randomLook());
   };
   $('#btnAdd').onclick=()=>{
-    if(npcs.length>=20){alert('최대 20명까지 가능합니다.');return;}
+    if(npcs.length>=20){alert(tr('alert.max20'));return;}
     let nm=$('#cName').value.trim();
     if(!nm){const used=npcs.map(n=>n.name); nm=NAMEPOOL.find(x=>!used.includes(x))||('N'+uid);}
-    if(npcs.some(n=>n.name===nm)){alert('같은 이름이 이미 있습니다.');return;}
+    if(npcs.some(n=>n.name===nm)){alert(tr('alert.dupName'));return;}
     const axes=[...document.querySelectorAll('#axSliders input')].map(i=>+i.value);
     const form=$('#cForm').value;
     const mix=form==='혼합'?{base:$('#cMixBase').value,trig:$('#cMixTrig').value}:null;
@@ -4387,7 +4391,7 @@ function serialize(){
     storyHTML:[...document.querySelectorAll('#story .lg')].slice(-150).map(e=>e.outerHTML)});
 }
 function applySave(data){
-  if(!data||!Array.isArray(data.npcs))throw new Error('형식이 올바르지 않은 저장 파일');
+  if(!data||!Array.isArray(data.npcs))throw new Error(tr('err.badSaveFile'));
   npcs=data.npcs; turn=data.turn||0; RATING=data.RATING||0;
   npcs.forEach(ensureSens);
   npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); equipOutfit(n,n.outfit); n.asleep=0; });
@@ -4414,14 +4418,14 @@ function applySave(data){
 }
 function saveLocal(silent){
   try{ localStorage.setItem(SAVE_KEY, serialize()); if(!silent)log('브라우저에 저장했다 💾 (12턴마다 자동 저장됨)','event'); return true; }
-  catch(e){ if(!silent)alert('이 환경에서는 브라우저 저장이 차단되어 있습니다.\n⬇ 버튼으로 파일 내보내기를 사용해 주세요.'); return false; }
+  catch(e){ if(!silent)alert(tr('alert.saveBlocked')); return false; }
 }
 function loadLocal(){
   try{
     const s=localStorage.getItem(SAVE_KEY);
-    if(!s){alert('브라우저 저장 데이터가 없습니다.');return;}
+    if(!s){alert(tr('alert.noSaveData'));return;}
     applySave(JSON.parse(s));
-  }catch(e){ alert('불러오기 실패: '+e.message); }
+  }catch(e){ alert(tr('alert.loadFailed')+e.message); }
 }
 function exportFile(){
   const data=serialize();
@@ -4443,7 +4447,7 @@ $('#btnImport').onclick=()=>$('#fileLoad').click();
 $('#fileLoad').onchange=e=>{
   const f=e.target.files[0]; if(!f)return;
   const r=new FileReader();
-  r.onload=()=>{ try{ applySave(JSON.parse(r.result)); }catch(err){ alert('파일을 읽을 수 없습니다: '+err.message); } };
+  r.onload=()=>{ try{ applySave(JSON.parse(r.result)); }catch(err){ alert(tr('alert.fileReadFailed')+err.message); } };
   r.readAsText(f);
   e.target.value='';
 };
