@@ -485,7 +485,7 @@ Object.assign(I18N.ko,{
  'sec.underwear':'속옷 🩲','sec.wardrobe':'옷장 👗','label.needWardrobe':'👗 옷을 갈아입으려면 옷장이 있는 곳(개인실·트레이닝룸)으로 가야 한다',
  'btn.sleep':'잠자기 💤','btn.autoFaint':'자동 기절','btn.reputation':'평판 📊','btn.batchAdmin':'⚙ 일괄',
  'sec.useItem':'아이템 사용 🧪','sec.solo':'혼자 하기','btn.doNothing':'아무것도 하지 않고 지켜본다 ⏭','label.partnerTier':'상대 반응단계',
- 'label.partnerLeading':'상대가 주도하고 있다.','label.choosePartner':'상대 선택',
+ 'label.partnerLeading':'상대가 주도하고 있다.','label.choosePartner':'상대 선택','label.proficiency':'숙련도',
  'btn.close':'닫기 ✕','btn.restoreDefaults':'기본값 복원','btn.applyClose':'적용하고 닫기','confirm.resetCfg':'모든 설정을 기본값으로 되돌릴까요?',
  'modal.sleepPrompt':'몇 턴 동안 잘까? 자는 동안 턴이 자동으로 흐르고, 말을 걸어도 듣지 못한다.',
  'modal.sleepShort':'짧게 (3턴)','modal.sleepNormal':'보통 (5턴)','modal.sleepDeep':'깊이 (8턴)',
@@ -522,7 +522,7 @@ Object.assign(I18N.en,{
  'sec.underwear':'Underwear 🩲','sec.wardrobe':'Wardrobe 👗','label.needWardrobe':'👗 You need to be somewhere with a wardrobe (private room / gym) to change clothes',
  'btn.sleep':'Sleep 💤','btn.autoFaint':'Auto-Faint','btn.reputation':'Reputation 📊','btn.batchAdmin':'⚙ Batch',
  'sec.useItem':'Use Item 🧪','sec.solo':'Solo Actions','btn.doNothing':'Do nothing and watch ⏭','label.partnerTier':'Partner tier',
- 'label.partnerLeading':'Your partner is taking the lead.','label.choosePartner':'Choose Partner',
+ 'label.partnerLeading':'Your partner is taking the lead.','label.choosePartner':'Choose Partner','label.proficiency':'Proficiency',
  'btn.close':'Close ✕','btn.restoreDefaults':'Restore Defaults','btn.applyClose':'Apply & Close','confirm.resetCfg':'Reset all settings to their defaults?',
  'modal.sleepPrompt':'How many turns should you sleep? Turns pass automatically while asleep, and you won\'t hear anyone talking to you.',
  'modal.sleepShort':'Short (3 turns)','modal.sleepNormal':'Normal (5 turns)','modal.sleepDeep':'Deep (8 turns)',
@@ -2302,6 +2302,8 @@ const DAILY_EVENTS=[
  {cond:()=>true, needMate:true, txt:(p,m)=>`계단에서 발을 헛디딜 뻔했는데, 지나가던 ${NM(m)}이(가) 재빨리 ${NM(p)}의 손을 잡아 주었다.`, fx:(p,m)=>{d(m,p,'호감',3);d(p,m,'호감',2);}},
  {cond:()=>WEATHER==='비', needMate:true, txt:(p,m)=>`우산이 없어 난감해하던 ${NM(p)}에게, ${NM(m)}이(가) 슬쩍 우산을 씌워 준다.`, fx:(p,m)=>{d(m,p,'호감',4);d(p,m,'호감',3);}},
  {cond:p=>p.space==='mart', needMate:true, txt:(p,m)=>`짐이 많아 보이자 ${NM(m)}이(가) 말없이 상자 하나를 대신 들어 준다.`, fx:(p,m)=>{d(m,p,'호감',3);}},
+ {cond:p=>SPACES[p.space]&&SPACES[p.space].tags.includes('야외'), txt:function(p){ this._v=ri(3,9); return `${NM(p)}이(가) 길가에 떨어진 동전 몇 개를 주웠다. <b>+${this._v}코인</b>`; }, fx:function(p){ p.money+=this._v; }},
+ {cond:p=>p.money>=15, txt:function(p){ this._v=ri(4,10); return `${NM(p)}이(가) 부주의로 지갑에서 동전을 흘렸다. <b>−${this._v}코인</b>`; }, fx:function(p){ p.money=Math.max(0,p.money-this._v); }},
  {cond:()=>true, txt:p=>`${NM(p)}에게는 별일 없는 하루였지만, 이런 잔잔한 하루도 나쁘지 않다고 생각했다.`, fx:p=>{p.stability=clamp(p.stability+2,0,100);}}
 ];
 function checkDailyEvent(p){
@@ -3876,22 +3878,31 @@ function checkFetishEvent(p){
         {text:pick(FET_WATER_HOLD), next:'…'}]});
   }
 }
+/* ── 날씨 연동 가격 변동: 계절 수요에 따라 상점가가 오르내린다 ── */
+const WEATHER_SHOP_MULT={무더위:{cafe:0.9,mart:1.08},한파:{cafe:1.1,mart:1.05},비:{dining:1.08,mart:1.05},강풍:{dining:1.05}};
+function shopPriceMult(sp){ const m=WEATHER_SHOP_MULT[WEATHER]; return (m&&m[sp])||1; }
 function doBuy(p,sp,i){
   const it=SHOPS[sp][i];
   if((it.minR||0)>RATING)return;
-  if(p.money<it.price){ log(`돈이 부족하다. (${it.name} · ${it.price}코인 / 보유 ${p.money})`,'event',p.space); render(); return; }
-  p.money-=it.price; try{it.fx(p);}catch(e){}
-  log(`${p.name}이(가) ${SPACES[sp].n}에서 <b>${esc(it.name)}</b>을(를) 샀다 (−${it.price}코인)`,'event',p.space);
+  const price=Math.max(1,Math.round(it.price*shopPriceMult(sp)));
+  if(p.money<price){ log(`돈이 부족하다. (${it.name} · ${price}코인 / 보유 ${p.money})`,'event',p.space); render(); return; }
+  p.money-=price; try{it.fx(p);}catch(e){}
+  log(`${p.name}이(가) ${SPACES[sp].n}에서 <b>${esc(it.name)}</b>을(를) 샀다 (−${price}코인)`,'event',p.space);
   flashToken(p.id); step();
 }
+/* ── 근속 숙련도: 같은 일자리를 연속으로 하면 보수 배율이 오르고, 다른 일을 하면 초기화 ── */
+function jobStreakMult(p,sp){ const s=p.flags._jobStreak; const n=(s&&s.sp===sp)?s.n:0; return Math.min(1+n*0.05,1.5); }
+function bumpJobStreak(p,sp){ const s=p.flags._jobStreak; p.flags._jobStreak=(s&&s.sp===sp)?{sp,n:s.n+1}:{sp,n:1}; }
 /* 일자리: 근무 가능 장소에서 코인 획득 */
 const JOBS={mart:['마트 진열 아르바이트',10],cafe:['카페 서빙',9],dining:['식당 주방 보조',11],farm:['농장 일손 돕기',12],strip:['클럽 홀 서빙',14],adult:['성인용품점 근무',13],gym:['트레이닝룸 보조',12],beach:['해변 안전요원',11]};
 function doWork(p){
   const j=JOBS[p.space]; if(!j)return;
-  const pay=j[1]+ri(-2,3);
+  const mult=jobStreakMult(p,p.space);
+  const pay=Math.round((j[1]+ri(-2,3))*mult);
   p.money+=pay; p.needs.피로=clamp(p.needs.피로+16,0,100); p.needs.성취=clamp(p.needs.성취-18,0,100);
   grow(p,'체격',0.3);
-  log(`${p.name}이(가) ${j[0]}(으)로 <b>+${pay}코인</b> 벌었다 (보유 ${p.money})`,'event',p.space);
+  bumpJobStreak(p,p.space);
+  log(`${p.name}이(가) ${j[0]}(으)로 <b>+${pay}코인</b> 벌었다${mult>1?` <span class="rx">(숙련도 ×${mult.toFixed(2)})</span>`:''} (보유 ${p.money})`,'event',p.space);
   flashToken(p.id); step();
 }
 /* ── 근무 과정: 선택에 따라 완성도(quality)가 달라지고 보수가 변동. R18 선택지는 RATING 3에서만 노출 ── */
@@ -4004,12 +4015,14 @@ function workChoose(i){
 }
 function finishWork(p){
   const wf=WORKFLOWS[workState.sp];
-  const mult=0.5+workState.quality/wf.maxQ;   /* 0.5~1.5배 */
-  const pay=Math.max(1,Math.round(wf.base*mult));
+  const qMult=0.5+workState.quality/wf.maxQ;   /* 0.5~1.5배 */
+  const streakMult=jobStreakMult(p,workState.sp);
+  const pay=Math.max(1,Math.round(wf.base*qMult*streakMult));
   p.money+=pay; p.needs.피로=clamp(p.needs.피로+16,0,100); p.needs.성취=clamp(p.needs.성취-16,0,100); grow(p,'체격',0.3);
   p.flags._jobs=p.flags._jobs||{}; p.flags._jobs[workState.sp]=1;
+  bumpJobStreak(p,workState.sp);
   const g=workState.quality>=wf.maxQ*0.8?'훌륭한 솜씨였다':workState.quality>=wf.maxQ*0.4?'무난하게 해냈다':'서툴러 팁이 시원찮았다';
-  log(`${p.name}이(가) ${wf.title}을(를) 마쳤다 — ${g}. <b>+${pay}코인</b> (보유 ${p.money})`,'event',p.space);
+  log(`${p.name}이(가) ${wf.title}을(를) 마쳤다 — ${g}. <b>+${pay}코인</b>${streakMult>1?` <span class="rx">(숙련도 ×${streakMult.toFixed(2)})</span>`:''} (보유 ${p.money})`,'event',p.space);
   workState=null; flashToken(p.id); step(3);
 }
 /* 이동 중 조우 (깊은 숲길 등 transit 공간) */
@@ -4371,12 +4384,15 @@ function renderPlayerPanel(){
     }
   }
   if(!p.hsex&&JOBS[p.space]){
-    h+=`<div class="psec">${tr('sec.job')} · ${lbl('space',SPACES[p.space].n)}</div><div class="chipRow"><button class="chip act" data-work="1">${esc(JOBS[p.space][0])} 하기<span style="opacity:.5;font-size:9px"> 3T</span></button></div>`;
+    const _jm=jobStreakMult(p,p.space);
+    h+=`<div class="psec">${tr('sec.job')} · ${lbl('space',SPACES[p.space].n)}${_jm>1?` <span style="opacity:.6;font-weight:400">(${tr('label.proficiency')} ×${_jm.toFixed(2)})</span>`:''}</div><div class="chipRow"><button class="chip act" data-work="1">${esc(JOBS[p.space][0])} 하기<span style="opacity:.5;font-size:9px"> 3T</span></button></div>`;
   }
   if(!p.hsex&&SHOPS[p.space]){
-    h+=`<div class="psec">${tr('sec.shop')} · ${lbl('space',SPACES[p.space].n)}</div><div class="chipRow">`;
-    SHOPS[p.space].forEach((it,i)=>{ if((it.minR||0)>RATING)return; if(it.fet&&!CFG[it.fet])return; if(it.once&&p.flags['아이템:'+it.once])return; const afford=p.money>=it.price;
-      h+=`<button class="chip act" data-buy="${i}" ${afford?'':'disabled'}>${esc(it.name)} · ${it.price}${tr('unit.coin')}</button>`; });
+    const _pm=shopPriceMult(p.space);
+    h+=`<div class="psec">${tr('sec.shop')} · ${lbl('space',SPACES[p.space].n)}${_pm!==1?` <span style="opacity:.6;font-weight:400">(${_pm<1?'📉':'📈'} ${WEATHER})</span>`:''}</div><div class="chipRow">`;
+    SHOPS[p.space].forEach((it,i)=>{ if((it.minR||0)>RATING)return; if(it.fet&&!CFG[it.fet])return; if(it.once&&p.flags['아이템:'+it.once])return;
+      const price=Math.max(1,Math.round(it.price*_pm)); const afford=p.money>=price;
+      h+=`<button class="chip act" data-buy="${i}" ${afford?'':'disabled'}>${esc(it.name)} · ${price}${tr('unit.coin')}${price!==it.price?(price<it.price?' 🔻':' 🔺'):''}</button>`; });
     h+=`</div>`;
   }
   if(!p.hsex && RATING>=3){
