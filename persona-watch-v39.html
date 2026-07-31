@@ -1120,7 +1120,8 @@ const CFG_DEF={
   autosave:12, logMax:300,
   defR18:true, defCor:true, autoFaint:false,
   fet_beast:false, fet_water:false, fet_tentacle:false, fet_bondage:false, fet_exhibition:false,
-  immersion:true
+  immersion:true,
+  riotMode:false, riotP:30
 };
 const CFG=Object.assign({},CFG_DEF);
 try{ Object.assign(CFG, JSON.parse(localStorage.getItem(CFG_KEY)||'{}')); }catch(e){}
@@ -1153,7 +1154,10 @@ const CFG_SCHEMA=[
  {k:'fet_bondage', t:'toggle', l:'R18+ 구속 요소', l_en:'R18+ Bondage Content',   d:'등급 3에서 밀실·창고 등에서 구속·조교 플레이 이벤트를 활성화합니다.', d_en:'At rating 3, enables bondage/training-play events in private rooms, the shed, etc.'},
  {k:'fet_exhibition',t:'toggle', l:'R18+ 노출증 요소', l_en:'R18+ Exhibitionism Content',d:'등급 3에서 공공장소 노출·관음 이벤트를 활성화합니다.', d_en:'At rating 3, enables public-exposure/voyeurism events.'},
  {g:'1인칭 시점',g_en:'First-Person View'},
- {k:'immersion', t:'toggle', l:'시작 시 이야기 모드', l_en:'Story Mode on Start',   d:'켜면 시작할 때 우측 패널이 [이야기](당신에게 직접 벌어지는 일만, 인터랙티브 스토리 형식) 모드로 열립니다. 끄면 [전체 로그](모든 인물의 행동을 기록하는 관찰용 로그)로 시작합니다. 플레이 중에는 로그 헤더의 전환 버튼으로 언제든 바꿀 수 있습니다.', d_en:'If on, the right panel opens in [Story] mode (only what happens directly to you, as an interactive story) at start. If off, it starts in [Full Log] mode (every character\'s actions, for observation). You can toggle between them any time from the log header button.'}
+ {k:'immersion', t:'toggle', l:'시작 시 이야기 모드', l_en:'Story Mode on Start',   d:'켜면 시작할 때 우측 패널이 [이야기](당신에게 직접 벌어지는 일만, 인터랙티브 스토리 형식) 모드로 열립니다. 끄면 [전체 로그](모든 인물의 행동을 기록하는 관찰용 로그)로 시작합니다. 플레이 중에는 로그 헤더의 전환 버튼으로 언제든 바꿀 수 있습니다.', d_en:'If on, the right panel opens in [Story] mode (only what happens directly to you, as an interactive story) at start. If off, it starts in [Full Log] mode (every character\'s actions, for observation). You can toggle between them any time from the log header button.'},
+ {g:'폭동 모드 (R18)',g_en:'Riot Mode (R18)'},
+ {k:'riotMode', t:'toggle', l:'폭동 모드', l_en:'Riot Mode', d:'등급 3에서, 10턴마다 확률적으로 몇 명이 발정해 당신을 쫓기 시작합니다. 몇 턴 안에 따돌리지 못하면 붙잡혀 다른 곳으로 끌려가 다인 H가 시작됩니다.', d_en:'At rating 3, every 10 turns a few characters may go into heat and start chasing you. If you can\'t shake them off in a few turns, they catch you, drag you elsewhere, and a group H session begins.'},
+ {k:'riotP', t:'range', l:'폭동 발생 확률', l_en:'Riot Trigger Chance', min:0,max:100,step:5, u:'%', d:'10턴마다 폭동이 발생할 확률.', d_en:'Chance every 10 turns that a riot triggers.'}
 ];
 
 function openConsole(){
@@ -1309,6 +1313,7 @@ document.addEventListener('pointerdown', seInit, true);
 let npcs=[], turn=0, timer=null, sel=[], uid=1, playerId=null, pTarget=null, pairEditMode=false, workState=null;
 let RATING=0, colorIdx=0, autoH=false; const confQueue=[], r18Queue=[];
 const leadQueue=[]; // 밀실 유도 큐
+let riotChase=null; // 폭동 모드: {chasers:[id...], turnsLeft} — 발정한 무리가 플레이어를 쫓는 중
 const PALETTE=['#B3423A','#33689C','#3E7A4E','#B07E23','#7E5AA2','#B23A6B','#2E8391','#8A6A5B','#5563AE','#C0692B'];
 const NM=n=>`<b style="color:${n.color}${n.fixed?';border-bottom:1.5px dotted '+n.color:''}">${n.fixed?'✦':''}${esc(n.name)}</b>`;
 const P=()=>npcs.find(n=>n.id===playerId);
@@ -3123,6 +3128,7 @@ function tickWorld(){
     checkRent(pl);
     checkDrunkMishap(pl);
     checkFetishEvent(pl);
+    checkRiotChase(pl);
     windCheck(pl);
     rainCheck(pl);
     heatCheck(pl);
@@ -3689,6 +3695,44 @@ const FET_TENT_END=['— 촉수에 사로잡힌 시간이 지나갔다 —','—
 const FET_WATER_INTRO=['취기와 함께 아랫배가 뻐근하다. 화장실은 멀고, 근처엔 시선들이 있다...','참을 새도 없이 아랫배가 요동친다. 주변엔 사람들의 눈이 있다...','갑작스레 밀려온 요의에 다리가 후들거린다. 화장실까지는 너무 멀다...'];
 const FET_WATER_REL=['해방감과 수치심이 동시에 밀려든다. 주변의 시선이 따갑다.','뜨거운 것이 다리를 타고 흐르는 감각에 얼굴이 새하얗게 질린다. 그러나 묘한 해방감도 함께 밀려온다.','수치스러움도 잠시, 온몸의 긴장이 스르르 풀려나가는 느낌이다.'];
 const FET_WATER_HOLD=['가까스로 참아냈다.','이를 악물고 버텨 냈다. 식은땀이 흐른다.','다리를 꼬며 간신히 위기를 넘겼다.'];
+/* ══════════════ 폭동 모드 (R18) — 발정한 무리가 플레이어를 쫓다 붙잡으면 다인 H ══════════════ */
+const RIOT_ONSET=['갑자기 주변 공기가 달라진다 — 몇몇의 눈빛이 예사롭지 않다.','이유 없이 몸이 달아오른 이들이 하나둘 당신 쪽을 향해 고개를 돌린다.','억눌렸던 무언가가 한꺼번에 터진 듯, 몇 명이 짐승 같은 눈으로 다가온다.'];
+const RIOT_CHASE_FLAVOR=['뒤쫓는 발소리가 점점 가까워진다.','거친 숨소리가 등 뒤에서 들려온다.','도망칠 곳을 찾아보지만 마땅치 않다.'];
+const RIOT_CAUGHT=['결국 팔이 붙잡혔다. 저항도 잠시, 여러 손길이 동시에 몸을 끌어당긴다.','도망은 거기까지였다. 사방에서 손이 뻗어와 몸을 붙든다.','더는 물러설 곳이 없다. 무리에게 완전히 둘러싸였다.'];
+function triggerRiot(p){
+  const eligible=npcs.filter(n=>!n.isPlayer&&n.r18&&!n.hsex&&n.asleep<=0);
+  if(eligible.length<1)return;
+  const chasers=shuffle(eligible).slice(0,Math.min(eligible.length,ri(1,3)));
+  riotChase={chasers:chasers.map(c=>c.id),turnsLeft:ri(3,5)};
+  chasers.forEach(c=>{ arouse(c,30); });
+  log(`⚠ <b style="color:#B23A6B">${pick(RIOT_ONSET)}</b> — ${chasers.map(c=>NM(c)).join(', ')}이(가) ${NM(p)}을(를) 향해 다가오기 시작한다!`,'event',p.space);
+}
+function checkRiotChase(p){
+  if(!CFG.riotMode||RATING<3||!p)return;
+  if(p.hsex||p.asleep>0||curEvent||workState||document.getElementById('modal'))return;
+  if(!riotChase){
+    if(turn%10===0&&Math.random()<CFG.riotP/100)triggerRiot(p);
+    return;
+  }
+  riotChase.chasers=riotChase.chasers.filter(id=>{ const c=npcs.find(n=>n.id===id); return c&&!c.hsex; });
+  if(riotChase.chasers.length===0){ riotChase=null; return; }
+  riotChase.turnsLeft--;
+  if(riotChase.turnsLeft<=0||Math.random()<0.4){
+    const chasers=riotChase.chasers.map(id=>npcs.find(n=>n.id===id)).filter(Boolean);
+    riotChase=null;
+    if(chasers.length===0)return;
+    const dest=pickLureDest(chasers[0],p);
+    p.space=dest; chasers.forEach(c=>c.space=dest);
+    log(`— <b style="color:#B23A6B">${pick(RIOT_CAUGHT)}</b> — ${NM(p)}이(가) ${chasers.map(c=>NM(c)).join(', ')}에게 붙잡혀 ${SPACES[dest].n}(으)로 끌려갔다 —`,'event',dest);
+    const grp=chasers.map(c=>c.id), mode='강압';
+    grp.forEach(id=>{ const o=npcs.find(x=>x.id===id); if(o){ o.hsex={with:p.id,mode,turns:0,party:[p.id],focusIdx:0}; d(o,p,'욕망',10); arouse(o,15); } });
+    p.hsex={passive:true,mode,turns:0,with:grp[0],sharedGroup:grp};
+    if(grp.length>=3)p.flags._multiH=1;
+    playSE('hstart');
+  } else if(Math.random()<0.5){
+    log(pick(RIOT_CHASE_FLAVOR),'event',p.space);
+  }
+}
 function checkFetishEvent(p){
   if(!p||p.hsex||p.asleep>0||curEvent||document.getElementById('modal')||RATING<3)return;
   if(turn%4!==0||Math.random()<0.7)return;
