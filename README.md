@@ -11,7 +11,7 @@
 | 파일 | 설명 |
 |---|---|
 | `persona-watch-v39.html` | **1인칭 R18 생존형 시뮬레이터.** 플레이어 캐릭터를 만들어 리조트 안에서 직접 행동하며, 인터랙티브 스토리 아크·1인칭 이야기 로그(당신에게 직접 벌어지는 일 중심)로 진행됩니다. 계속 개발 중인 메인 버전입니다. |
-| `persona-watch-observer.html` | **관찰판.** 플레이어 없이 자동재생만으로도 NPC들의 군상극을 지켜보는 데 초점을 둔 파생 버전입니다. 로그를 거르지 않고 전부 보여주며, 이벤트·관전 확률이 더 높게 기본 설정되어 있습니다. |
+| `persona-watch-observer.html` | **관찰판.** 아바타 커스터마이징·날씨·지속효과·언어 전환 등 v39의 기능을 그대로 공유하는 파생 버전입니다. 다만 메인 스토리 아크는 진행하지 않고(인물 개인 서사보다 NPC 군상극 관찰에 초점), 전체 로그가 기본으로 열리며, 이벤트·관전 확률과 자동 기절이 기본으로 더 높게 설정되어 있습니다. |
 
 두 파일은 저장 데이터와 설정을 별도로 관리하므로 서로 간섭하지 않습니다.
 
@@ -24,11 +24,13 @@
 - **날씨 시스템**: 맑음/흐림/비/강풍/무더위/한파가 순환하며 각각 노출·피로·안정도 등에 실질적인 영향을 줍니다.
 - **지속효과(상태) 시스템**: 특정 이벤트가 일회성으로 끝나지 않고 여러 턴에 걸쳐 주기적으로 효과를 일으키다 종료되는 상태(감기, 점액감염, 기생체 등)를 가집니다.
 - **관계·H 시스템 (R18)**: 호감/애정/신뢰/긴장/욕망 스탯, 성기 타입에 따라 분기되는 전용 대사, 다양한 페티시 이벤트(수간·촉수·워터스포츠·구속·노출증 등, 설정에서 개별 토글), 다인 플레이, 강압/부탁/복종 등의 R18 성향.
-- **일자리 시스템**: 마트·카페·식당·농장·헬스장·해변·스트립클럽·성인용품점 등에서 근무하며, 다수는 선택지에 따라 R18 분기가 있는 다단계 근무 미니게임입니다.
+- **일자리 시스템**: 마트·카페·식당·농장·헬스장·해변·스트립클럽·성인용품점 등에서 근무하며, 다수는 선택지에 따라 R18 분기가 있는 다단계 근무 미니게임입니다. 같은 일자리를 연속으로 하면 숙련도가 붙어 보수가 오르고(최대 +50%), 날씨에 따라 상점 물가도 오르내립니다.
+- **질투·소문 / 성적 평판 (R18)**: 애정 깊은 인물이 H 세션을 목격하면 긴장이 쌓이다 대치 이벤트로 번지며(선택에 따라 다른 인물에게까지 파문), 별도로 누적되는 성적 평판 수치가 높아지면 낯선 인물이 소문을 듣고 먼저 다가오기도 합니다. 두 시스템 모두 평판·연인 여부·성격(대담함) 등 캐릭터 맥락에 따라 확률이 달라집니다.
+- **폭동 모드 (R18, 설정에서 켜기)**: 활성화하면 주기적으로 몇 명이 발정해 플레이어를 쫓아오며, 따돌리지 못하면 붙잡혀 다인 H가 시작됩니다. 포획 확률은 추격자의 흥분도와 플레이어의 운동 스탯에 따라 달라지고, "도망친다" 버튼으로 탈출을 시도할 수 있습니다.
 - **1인칭 이야기 로그 / 전체 로그 전환**: 우측 패널 헤더 버튼으로 "당신에게 직접 벌어지는 일만" 보여주는 이야기 모드와, 모든 인물의 행동을 기록하는 전체 로그를 언제든 전환할 수 있습니다.
 - **저장/불러오기**: 브라우저 로컬 저장, 파일로 내보내기/가져오기 지원. 자동 저장 간격은 설정에서 조절합니다.
 - **시스템 설정 콘솔**: 툴바의 ⚙ 버튼에서 기절/절정/난입 반응, 각종 확률·배율, 신규 캐릭터 기본값, R18+ 페티시 요소 토글 등을 세밀하게 조정할 수 있습니다.
-- **언어 전환 (한국어/English)**: `persona-watch-v39.html` 툴바에서 인터페이스 언어를 한국어/영어로 전환할 수 있습니다. 툴바·버튼·패널 라벨·설정 콘솔·퀘스트 설명 등 UI 전반이 번역되며, 선택은 브라우저에 저장됩니다. NPC 대사·이벤트·스토리 본문 등 서사 콘텐츠는 한국어로 고정되어 있습니다.
+- **언어 전환 (한국어/English)**: 두 버전 모두 툴바에서 인터페이스 언어를 한국어/영어로 전환할 수 있습니다. 툴바·버튼·패널 라벨·설정 콘솔·퀘스트 설명 등 UI 전반이 번역되며, 선택은 브라우저에 저장됩니다. NPC 대사·이벤트·스토리 본문 등 서사 콘텐츠는 한국어로 고정되어 있습니다.
 
 ## 시작하기
 
@@ -54,8 +56,8 @@ A persona life-simulator that runs entirely from a single HTML file in your brow
 
 | File | Description |
 |---|---|
-| `persona-watch-v39.html` | **First-person R18 survival simulator.** Create a player character and act directly within the resort, driven by interactive story arcs and a first-person story log (focused on what happens directly to you). This is the actively developed main version, and the only one with a language toggle. |
-| `persona-watch-observer.html` | **Observer board.** A derivative version focused on watching the NPCs' ensemble drama unfold via auto-play alone, with no player character. Shows the unfiltered full log, with higher default event/spectate probabilities. Korean-only. |
+| `persona-watch-v39.html` | **First-person R18 survival simulator.** Create a player character and act directly within the resort, driven by interactive story arcs and a first-person story log (focused on what happens directly to you). This is the actively developed main version. |
+| `persona-watch-observer.html` | **Observer board.** Shares v39's full feature set (avatars, weather, persistent status effects, language toggle, etc.), but skips the main story arcs (focused on watching the NPCs' ensemble drama rather than one character's personal narrative), opens in Full Log mode by default, and has higher default event/spectate probabilities plus auto-faint enabled. |
 
 The two files keep separate save data and settings, so they never interfere with each other.
 
@@ -68,11 +70,13 @@ The two files keep separate save data and settings, so they never interfere with
 - **Weather system**: Clear / Cloudy / Rain / Windy / Heatwave / Cold Snap cycle through and meaningfully affect exposure, fatigue, stability, and more.
 - **Persistent status-effect system**: Certain events don't end in one shot — they leave a status (cold, slime infection, parasite, etc.) that keeps applying effects turn after turn until it runs its course.
 - **Relationship & H system (R18)**: Liking / Affection / Trust / Tension / Desire stats, genital-type-specific dialogue branches, a range of fetish events (bestiality, tentacles, watersports, bondage, exhibitionism, etc. — each individually toggleable in settings), group play, and R18 dispositions (default / plea / force / submit).
-- **Job system**: Work at the mart, cafe, dining hall, farm, gym, beach, strip club, adult shop, and more — many are multi-stage work minigames with R18 branches depending on your choices.
+- **Job system**: Work at the mart, cafe, dining hall, farm, gym, beach, strip club, adult shop, and more — many are multi-stage work minigames with R18 branches depending on your choices. Working the same job repeatedly builds a proficiency bonus (up to +50% pay), and shop prices shift a bit with the weather.
+- **Jealousy/gossip & sexual reputation (R18)**: Characters who care about you may notice if they witness you in an H session, building tension that can escalate into a confrontation event (with consequences that ripple to others who care about them). Separately, a sexual reputation stat builds up from your activity, and once it's high enough, strangers may proposition you first, having heard the rumors. Both systems weigh reputation, relationship status, and personality (boldness) rather than using flat odds.
+- **Riot Mode (R18, opt-in in settings)**: When enabled, characters periodically go into heat and chase you; if you can't shake them off, they catch you and start a group H session. Capture odds depend on the chasers' arousal and your athletics, and you can attempt to Flee.
 - **First-person story log / full log toggle**: A header button on the right panel lets you switch anytime between Story mode (only what happens directly to you) and the Full Log (every character's actions recorded).
 - **Save / load**: Local browser save plus export/import to file. Autosave interval is adjustable in settings.
 - **System settings console**: The ⚙ toolbar button gives fine-grained control over fainting/climax/interruption reactions, various probabilities and multipliers, new-character defaults, and individual R18+ fetish content toggles.
-- **Language toggle (한국어/English)**: `persona-watch-v39.html`'s toolbar lets you switch the interface language between Korean and English. The toolbar, buttons, panel labels, settings console, quest descriptions, and the rest of the UI chrome are translated, and your choice is saved in the browser. NPC dialogue, events, and story text remain Korean-only.
+- **Language toggle (한국어/English)**: Both versions' toolbars let you switch the interface language between Korean and English. The toolbar, buttons, panel labels, settings console, quest descriptions, and the rest of the UI chrome are translated, and your choice is saved in the browser. NPC dialogue, events, and story text remain Korean-only.
 
 ## Getting Started
 
