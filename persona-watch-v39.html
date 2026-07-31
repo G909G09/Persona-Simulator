@@ -305,6 +305,7 @@ h2.sec:first-child{margin-top:0}
   <button id="btnImport" class="icoBtn" title="파일 가져오기" data-i18n-title="btn.import">⬆</button>
   <input type="file" id="fileLoad" accept=".json,application/json">
   <button id="btnStep" data-i18n="btn.step">1턴 ⏭</button>
+  <button id="btnStep5" title="모달이 뜨면 자동으로 멈춥니다" data-i18n-title="btn.step5.title" data-i18n="btn.step5">5턴 ⏭⏭</button>
   <button id="btnPlay" class="primary" data-i18n="btn.play">▶ 자동재생</button>
   <select id="speedSel"><option value="1600">1×</option><option value="900">2×</option><option value="500">4×</option></select>
 </div>
@@ -410,7 +411,7 @@ Object.assign(I18N.ko,{
  'title.sub':'성격 시뮬레이션 프로토타입 v39',
  'rate.title':'관찰 등급','rate.0':'등급: 전체이용가','rate.1':'등급: 15세','rate.2':'등급: 성인','rate.3':'등급: R18',
  'btn.console':'시스템 설정','btn.se':'효과음 켬/끔','btn.save':'브라우저에 저장','btn.load':'저장 불러오기','btn.export':'파일로 내보내기','btn.import':'파일 가져오기',
- 'btn.step':'1턴 ⏭','btn.stepWait':'대기 ⏭','btn.play':'▶ 자동재생','btn.pause':'∥ 정지','btn.actFab':'행동 패널 열기/닫기',
+ 'btn.step':'1턴 ⏭','btn.stepWait':'대기 ⏭','btn.step5':'5턴 ⏭⏭','btn.step5.title':'모달이 뜨면 자동으로 멈춥니다','btn.play':'▶ 자동재생','btn.pause':'∥ 정지','btn.actFab':'행동 패널 열기/닫기',
  'nav.map':'지도','nav.people':'인물','nav.activity':'활동',
  'sec.roster':'등장인물','sec.addChar':'캐릭터 추가',
  'form.name':'이름','form.name.ph':'비우면 자동','form.arch':'성격','form.form':'격식',
@@ -496,7 +497,8 @@ Object.assign(I18N.ko,{
  'modal.busDesc':'노선을 따라 원하는 곳까지 한 번에. 낯선 승객과 밀착될 수도 있다...','modal.bikeDesc':'페달을 밟아 어디든 빠르고 안전하게.',
  'err.badSaveFile':'형식이 올바르지 않은 저장 파일','alert.saveBlocked':'이 환경에서는 브라우저 저장이 차단되어 있습니다.\n⬇ 버튼으로 파일 내보내기를 사용해 주세요.',
  'alert.noSaveData':'브라우저 저장 데이터가 없습니다.','alert.loadFailed':'불러오기 실패: ','alert.fileReadFailed':'파일을 읽을 수 없습니다: ','btn.delete':'삭제',
- 'btn.followAlong':'따라간다','btn.decline':'거절한다','btn.accept':'받아들인다'
+ 'btn.followAlong':'따라간다','btn.decline':'거절한다','btn.accept':'받아들인다',
+ 'confirm.deleteChar':'{name}을(를) 삭제할까요? 되돌릴 수 없습니다.','confirm.deletePlayerNote':'(플레이어 캐릭터입니다!)'
 });
 Object.assign(I18N.en,{
  'tab.stat':'Stats','tab.rel':'Relations','btn.pairEditDone':'Done Adjusting','btn.pairEdit':'Adjust Relation ✎',
@@ -532,13 +534,14 @@ Object.assign(I18N.en,{
  'modal.busDesc':'Ride the route straight to your destination in one go. You might end up pressed against a stranger...','modal.bikeDesc':'Pedal your way anywhere, fast and safe.',
  'err.badSaveFile':'Malformed save file','alert.saveBlocked':'Browser storage is blocked in this environment.\nPlease use the ⬇ Export to File button instead.',
  'alert.noSaveData':'No browser save data found.','alert.loadFailed':'Load failed: ','alert.fileReadFailed':'Could not read file: ','btn.delete':'Delete',
- 'btn.followAlong':'Go with them','btn.decline':'Decline','btn.accept':'Accept'
+ 'btn.followAlong':'Go with them','btn.decline':'Decline','btn.accept':'Accept',
+ 'confirm.deleteChar':'Delete {name}? This cannot be undone.','confirm.deletePlayerNote':'(This is your player character!)'
 });
 Object.assign(I18N.en,{
  'title.sub':'Persona Simulation Prototype v39',
  'rate.title':'Content rating','rate.0':'Rating: All Ages','rate.1':'Rating: 15+','rate.2':'Rating: Adult','rate.3':'Rating: R18',
  'btn.console':'System settings','btn.se':'Toggle sound effects','btn.save':'Save to browser','btn.load':'Load save','btn.export':'Export to file','btn.import':'Import from file',
- 'btn.step':'1 Turn ⏭','btn.stepWait':'Wait ⏭','btn.play':'▶ Auto-play','btn.pause':'■ Pause','btn.actFab':'Open/close action panel',
+ 'btn.step':'1 Turn ⏭','btn.stepWait':'Wait ⏭','btn.step5':'5 Turns ⏭⏭','btn.step5.title':'Stops automatically if a modal pops up','btn.play':'▶ Auto-play','btn.pause':'■ Pause','btn.actFab':'Open/close action panel',
  'nav.map':'Map','nav.people':'People','nav.activity':'Activity',
  'sec.roster':'Characters','sec.addChar':'Add Character',
  'form.name':'Name','form.name.ph':'Leave blank for random','form.arch':'Personality','form.form':'Speech',
@@ -3389,7 +3392,7 @@ function renderRoster(){
     const isSel=sel.includes(n.id);
     it.className='rosterItem'+(isSel?' sel':'');
     it.innerHTML=`<span class="mini" style="${isSel?'':`border-color:${n.color};color:${n.color}`}">${n.name[0]}</span><span class="nm">${n.fixed?'<span style="color:#C9A227">✦</span>':''}${esc(n.name)}${n.isPlayer?' <small style="opacity:.5">P</small>':''}</span><span class="at">${lbl('arch',n.arch)}·${lbl('form',n.form)}</span><button class="del" title="${tr('btn.delete')}">×</button>`;
-    it.onclick=e=>{if(e.target.className==='del'){removeNpc(n.id)}else select(n.id)};
+    it.onclick=e=>{if(e.target.className==='del'){ if(confirm(tr('confirm.deleteChar').replace('{name}',n.name)+(n.isPlayer?' '+tr('confirm.deletePlayerNote'):'')))removeNpc(n.id); }else select(n.id)};
     R.appendChild(it);
   }
 }
@@ -4459,6 +4462,7 @@ $('#btnConsole').onclick=()=>openConsole();
 
 /* ══════════════ 컨트롤 ══════════════ */
 $('#btnStep').onclick=()=>{stopPlay(); step();};
+$('#btnStep5').onclick=()=>{stopPlay(); step(5);};
 $('#btnPlay').onclick=()=>{timer?stopPlay():startPlay();};
 $('#speedSel').onchange=()=>{if(timer){stopPlay();startPlay();}};
 $('#btnClearLog').onclick=()=>{ $('#log').innerHTML=''; $('#story').innerHTML=''; };
