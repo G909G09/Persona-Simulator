@@ -18,7 +18,7 @@
 ## 주요 기능 (v39 기준)
 
 - **관찰 등급 0~3단계**: 전체이용가부터 R18까지, 등급에 따라 노출·상호작용 콘텐츠가 단계적으로 열립니다.
-- **캐릭터 커스터마이징**: 성격(아키타입) 슬라이더, 신체 민감도, 성별/성기 타입, 의상(25종 이상) 외에 피부톤·헤어스타일·머리색·눈동자색을 고르는 **도트 그래픽 아바타**를 실시간 미리보기로 제작할 수 있습니다.
+- **캐릭터 커스터마이징**: 성격(아키타입) 슬라이더, 신체 민감도, 성별/성기 타입, 의상(47종)·헤어스타일(18종)·속옷(13종) 외에 피부톤·머리색·눈동자색을 고르는 **도트 그래픽 아바타**를 실시간 미리보기로 제작할 수 있습니다. `avatar_assets/` 폴더에 규격에 맞는 투명 PNG를 넣으면 도트 렌더러 대신 그 이미지를 겹쳐 그리는 레이어 시스템도 지원합니다(파일이 없으면 자동으로 기존 도트 렌더러를 사용).
 - **인터랙티브 스토리 아크**: 전망대(세라)·마트(도한)·농장(새로)·스트립클럽(리라) 등 고정 인물마다 독립된 다챕터 서사가 있으며, 관계 수치 임계값 + 해당 인물의 실제 장소를 방문해야 진행됩니다. 각 챕터마다 선택지가 있어 결말이 달라집니다.
 - **일상 스크립트**: 큰 줄거리와 무관하게 스치는 소소한 하루의 순간들(습득물, 우연한 만남, 날씨 관련 소소한 사건 등)이 랜덤하게 삽입됩니다.
 - **날씨 시스템**: 맑음/흐림/비/강풍/무더위/한파가 순환하며 각각 노출·피로·안정도 등에 실질적인 영향을 줍니다.
@@ -64,7 +64,7 @@ The two files keep separate save data and settings, so they never interfere with
 ## Key Features (as of v39)
 
 - **Content rating, 4 tiers (0–3)**: From All Ages to R18 — exposure and interaction content unlocks progressively by rating.
-- **Character customization**: Personality (archetype) sliders, body sensitivity, gender/genital type, 25+ outfits, plus a **pixel-art avatar** you build with skin tone, hairstyle, hair color, and eye color, previewed live.
+- **Character customization**: Personality (archetype) sliders, body sensitivity, gender/genital type, 47 outfits, 18 hairstyles, and 13 underwear options, plus a **pixel-art avatar** you build with skin tone, hair color, and eye color, previewed live. Also supports an optional PNG-layer rendering mode -- drop matching transparent PNGs into an `avatar_assets/` folder and the game automatically composites those instead of the built-in pixel renderer (falls back gracefully if files are missing).
 - **Interactive story arcs**: Fixed characters (the lookout keeper, the mart owner, the farm girl, the strip-club dancer, etc.) each have an independent multi-chapter storyline that advances only once relationship thresholds are met *and* you're actually at that character's location. Every chapter has branching choices that change the outcome.
 - **Everyday scripted moments**: Small slice-of-life events unrelated to the main plot (found items, chance encounters, minor weather-related happenings) are randomly sprinkled in.
 - **Weather system**: Clear / Cloudy / Rain / Windy / Heatwave / Cold Snap cycle through and meaningfully affect exposure, fatigue, stability, and more.

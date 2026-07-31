@@ -440,7 +440,10 @@ Object.assign(LABEL_EN,{
  need:{'사교욕':'Social','피로':'Fatigue','성취욕':'Drive','안정도':'Stability','매력':'Charm','노출도':'Exposure'},
  sexstat:{'흥분':'Arousal','취기':'Drunk','타락':'Corrupt.','정력':'Stamina','체격':'Build','운동':'Fitness','평판':'Reputation'},
  part:{'입술':'Lips','귀':'Ears','목':'Neck','가슴':'Chest','허리':'Waist','하복부':'Groin'},
- hair:{'숏컷':'Short','단발':'Bob','포니테일':'Ponytail','트윈테일':'Twintails','롱헤어':'Long','대머리':'Bald'},
+ hair:{'숏컷':'Short','단발':'Bob','포니테일':'Ponytail','트윈테일':'Twintails','롱헤어':'Long','대머리':'Bald',
+   '히메컷':'Hime Cut','웨이브 롱':'Wave Long','곱슬머리':'Curly','땋은 머리':'Braided','사이드테일':'Sidetail',
+   '반묶음':'Half-Up','숏 웨이브':'Short Wave','애시 보브':'Ash Bob','하프업 트윈':'Half-Up Twin',
+   '언더컷 숏':'Undercut Short','포니테일 하이':'High Ponytail','리본 롱':'Ribbon Long'},
  status:{'감기':'Cold','점액감염':'Slime Infection','기생체':'Parasite'},
  space:{'전망대':'Lookout','해변길':'Beach Path','해변':'Beach','창고':'Shed','광장':'Plaza','카페':'Cafe',
    '옥상':'Rooftop','복도':'Hallway','식당':'Dining Hall','도서실':'Library',
@@ -452,8 +455,17 @@ Object.assign(LABEL_EN,{
    '차이나 드레스':'Cheongsam','웨딩 드레스':'Wedding Dress','비키니':'Bikini','가죽 의상':'Leather Outfit',
    '메이드복':'Maid Outfit','바니걸':'Bunny Suit','교복':'School Uniform','잠옷':'Pajamas','우비':'Raincoat',
    '집사복':'Butler Outfit','무녀복':'Shrine Maiden Robe','간호사복':'Nurse Outfit','스쿨 수영복':'School Swimsuit',
-   '치어리더복':'Cheerleader Outfit','알몸':'Nude'},
- under:{'브라':'Bra','레이스 브라':'Lace Bra','팬티':'Panties','레이스 팬티':'Lace Panties','착용 안 함':'None'},
+   '치어리더복':'Cheerleader Outfit','알몸':'Nude',
+   '오프숄더 니트':'Off-Shoulder Knit','크롭탑 세트':'Crop Top Set','후드 집업':'Hoodie','원피스 수영복':'One-Piece Swimsuit',
+   '래시가드':'Rash Guard','스포츠 브라 세트':'Sports Bra Set','오버사이즈 셔츠':'Oversize Shirt','코르셋 드레스':'Corset Dress',
+   '실크 라운지 로브':'Silk Lounge Robe','홀터넥 스트랩 드레스':'Halter Strap Dress','동물 잠옷':'Animal Kigurumi',
+   '스팀펑크 코르셋':'Steampunk Corset','아이돌 무대의상':'Idol Stage Costume','체육복':'Gym Uniform',
+   '앞치마 원피스':'Apron Dress','튜브탑 미니드레스':'Tube Top Minidress','새틴 슬립 나이트드레스':'Satin Slip Nightdress',
+   '하이레그 레오타드':'High-Leg Leotard','스트리트 크롭 세트':'Street Crop Set','오일 비치웨어':'Oiled Beachwear',
+   '라텍스 슈트':'Latex Suit','여신 드레이프 드레스':'Goddess Drape Dress'},
+ under:{'브라':'Bra','레이스 브라':'Lace Bra','팬티':'Panties','레이스 팬티':'Lace Panties','착용 안 함':'None',
+   '스포츠 브라':'Sports Bra','볼륨 브라':'Push-Up Bra','시스루 브라':'Sheer Bra','니플 패치':'Nipple Pasties','튜브탑 밴드':'Tube Band',
+   '로우라이즈 팬티':'Low-Rise Panties','삭스벨트 세트':'Garter Set','끈팬티':'Thong','오픈 크로치':'Open-Crotch'},
  hact:{'애무':'Caress','키스':'Kiss','속삭이기':'Whisper','삽입':'Insert','격렬하게':'Rough','천천히':'Slow',
    '체위 바꾸기':'Change Position','멈추고 안기':'Pause & Hold','중단':'Stop'},
  rellabel:{'연인':'Lovers','구멍동지':'Fling Circle','섹파':'FWB','비밀스러운 사이':'Secret Fling',
@@ -1458,6 +1470,28 @@ const OUTFITS={
   '간호사복':{노출:40, 매력:19, price:78, minR:3, emoji:'💉', desc:'단정한 듯 아슬아슬한 간호사 복장'},
   '스쿨 수영복':{노출:62,매력:14,price:40, minR:3, emoji:'🏊', desc:'교내 수영 수업용, 몸에 착 붙는 스쿨 수영복'},
   '치어리더복':{노출:46,매력:17,price:65, minR:3, emoji:'📣', desc:'짧은 스커트가 팔랑이는 응원단 의상'},
+  '오프숄더 니트':{노출:22,매력:10,price:30, emoji:'🧶', desc:'어깨선이 살짝 드러나는 니트'},
+  '크롭탑 세트':{노출:34,매력:13,price:32, emoji:'👚', desc:'허리선이 드러나는 크롭탑과 스커트'},
+  '후드 집업':{노출:10,매력:5, price:22, emoji:'🧥', desc:'편하게 걸치는 오버사이즈 후드'},
+  '원피스 수영복':{노출:34,매력:9, price:38, emoji:'🩱', desc:'비키니보다 정숙한 스포츠 수영복'},
+  '래시가드':{노출:6, 매력:4, price:28, emoji:'🏄', desc:'자외선을 막는 전신 수상복'},
+  '스포츠 브라 세트':{노출:44,매력:12,price:30, minR:3, emoji:'🏋️', desc:'짐 전용 브라탑과 레깅스'},
+  '오버사이즈 셔츠':{노출:38,매력:14,price:20, minR:3, emoji:'👔', desc:'흘러내리듯 걸친 큰 셔츠 한 장'},
+  '코르셋 드레스':{노출:50,매력:22,price:100, minR:3, emoji:'🎀', desc:'허리를 조인 관능적인 코르셋 드레스'},
+  '실크 라운지 로브':{노출:42,매력:17,price:60, minR:3, emoji:'🛏️', desc:'얇게 비치는 실내용 실크 가운'},
+  '홀터넥 스트랩 드레스':{노출:40,매력:20,price:85, emoji:'👗', desc:'목뒤로 끈을 묶는 대담한 드레스'},
+  '동물 잠옷':{노출:8, 매력:8, price:30, emoji:'🐻', desc:'귀엽고 헐렁한 동물 모양 잠옷'},
+  '스팀펑크 코르셋':{노출:52,매력:21,price:110, minR:3, emoji:'⚙️', desc:'벨트와 버클로 조인 이색적인 코르셋'},
+  '아이돌 무대의상':{노출:44,매력:23,price:120, emoji:'🎤', desc:'반짝이는 장식이 화려한 무대 의상'},
+  '체육복':{노출:14,매력:7, price:25, emoji:'🏃', desc:'학교 체육 시간용 트레이닝 셋업'},
+  '앞치마 원피스':{노출:20,매력:10,price:35, emoji:'🍳', desc:'캐주얼한 카페/가사 앞치마 원피스'},
+  '튜브탑 미니드레스':{노출:58,매력:19,price:70, minR:3, emoji:'💃', desc:'어깨끈 없이 가슴 라인만 감싼 미니 드레스'},
+  '새틴 슬립 나이트드레스':{노출:64,매력:18,price:55, minR:3, emoji:'🌙', desc:'살결이 비치는 새틴 슬립 잠옷'},
+  '하이레그 레오타드':{노출:70,매력:16,price:60, minR:3, emoji:'🩰', desc:'다리 라인이 과감히 드러나는 레오타드'},
+  '스트리트 크롭 세트':{노출:30,매력:11,price:34, emoji:'🧢', desc:'크롭탑과 카고팬츠의 스트리트 룩'},
+  '오일 비치웨어':{노출:82,매력:15,price:45, minR:3, emoji:'🧴', desc:'오일을 바른 맨살 위에 최소한만 걸친 해변 룩'},
+  '라텍스 슈트':{노출:68,매력:20,price:130, minR:3, emoji:'🖤', desc:'몸에 밀착되는 광택 소재의 전신 슈트'},
+  '여신 드레이프 드레스':{노출:26,매력:21,price:95, emoji:'✨', desc:'그리스풍으로 몸을 휘감아 흐르는 드레스'},
   '알몸':    {노출:100,매력:6,  price:0,  minR:3, emoji:'🔞', desc:'아무것도 걸치지 않은 맨몸'}
 };
 const OUTFIT_H={
@@ -1491,7 +1525,12 @@ function joinLine(j){
   return pick(['달아오른 분위기에 홀린 듯 끼어든다','호기심 어린 손길로 합류한다','참지 못하고 몸을 밀어 넣는다']);
 }
 const OUTFIT_G={'드레스':'F','수영복':'F','란제리':'F','차이나 드레스':'F','웨딩 드레스':'F','비키니':'F','메이드복':'F','바니걸':'F','정장':'U','평상복':'U','캐주얼':'U','전신 코트':'U','노출 의상':'U','트레이닝복':'U','유카타':'U','가죽 의상':'U','알몸':'U',
-  '교복':'U','잠옷':'U','우비':'U','집사복':'U','무녀복':'F','간호사복':'F','스쿨 수영복':'F','치어리더복':'F'};
+  '교복':'U','잠옷':'U','우비':'U','집사복':'U','무녀복':'F','간호사복':'F','스쿨 수영복':'F','치어리더복':'F',
+  '오프숄더 니트':'F','크롭탑 세트':'F','후드 집업':'U','원피스 수영복':'F','래시가드':'U',
+  '스포츠 브라 세트':'F','오버사이즈 셔츠':'U','코르셋 드레스':'F','실크 라운지 로브':'U',
+  '홀터넥 스트랩 드레스':'F','동물 잠옷':'U','스팀펑크 코르셋':'F','아이돌 무대의상':'F','체육복':'U',
+  '앞치마 원피스':'F','튜브탑 미니드레스':'F','새틴 슬립 나이트드레스':'F','하이레그 레오타드':'F',
+  '스트리트 크롭 세트':'U','오일 비치웨어':'F','라텍스 슈트':'F','여신 드레이프 드레스':'F'};
 /* ══════════════ 도트 캐릭터(서브컬쳐 아바타) ══════════════
    각 인물의 look={skin,hairStyle,hairColor,eyeColor}을 작은 픽셀 그리드에 그려
    커스터마이징을 실제로 눈에 보이게 만든다. 캔버스를 작게 그리고 CSS로 확대해
@@ -1501,7 +1540,14 @@ const AV_OUTLINE='#1a1410';
 const SKIN_TONES=['#FFE0BD','#F4C89B','#E0AC69','#C68642','#8D5524','#5C3A21'];
 const HAIR_COLORS=['#2B2B2B','#5A3825','#8B5A2B','#C9A227','#B23A6B','#3A5AA0','#EAEAEA','#7A3AA0','#3A7A5A','#D95B3F'];
 const EYE_COLORS=['#2B2B2B','#3A5AA0','#5A8A4A','#8B5A2B','#B23A6B','#7A3AA0','#3AA0A0'];
-const HAIR_STYLES=['숏컷','단발','포니테일','트윈테일','롱헤어','대머리'];
+const HAIR_STYLES=['숏컷','단발','포니테일','트윈테일','롱헤어','대머리',
+  '히메컷','웨이브 롱','곱슬머리','땋은 머리','사이드테일','반묶음','숏 웨이브','애시 보브','하프업 트윈','언더컷 숏','포니테일 하이','리본 롱'];
+/* 새 헤어스타일은 실제 아트가 없는 절차적(픽셀) 렌더링 모드에서 가장 비슷한 기존 실루엣을 재사용한다 */
+const HAIR_BACK_FALLBACK={
+  '히메컷':'단발','웨이브 롱':'롱헤어','곱슬머리':'숏컷','땋은 머리':'포니테일','사이드테일':'포니테일',
+  '반묶음':'트윈테일','숏 웨이브':'숏컷','애시 보브':'단발','하프업 트윈':'트윈테일','언더컷 숏':'숏컷',
+  '포니테일 하이':'포니테일','리본 롱':'롱헤어'
+};
 function randomLook(){
   return {skin:pick(SKIN_TONES), hairStyle:pick(HAIR_STYLES), hairColor:pick(HAIR_COLORS), eyeColor:pick(EYE_COLORS)};
 }
@@ -1511,7 +1557,13 @@ const OUTFIT_COLOR={
  '드레스':'#8A4A6E','노출 의상':'#B23A6B','란제리':'#C9789A','트레이닝복':'#3E7A52','유카타':'#5F8A6E',
  '차이나 드레스':'#A02E3E','웨딩 드레스':'#F2F0EC','비키니':'#D9607A','가죽 의상':'#2A2320','메이드복':'#2B2B33',
  '바니걸':'#1F1F24','교복':'#2C3E6B','잠옷':'#C9A6C0','우비':'#E0B23A','집사복':'#26262E','무녀복':'#B2372E',
- '간호사복':'#EAEAF0','스쿨 수영복':'#1F3E6B','치어리더복':'#C9282E'
+ '간호사복':'#EAEAF0','스쿨 수영복':'#1F3E6B','치어리더복':'#C9282E',
+ '오프숄더 니트':'#5B8A5E','크롭탑 세트':'#4E8FA8','후드 집업':'#8B8B93','원피스 수영복':'#1F5A7A',
+ '래시가드':'#26425F','스포츠 브라 세트':'#33363E','오버사이즈 셔츠':'#E8E4DC','코르셋 드레스':'#5A2E3A',
+ '실크 라운지 로브':'#EFE6E0','홀터넥 스트랩 드레스':'#7A2E4E','동물 잠옷':'#8A5A2E','스팀펑크 코르셋':'#4A3826',
+ '아이돌 무대의상':'#7A3AA0','체육복':'#2C3E6B','앞치마 원피스':'#8A6A4E','튜브탑 미니드레스':'#B23A6B',
+ '새틴 슬립 나이트드레스':'#C9789A','하이레그 레오타드':'#20222A','스트리트 크롭 세트':'#3E5A3E',
+ '오일 비치웨어':'#D9A05A','라텍스 슈트':'#1A1A1E','여신 드레이프 드레스':'#F2F0EC'
 };
 function pRow(ctx,y,width,color,xoff){ if(!color||width<=0)return; xoff=xoff||0; const x0=Math.floor((AV_W-width)/2)+xoff; ctx.fillStyle=color; ctx.fillRect(x0,y,width,1); }
 function avHex2rgb(h){ h=h.replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
@@ -1524,23 +1576,25 @@ function avSilhouette(ctx,startY,widths,color,xoff){
 }
 const AV_HEAD_W=[6,12,17,20,22,22,22,22,22,20,17,12,7];
 function drawHairBack(ctx,style,color){
+  const eff=HAIR_BACK_FALLBACK[style]||style;
   const dark=avShade(color,-0.3);
-  if(style==='트윈테일'){
+  if(eff==='트윈테일'){
     for(const side of [-1,1])avSilhouette(ctx,10,[6,7,7,7,6,6,5,4],dark,side*10);
-  }else if(style==='포니테일'){
+  }else if(eff==='포니테일'){
     avSilhouette(ctx,9,[6,6,7,7,7,6,6,5,4],dark,10);
-  }else if(style==='롱헤어'){
+  }else if(eff==='롱헤어'){
     for(const side of [-1,1])avSilhouette(ctx,9,[7,8,9,10,10,10,9,9,8,7,6],dark,side*8);
   }
 }
 function drawHairFront(ctx,style,color){
   if(style==='대머리')return;
+  const eff=HAIR_BACK_FALLBACK[style]||style;
   const light=avShade(color,0.25);
   avSilhouette(ctx,0,[7,13,18,20,21],color);
   for(const side of [-1,1]){
     let lockW;
-    if(style==='단발')lockW=[3,3,3,3,3,3];
-    else if(style==='롱헤어')lockW=[2,2,2,2,2,2,2,2];
+    if(eff==='단발')lockW=[3,3,3,3,3,3];
+    else if(eff==='롱헤어')lockW=[2,2,2,2,2,2,2,2];
     else lockW=[2,2,2,2];
     avSilhouette(ctx,5,lockW,color,side*10);
   }
@@ -1569,28 +1623,100 @@ function drawAvatarCtx(ctx,n){
   /* 머리 */
   avSilhouette(ctx,0,AV_HEAD_W,skin);
   pRow(ctx,10,16,avShade(skin,-0.08)); pRow(ctx,11,11,avShade(skin,-0.08));
-  /* 눈 */
+  drawFaceFeatures(ctx,look.eyeColor);
+  /* 앞머리(이마 위로 얼굴 그린 뒤 마지막에 덮어 그린다) */
+  drawHairFront(ctx,look.hairStyle,look.hairColor);
+}
+/* 눈·볼터치·입 — 절차적 렌더러와 PNG 레이어 렌더러가 공통으로 사용하는 얼굴 이목구비 */
+function drawFaceFeatures(ctx,eyeColor){
   const cy=6;
   for(const side of [-1,1]){
     const ex=side*5;
     pRow(ctx,cy-1,3,AV_OUTLINE,ex); pRow(ctx,cy,3,AV_OUTLINE,ex); pRow(ctx,cy+1,3,AV_OUTLINE,ex);
-    pRow(ctx,cy,3,look.eyeColor,ex);
-    ctx.fillStyle=avShade(look.eyeColor,-0.4);
+    pRow(ctx,cy,3,eyeColor,ex);
+    ctx.fillStyle=avShade(eyeColor,-0.4);
     ctx.fillRect(Math.floor(AV_W/2)+ex-1,cy,1,1);
     ctx.fillStyle='#fff';
     ctx.fillRect(Math.floor(AV_W/2)+ex,cy-1,1,1);
   }
-  /* 볼터치 */
   pRow(ctx,8,2,'rgba(255,140,160,.5)',-8); pRow(ctx,8,2,'rgba(255,140,160,.5)',8);
-  /* 입 */
   pRow(ctx,9,2,'rgba(140,60,70,.6)');
-  /* 앞머리(이마 위로 얼굴 그린 뒤 마지막에 덮어 그린다) */
-  drawHairFront(ctx,look.hairStyle,look.hairColor);
+}
+/* ══════════════ PNG 레이어 아바타 (실제 이미지 자산 연동, 없으면 위 절차적 렌더러로 자동 대체) ══════════════
+   avatar_assets/ 폴더를 HTML 파일과 같은 위치에 두고 아래 경로에 투명 PNG(26×34 비율, 캔버스에 꽉 차게)를 넣으면
+   자동으로 이 레이어 합성 렌더러가 활성화된다. 파일이 없으면(현재 상태) 지금까지의 픽셀 캔버스 렌더러가 그대로 쓰인다.
+     avatar_assets/base/body.png          — 알몸 베이스. 이목구비는 비워 둔다(아래 절차적 눈·볼터치·입이 겹쳐 그려짐). 흰색/회색조로 만들면 피부색으로 자동 틴트.
+     avatar_assets/outfit/<슬러그>.png     — 의상별 전신 아트. 슬러그는 AV_SLUGS.outfit 참고
+     avatar_assets/hair_back/<슬러그>.png  — 뒷머리. 흰색/회색조로 만들면 머리색으로 자동 틴트
+     avatar_assets/hair_front/<슬러그>.png — 앞머리(이마 위, 마지막에 덮어 그려짐)
+   현재는 아이웨어·표정 등 추가 레이어는 연동하지 않는다(필요 시 후속 작업으로 확장). */
+const AV_ASSET_BASE='avatar_assets/';
+const AV_SLUGS={
+  hair:{
+    '숏컷':'short_cut','단발':'bob','포니테일':'ponytail','트윈테일':'twintail','롱헤어':'long_hair','대머리':'bald',
+    '히메컷':'hime_cut','웨이브 롱':'wave_long','곱슬머리':'curly','땋은 머리':'braid','사이드테일':'sidetail',
+    '반묶음':'half_up','숏 웨이브':'short_wave','애시 보브':'ash_bob','하프업 트윈':'half_up_twin',
+    '언더컷 숏':'undercut_short','포니테일 하이':'ponytail_high','리본 롱':'ribbon_long'
+  },
+  outfit:{
+    '평상복':'casual_wear','캐주얼':'casual','전신 코트':'long_coat','정장':'suit','수영복':'swimsuit','드레스':'dress',
+    '노출 의상':'revealing_outfit','란제리':'lingerie','트레이닝복':'tracksuit','유카타':'yukata','차이나 드레스':'cheongsam',
+    '웨딩 드레스':'wedding_dress','비키니':'bikini','가죽 의상':'leather_outfit','메이드복':'maid_outfit','바니걸':'bunny_suit',
+    '교복':'school_uniform','잠옷':'pajamas','우비':'raincoat','집사복':'butler_outfit','무녀복':'shrine_maiden',
+    '간호사복':'nurse_outfit','스쿨 수영복':'school_swimsuit','치어리더복':'cheerleader','알몸':'nude',
+    '오프숄더 니트':'offshoulder_knit','크롭탑 세트':'crop_top_set','후드 집업':'hoodie','원피스 수영복':'one_piece_swimsuit',
+    '래시가드':'rashguard','스포츠 브라 세트':'sports_bra_set','오버사이즈 셔츠':'oversize_shirt','코르셋 드레스':'corset_dress',
+    '실크 라운지 로브':'silk_robe','홀터넥 스트랩 드레스':'halter_dress','동물 잠옷':'kigurumi','스팀펑크 코르셋':'steampunk_corset',
+    '아이돌 무대의상':'idol_stage','체육복':'gym_uniform','앞치마 원피스':'apron_dress','튜브탑 미니드레스':'tube_minidress',
+    '새틴 슬립 나이트드레스':'satin_slip','하이레그 레오타드':'highleg_leotard','스트리트 크롭 세트':'street_crop_set',
+    '오일 비치웨어':'oil_beachwear','라텍스 슈트':'latex_suit','여신 드레이프 드레스':'goddess_drape'
+  }
+};
+function avAssetPath(cat,slug){ return AV_ASSET_BASE+cat+'/'+slug+'.png'; }
+const _avImgCache={};
+function avLoadImage(src){
+  if(_avImgCache[src])return _avImgCache[src];
+  const p=new Promise((resolve,reject)=>{ const img=new Image(); img.onload=()=>resolve(img); img.onerror=()=>reject(new Error('missing:'+src)); img.src=src; });
+  _avImgCache[src]=p; return p;
+}
+/* 흰색/회색조 실루엣 PNG를 캔버스 합성(source-atop)으로 원하는 색으로 물들인다 */
+function avTint(img,color){
+  const off=document.createElement('canvas'); off.width=AV_W; off.height=AV_H;
+  const octx=off.getContext('2d'); octx.imageSmoothingEnabled=false;
+  octx.drawImage(img,0,0,AV_W,AV_H);
+  octx.globalCompositeOperation='source-atop';
+  octx.fillStyle=color; octx.fillRect(0,0,AV_W,AV_H);
+  return off;
+}
+let AV_PNG_MODE=false;
+(function avDetectPngAssets(){
+  avLoadImage(avAssetPath('base','body')).then(()=>{
+    AV_PNG_MODE=true;
+    if(typeof render==='function')render();
+  }).catch(()=>{ AV_PNG_MODE=false; });
+})();
+async function drawAvatarPNG(ctx,n){
+  const look=ensureLook(n);
+  ctx.clearRect(0,0,AV_W,AV_H);
+  const outfitSlug=AV_SLUGS.outfit[n.outfit]||AV_SLUGS.outfit['평상복'];
+  const hairSlug=AV_SLUGS.hair[look.hairStyle];
+  const drawLayer=async(src,tintColor)=>{
+    try{
+      const img=await avLoadImage(src);
+      ctx.drawImage(tintColor?avTint(img,tintColor):img,0,0,AV_W,AV_H);
+    }catch(e){ /* 해당 레이어 자산이 아직 없으면 조용히 건너뛴다 */ }
+  };
+  await drawLayer(avAssetPath('base','body'),look.skin);
+  await drawLayer(avAssetPath('outfit',outfitSlug));
+  if(hairSlug)await drawLayer(avAssetPath('hair_back',hairSlug),look.hairColor);
+  drawFaceFeatures(ctx,look.eyeColor);
+  if(hairSlug)await drawLayer(avAssetPath('hair_front',hairSlug),look.hairColor);
 }
 function renderAvatarInto(canvasEl,n){
   if(!canvasEl||!canvasEl.getContext)return;
   const ctx=canvasEl.getContext('2d'); ctx.imageSmoothingEnabled=false;
-  drawAvatarCtx(ctx,n);
+  if(AV_PNG_MODE){ drawAvatarPNG(ctx,n).catch(()=>{ drawAvatarCtx(ctx,n); }); }
+  else{ drawAvatarCtx(ctx,n); }
 }
 function avatarCanvasHTML(id,size){ size=size||96; return `<canvas id="${id}" width="${AV_W}" height="${AV_H}" style="width:${size}px;height:${Math.round(size*AV_H/AV_W)}px;image-rendering:pixelated;border:1px solid var(--line);border-radius:4px;background:var(--soft);flex-shrink:0"></canvas>`; }
 /* 외형 커스터마이징 UI: 미리보기 캔버스 + 피부/헤어스타일/머리색/눈동자색 스와치.
@@ -1627,8 +1753,12 @@ function wireLookEditor(idp,look,outfitName){
   return ()=>cur;
 }
 const WARDROBE_ZONES=['roomA','roomB','roomC','roomD','gym'];   /* 옷장이 있는 안전 공간 */
-const UNDERWEAR={상:{'브라':{노출:0},'레이스 브라':{노출:4,매력:2,need:'레이스 속옷'},'착용 안 함':{노출:10}},
-                 하:{'팬티':{노출:0},'레이스 팬티':{노출:4,매력:2,need:'레이스 속옷'},'착용 안 함':{노출:12}}};
+const UNDERWEAR={상:{'브라':{노출:0},'레이스 브라':{노출:4,매력:2,need:'레이스 속옷'},'스포츠 브라':{노출:0},
+                    '볼륨 브라':{노출:2,매력:4},'시스루 브라':{노출:8,매력:3,need:'레이스 속옷'},
+                    '니플 패치':{노출:16,매력:2,need:'레이스 속옷'},'튜브탑 밴드':{노출:4,매력:2},'착용 안 함':{노출:10}},
+                 하:{'팬티':{노출:0},'레이스 팬티':{노출:4,매력:2,need:'레이스 속옷'},'로우라이즈 팬티':{노출:2,매력:1},
+                    '삭스벨트 세트':{노출:6,매력:5,need:'레이스 속옷'},'끈팬티':{노출:9,매력:3,need:'레이스 속옷'},
+                    '오픈 크로치':{노출:20,매력:2,need:'레이스 속옷'},'착용 안 함':{노출:12}}};
 function equipOutfit(n,name){
   if(!OUTFITS[name])name='평상복';
   const o=OUTFITS[name];
@@ -3700,7 +3830,27 @@ const SHOPS={
     {name:'의상: 교복',price:45,fx:p=>{buyOutfit(p,'교복');}},
     {name:'의상: 잠옷',price:20,fx:p=>{buyOutfit(p,'잠옷');}},
     {name:'의상: 우비',price:15,fx:p=>{buyOutfit(p,'우비');}},
-    {name:'의상: 집사복',price:75,fx:p=>{buyOutfit(p,'집사복');}}
+    {name:'의상: 집사복',price:75,fx:p=>{buyOutfit(p,'집사복');}},
+    {name:'의상: 오프숄더 니트',price:30,fx:p=>{buyOutfit(p,'오프숄더 니트');}},
+    {name:'의상: 크롭탑 세트',price:32,fx:p=>{buyOutfit(p,'크롭탑 세트');}},
+    {name:'의상: 후드 집업',price:22,fx:p=>{buyOutfit(p,'후드 집업');}},
+    {name:'의상: 원피스 수영복',price:38,fx:p=>{buyOutfit(p,'원피스 수영복');}},
+    {name:'의상: 래시가드',price:28,fx:p=>{buyOutfit(p,'래시가드');}},
+    {name:'의상: 홀터넥 스트랩 드레스',price:85,fx:p=>{buyOutfit(p,'홀터넥 스트랩 드레스');}},
+    {name:'의상: 동물 잠옷',price:30,fx:p=>{buyOutfit(p,'동물 잠옷');}},
+    {name:'의상: 아이돌 무대의상',price:120,fx:p=>{buyOutfit(p,'아이돌 무대의상');}},
+    {name:'의상: 체육복',price:25,fx:p=>{buyOutfit(p,'체육복');}},
+    {name:'의상: 앞치마 원피스',price:35,fx:p=>{buyOutfit(p,'앞치마 원피스');}},
+    {name:'의상: 스트리트 크롭 세트',price:34,fx:p=>{buyOutfit(p,'스트리트 크롭 세트');}},
+    {name:'의상: 여신 드레이프 드레스',price:95,fx:p=>{buyOutfit(p,'여신 드레이프 드레스');}},
+    {name:'향수',price:18,fx:p=>{p.flags['아이템:향수']=(p.flags['아이템:향수']||0)+1;}},
+    {name:'액세서리',price:35,fx:p=>{p.flags['아이템:액세서리']=(p.flags['아이템:액세서리']||0)+1;}},
+    {name:'손편지 재료',price:5,fx:p=>{p.flags['아이템:손편지']=(p.flags['아이템:손편지']||0)+1;}},
+    {name:'고급 와인',price:25,minR:2,fx:p=>{p.flags['아이템:고급 와인']=(p.flags['아이템:고급 와인']||0)+1;}},
+    {name:'곰인형',price:22,fx:p=>{p.flags['아이템:곰인형']=(p.flags['아이템:곰인형']||0)+1;}},
+    {name:'자수 손수건',price:12,fx:p=>{p.flags['아이템:자수 손수건']=(p.flags['아이템:자수 손수건']||0)+1;}},
+    {name:'피로회복 드링크',price:8,fx:p=>{p.flags['아이템:피로회복 드링크']=(p.flags['아이템:피로회복 드링크']||0)+1;}},
+    {name:'각성제',price:14,fx:p=>{p.flags['아이템:각성제']=(p.flags['아이템:각성제']||0)+1;}}
   ],
   cafe:[
     {name:'커피',price:5,fx:p=>{p.needs.피로=clamp(p.needs.피로-10,0,100);p.stability=clamp(p.stability+4,0,100);}},
@@ -3728,13 +3878,38 @@ const SHOPS={
     {name:'의상: 간호사복',price:78,minR:3,fx:p=>{buyOutfit(p,'간호사복');}},
     {name:'의상: 스쿨 수영복',price:40,minR:3,fx:p=>{buyOutfit(p,'스쿨 수영복');}},
     {name:'의상: 치어리더복',price:65,minR:3,fx:p=>{buyOutfit(p,'치어리더복');}},
-    {name:'의상: 알몸(탈의)',price:0,minR:3,fx:p=>{buyOutfit(p,'알몸');}}
+    {name:'의상: 알몸(탈의)',price:0,minR:3,fx:p=>{buyOutfit(p,'알몸');}},
+    {name:'의상: 스포츠 브라 세트',price:30,minR:3,fx:p=>{buyOutfit(p,'스포츠 브라 세트');}},
+    {name:'의상: 오버사이즈 셔츠',price:20,minR:3,fx:p=>{buyOutfit(p,'오버사이즈 셔츠');}},
+    {name:'의상: 코르셋 드레스',price:100,minR:3,fx:p=>{buyOutfit(p,'코르셋 드레스');}},
+    {name:'의상: 실크 라운지 로브',price:60,minR:3,fx:p=>{buyOutfit(p,'실크 라운지 로브');}},
+    {name:'의상: 스팀펑크 코르셋',price:110,minR:3,fx:p=>{buyOutfit(p,'스팀펑크 코르셋');}},
+    {name:'의상: 튜브탑 미니드레스',price:70,minR:3,fx:p=>{buyOutfit(p,'튜브탑 미니드레스');}},
+    {name:'의상: 새틴 슬립 나이트드레스',price:55,minR:3,fx:p=>{buyOutfit(p,'새틴 슬립 나이트드레스');}},
+    {name:'의상: 하이레그 레오타드',price:60,minR:3,fx:p=>{buyOutfit(p,'하이레그 레오타드');}},
+    {name:'의상: 오일 비치웨어',price:45,minR:3,fx:p=>{buyOutfit(p,'오일 비치웨어');}},
+    {name:'의상: 라텍스 슈트',price:130,minR:3,fx:p=>{buyOutfit(p,'라텍스 슈트');}},
+    {name:'은밀한 액세서리',price:35,minR:3,fx:p=>{p.flags['아이템:은밀한 액세서리']=(p.flags['아이템:은밀한 액세서리']||0)+1;}},
+    {name:'최음제',price:32,minR:3,fx:p=>{p.flags['아이템:최음제']=(p.flags['아이템:최음제']||0)+1;}},
+    {name:'진정제',price:20,minR:3,fx:p=>{p.flags['아이템:진정제']=(p.flags['아이템:진정제']||0)+1;}},
+    {name:'바디 오일',price:20,minR:3,fx:p=>{p.flags['아이템:바디 오일']=(p.flags['아이템:바디 오일']||0)+1;}},
+    {name:'마사지 오일',price:25,minR:3,fx:p=>{p.flags['아이템:마사지 오일']=(p.flags['아이템:마사지 오일']||0)+1;}},
+    {name:'무드 향초',price:18,minR:3,fx:p=>{p.flags['아이템:무드 향초']=(p.flags['아이템:무드 향초']||0)+1;}},
+    {name:'피임 기구',price:10,minR:3,fx:p=>{p.flags['아이템:피임 기구']=(p.flags['아이템:피임 기구']||0)+1;}}
   ]
 };
 function buyOutfit(p,name){ p.wardrobe=p.wardrobe||['평상복']; if(!p.wardrobe.includes(name))p.wardrobe.push(name); }
 const USABLES={
   '감도 젤':{emoji:'💧',desc:'전 부위 감도 상승(지속)',use:p=>{for(const k in p.sens)p.sens[k]=clamp(p.sens[k]+10,0,100); log(`${NM(p)}이(가) 감도 젤을 발랐다 — 온몸이 예민해진다`,'event',p.space);}},
-  '정력제':{emoji:'💊',desc:'최대 정력·현재 정력 회복',use:p=>{p.lewd.max정력=clamp(p.lewd.max정력+20,50,400); p.lewd.정력=clamp(p.lewd.정력+40,0,p.lewd.max정력); log(`${NM(p)}이(가) 정력제를 복용했다 — 힘이 솟는다`,'event',p.space);}}
+  '정력제':{emoji:'💊',desc:'최대 정력·현재 정력 회복',use:p=>{p.lewd.max정력=clamp(p.lewd.max정력+20,50,400); p.lewd.정력=clamp(p.lewd.정력+40,0,p.lewd.max정력); log(`${NM(p)}이(가) 정력제를 복용했다 — 힘이 솟는다`,'event',p.space);}},
+  '최음제':{emoji:'🌶️',desc:'흥분 즉시 대폭 상승',use:p=>{arouse(p,35); log(`${NM(p)}이(가) 최음제를 삼켰다 — 몸이 뜨겁게 달아오른다`,'event',p.space);}},
+  '진정제':{emoji:'💊',desc:'흥분 하락, 안정도 회복',use:p=>{p.lewd.흥분=clamp(p.lewd.흥분-30,0,100); p.stability=clamp(p.stability+15,0,100); log(`${NM(p)}이(가) 진정제를 복용했다 — 마음이 가라앉는다`,'event',p.space);}},
+  '피로회복 드링크':{emoji:'🧃',desc:'피로 즉시 감소',use:p=>{p.needs.피로=clamp(p.needs.피로-30,0,100); log(`${NM(p)}이(가) 피로회복 드링크를 마셨다 — 몸이 한결 가볍다`,'event',p.space);}},
+  '각성제':{emoji:'⚡',desc:'피로 감소 + 정력 소폭 회복',use:p=>{p.needs.피로=clamp(p.needs.피로-18,0,100); p.lewd.정력=clamp(p.lewd.정력+15,0,p.lewd.max정력); log(`${NM(p)}이(가) 각성제를 마셨다 — 정신이 번쩍 든다`,'event',p.space);}},
+  '바디 오일':{emoji:'🧴',desc:'매력·노출도 일시 상승',use:p=>{p.매력=clamp(p.매력+8,0,100); p.노출도=clamp(p.노출도+6,0,100); log(`${NM(p)}이(가) 바디 오일을 발랐다 — 살결이 매끄럽게 빛난다`,'event',p.space);}},
+  '마사지 오일':{emoji:'💆',desc:'안정도 회복 + 민감도 소폭 상승',use:p=>{p.stability=clamp(p.stability+20,0,100); for(const k in p.sens)p.sens[k]=clamp(p.sens[k]+5,0,100); log(`${NM(p)}이(가) 마사지 오일을 발랐다 — 몸이 노곤하게 풀린다`,'event',p.space);}},
+  '무드 향초':{emoji:'🕯️',desc:'안정도 회복, 은은한 분위기 연출',use:p=>{p.stability=clamp(p.stability+12,0,100); p.needs.사교=clamp(p.needs.사교-6,0,100); log(`${NM(p)}이(가) 무드 향초에 불을 붙였다 — 은은한 향이 방 안을 채운다`,'event',p.space);}},
+  '피임 기구':{emoji:'🛡️',desc:'안심하고 즐길 수 있게 해준다',use:p=>{p.flags._protected=turn+50; p.stability=clamp(p.stability+5,0,100); log(`${NM(p)}이(가) 피임 기구를 챙겨두었다 — 마음이 한결 편하다`,'event',p.space);}}
 };
 function useItem(p,name){ const it=USABLES[name]; if(!it)return; if((p.flags['아이템:'+name]||0)<=0)return; p.flags['아이템:'+name]--; try{it.use(p);}catch(e){} flashToken(p.id); step(1); }
 /* ══════════════ R18+ 페티시 (설정 토글로 켜질 때만 활성) ══════════════ */
@@ -4124,7 +4299,14 @@ function spaceFlavor(n){ const pool=SPACE_LINES[n.space]; if(!pool)return; log(`
 const GIFTS={
   '꽃':{label:'꽃',호감:8,애정:5,line:'수줍게 꽃을 건넨다'},
   '수제 초콜릿':{label:'수제 초콜릿',호감:6,애정:6,line:'달콤한 초콜릿을 내민다'},
-  '야한 선물':{label:'야한 선물',minR:3,호감:3,욕망:12,line:'짓궂은 미소로 은밀한 선물을 건넨다'}
+  '야한 선물':{label:'야한 선물',minR:3,호감:3,욕망:12,line:'짓궂은 미소로 은밀한 선물을 건넨다'},
+  '향수':{label:'향수',호감:6,애정:2,line:'은은한 향수를 살짝 뿌려 건넨다'},
+  '액세서리':{label:'액세서리',호감:9,애정:6,line:'귀걸이를 수줍게 내민다'},
+  '손편지':{label:'손편지',호감:4,애정:5,line:'꾹꾹 눌러쓴 편지를 건넨다'},
+  '고급 와인':{label:'고급 와인',minR:2,호감:7,line:'분위기 있는 와인을 내민다'},
+  '곰인형':{label:'곰인형',호감:4,애정:7,line:'포근한 곰인형을 품에 안겨준다'},
+  '자수 손수건':{label:'자수 손수건',호감:5,애정:3,line:'정성스레 수놓은 손수건을 건넨다'},
+  '은밀한 액세서리':{label:'은밀한 액세서리',minR:3,호감:2,욕망:14,line:'짓궂은 미소로 초커를 걸어준다'}
 };
 function giftGive(p,t,item){
   const g=GIFTS[item]; if(!g||!t)return;
