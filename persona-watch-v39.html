@@ -1496,7 +1496,8 @@ const OUTFIT_G={'드레스':'F','수영복':'F','란제리':'F','차이나 드�
    각 인물의 look={skin,hairStyle,hairColor,eyeColor}을 작은 픽셀 그리드에 그려
    커스터마이징을 실제로 눈에 보이게 만든다. 캔버스를 작게 그리고 CSS로 확대해
    image-rendering:pixelated로 각지게 표시한다. */
-const AV_W=18, AV_H=22;
+const AV_W=26, AV_H=34;
+const AV_OUTLINE='#1a1410';
 const SKIN_TONES=['#FFE0BD','#F4C89B','#E0AC69','#C68642','#8D5524','#5C3A21'];
 const HAIR_COLORS=['#2B2B2B','#5A3825','#8B5A2B','#C9A227','#B23A6B','#3A5AA0','#EAEAEA','#7A3AA0','#3A7A5A','#D95B3F'];
 const EYE_COLORS=['#2B2B2B','#3A5AA0','#5A8A4A','#8B5A2B','#B23A6B','#7A3AA0','#3AA0A0'];
@@ -1512,38 +1513,79 @@ const OUTFIT_COLOR={
  '바니걸':'#1F1F24','교복':'#2C3E6B','잠옷':'#C9A6C0','우비':'#E0B23A','집사복':'#26262E','무녀복':'#B2372E',
  '간호사복':'#EAEAF0','스쿨 수영복':'#1F3E6B','치어리더복':'#C9282E'
 };
-function pRow(ctx,y,width,color){ if(!color)return; const x0=Math.floor((AV_W-width)/2); ctx.fillStyle=color; ctx.fillRect(x0,y,width,1); }
-const AV_HEAD_W=[4,8,11,12,13,13,13,12,10,7];
-function drawHair(ctx,style,color){
-  if(style==='대머리')return;
-  ctx.fillStyle=color;
-  for(let y=0;y<3;y++)pRow(ctx,y,(AV_HEAD_W[y]||6)+2,color);
-  if(style==='단발'){
-    for(let y=3;y<7;y++){ const w=(AV_HEAD_W[y]||10)+2, x0=Math.floor((AV_W-w)/2); ctx.fillRect(x0,y,1,1); ctx.fillRect(x0+w-1,y,1,1); }
-  }else if(style==='롱헤어'){
-    for(let y=3;y<16;y++){ const w=(y<10?(AV_HEAD_W[y]||10):18)+2, x0=Math.floor((AV_W-w)/2); ctx.fillRect(x0,y,1,1); ctx.fillRect(x0+w-1,y,1,1); }
+function pRow(ctx,y,width,color,xoff){ if(!color||width<=0)return; xoff=xoff||0; const x0=Math.floor((AV_W-width)/2)+xoff; ctx.fillStyle=color; ctx.fillRect(x0,y,width,1); }
+function avHex2rgb(h){ h=h.replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function avRgb2hex(r,g,b){ return '#'+[r,g,b].map(v=>clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join(''); }
+function avShade(hex,pct){ const [r,g,b]=avHex2rgb(hex); const f=v=>pct<0? v*(1+pct) : v+(255-v)*pct; return avRgb2hex(f(r),f(g),f(b)); }
+/* 실루엣: 각 행을 외곽선(테두리) 색으로 폭+2만큼 먼저 채운 뒤, 실제 색을 폭만큼 덮어 그려 1px 테두리 효과를 낸다 */
+function avSilhouette(ctx,startY,widths,color,xoff){
+  widths.forEach((w,i)=>pRow(ctx,startY+i,w+2,AV_OUTLINE,xoff));
+  widths.forEach((w,i)=>pRow(ctx,startY+i,w,color,xoff));
+}
+const AV_HEAD_W=[6,12,17,20,22,22,22,22,22,20,17,12,7];
+function drawHairBack(ctx,style,color){
+  const dark=avShade(color,-0.3);
+  if(style==='트윈테일'){
+    for(const side of [-1,1])avSilhouette(ctx,10,[6,7,7,7,6,6,5,4],dark,side*10);
   }else if(style==='포니테일'){
-    for(let y=2;y<11;y++)ctx.fillRect(AV_W-2,y,2,1);
-  }else if(style==='트윈테일'){
-    for(let y=3;y<11;y++){ ctx.fillRect(0,y,2,1); ctx.fillRect(AV_W-2,y,2,1); }
+    avSilhouette(ctx,9,[6,6,7,7,7,6,6,5,4],dark,10);
+  }else if(style==='롱헤어'){
+    for(const side of [-1,1])avSilhouette(ctx,9,[7,8,9,10,10,10,9,9,8,7,6],dark,side*8);
   }
+}
+function drawHairFront(ctx,style,color){
+  if(style==='대머리')return;
+  const light=avShade(color,0.25);
+  avSilhouette(ctx,0,[7,13,18,20,21],color);
+  for(const side of [-1,1]){
+    let lockW;
+    if(style==='단발')lockW=[3,3,3,3,3,3];
+    else if(style==='롱헤어')lockW=[2,2,2,2,2,2,2,2];
+    else lockW=[2,2,2,2];
+    avSilhouette(ctx,5,lockW,color,side*10);
+  }
+  pRow(ctx,0,4,light,-5); pRow(ctx,1,4,light,-5);
 }
 function drawAvatarCtx(ctx,n){
   ctx.clearRect(0,0,AV_W,AV_H);
   const look=ensureLook(n);
-  AV_HEAD_W.forEach((w,y)=>pRow(ctx,y,w,look.skin));
-  pRow(ctx,10,6,look.skin);
+  const skin=look.skin, skinDark=avShade(skin,-0.15);
   const outColor=(n.outfit==='알몸')?look.skin:(OUTFIT_COLOR[n.outfit]||'#8B8B87');
-  const torsoW=[14,16,17,18,18,18,18,18,18,18,18];
-  torsoW.forEach((w,i)=>pRow(ctx,11+i,w,outColor));
-  drawHair(ctx,look.hairStyle,look.hairColor);
-  const cx=AV_W/2;
-  ctx.fillStyle=look.eyeColor;
-  ctx.fillRect(cx-4,6,2,1); ctx.fillRect(cx+2,6,2,1);
-  ctx.fillStyle='rgba(0,0,0,.35)';
-  ctx.fillRect(cx-1,8,2,1);
-  ctx.fillStyle='rgba(255,140,160,.35)';
-  ctx.fillRect(cx-6,7,1,1); ctx.fillRect(cx+5,7,1,1);
+  /* 다리·신발 */
+  for(const side of [-1,1])avSilhouette(ctx,26,[4,4,4,4,4],skinDark,side*5);
+  for(const side of [-1,1])avSilhouette(ctx,31,[6,5],'#2b2320',side*5);
+  /* 몸통(의상) — 팔이 옆으로 드러나도록 폭을 좁게 잡는다 */
+  const torsoW=[13,15,16,17,17,17,17,18,18,19,19];
+  avSilhouette(ctx,14,torsoW,outColor);
+  pRow(ctx,23,18,avShade(outColor,-0.2)); pRow(ctx,24,18,avShade(outColor,-0.2));
+  pRow(ctx,14,9,avShade(outColor,0.25));
+  /* 팔 (몸통 위에 그려 옆으로 드러나 보이게) */
+  for(const side of [-1,1])avSilhouette(ctx,15,[4,4,4,4,4,5],skin,side*10.5);
+  for(const side of [-1,1])avSilhouette(ctx,21,[5,5],skin,side*10.5);
+  /* 뒷머리(머리 뒤로 드러나는 부분) */
+  drawHairBack(ctx,look.hairStyle,look.hairColor);
+  /* 목 */
+  pRow(ctx,12,6,skinDark); pRow(ctx,13,7,skin);
+  /* 머리 */
+  avSilhouette(ctx,0,AV_HEAD_W,skin);
+  pRow(ctx,10,16,avShade(skin,-0.08)); pRow(ctx,11,11,avShade(skin,-0.08));
+  /* 눈 */
+  const cy=6;
+  for(const side of [-1,1]){
+    const ex=side*5;
+    pRow(ctx,cy-1,3,AV_OUTLINE,ex); pRow(ctx,cy,3,AV_OUTLINE,ex); pRow(ctx,cy+1,3,AV_OUTLINE,ex);
+    pRow(ctx,cy,3,look.eyeColor,ex);
+    ctx.fillStyle=avShade(look.eyeColor,-0.4);
+    ctx.fillRect(Math.floor(AV_W/2)+ex-1,cy,1,1);
+    ctx.fillStyle='#fff';
+    ctx.fillRect(Math.floor(AV_W/2)+ex,cy-1,1,1);
+  }
+  /* 볼터치 */
+  pRow(ctx,8,2,'rgba(255,140,160,.5)',-8); pRow(ctx,8,2,'rgba(255,140,160,.5)',8);
+  /* 입 */
+  pRow(ctx,9,2,'rgba(140,60,70,.6)');
+  /* 앞머리(이마 위로 얼굴 그린 뒤 마지막에 덮어 그린다) */
+  drawHairFront(ctx,look.hairStyle,look.hairColor);
 }
 function renderAvatarInto(canvasEl,n){
   if(!canvasEl||!canvasEl.getContext)return;
