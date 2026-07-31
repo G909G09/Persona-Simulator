@@ -438,7 +438,7 @@ Object.assign(LABEL_EN,{
  genital:{'여성기':'Female','남성기':'Male','양성':'Both'},
  r18mode:{'기본':'Default','부탁':'Plea','강압':'Force','복종':'Submit'},
  need:{'사교욕':'Social','피로':'Fatigue','성취욕':'Drive','안정도':'Stability','매력':'Charm','노출도':'Exposure'},
- sexstat:{'흥분':'Arousal','취기':'Drunk','타락':'Corrupt.','정력':'Stamina','체격':'Build','운동':'Fitness'},
+ sexstat:{'흥분':'Arousal','취기':'Drunk','타락':'Corrupt.','정력':'Stamina','체격':'Build','운동':'Fitness','평판':'Reputation'},
  part:{'입술':'Lips','귀':'Ears','목':'Neck','가슴':'Chest','허리':'Waist','하복부':'Groin'},
  hair:{'숏컷':'Short','단발':'Bob','포니테일':'Ponytail','트윈테일':'Twintails','롱헤어':'Long','대머리':'Bald'},
  status:{'감기':'Cold','점액감염':'Slime Infection','기생체':'Parasite'},
@@ -1121,7 +1121,8 @@ const CFG_DEF={
   defR18:true, defCor:true, autoFaint:false,
   fet_beast:false, fet_water:false, fet_tentacle:false, fet_bondage:false, fet_exhibition:false,
   immersion:true,
-  riotMode:false, riotP:30
+  riotMode:false, riotP:30,
+  repProposition:true
 };
 const CFG=Object.assign({},CFG_DEF);
 try{ Object.assign(CFG, JSON.parse(localStorage.getItem(CFG_KEY)||'{}')); }catch(e){}
@@ -1157,7 +1158,9 @@ const CFG_SCHEMA=[
  {k:'immersion', t:'toggle', l:'시작 시 이야기 모드', l_en:'Story Mode on Start',   d:'켜면 시작할 때 우측 패널이 [이야기](당신에게 직접 벌어지는 일만, 인터랙티브 스토리 형식) 모드로 열립니다. 끄면 [전체 로그](모든 인물의 행동을 기록하는 관찰용 로그)로 시작합니다. 플레이 중에는 로그 헤더의 전환 버튼으로 언제든 바꿀 수 있습니다.', d_en:'If on, the right panel opens in [Story] mode (only what happens directly to you, as an interactive story) at start. If off, it starts in [Full Log] mode (every character\'s actions, for observation). You can toggle between them any time from the log header button.'},
  {g:'폭동 모드 (R18)',g_en:'Riot Mode (R18)'},
  {k:'riotMode', t:'toggle', l:'폭동 모드', l_en:'Riot Mode', d:'등급 3에서, 10턴마다 확률적으로 몇 명이 발정해 당신을 쫓기 시작합니다. 몇 턴 안에 따돌리지 못하면 붙잡혀 다른 곳으로 끌려가 다인 H가 시작됩니다.', d_en:'At rating 3, every 10 turns a few characters may go into heat and start chasing you. If you can\'t shake them off in a few turns, they catch you, drag you elsewhere, and a group H session begins.'},
- {k:'riotP', t:'range', l:'폭동 발생 확률', l_en:'Riot Trigger Chance', min:0,max:100,step:5, u:'%', d:'10턴마다 폭동이 발생할 확률.', d_en:'Chance every 10 turns that a riot triggers.'}
+ {k:'riotP', t:'range', l:'폭동 발생 확률', l_en:'Riot Trigger Chance', min:0,max:100,step:5, u:'%', d:'10턴마다 폭동이 발생할 확률.', d_en:'Chance every 10 turns that a riot triggers.'},
+ {g:'성적 평판 (R18)',g_en:'Sexual Reputation (R18)'},
+ {k:'repProposition', t:'toggle', l:'평판 기반 제안', l_en:'Reputation-Based Propositions', d:'성적 평판이 높으면(50 이상), 아직 친하지 않은 인물이 소문을 들었다며 먼저 은밀한 제안을 걸어올 수 있습니다. 평판 수치 자체는 이 옵션을 꺼도 계속 쌓입니다.', d_en:'Once your sexual reputation is high (50+), characters you barely know may approach you first with a proposition, having heard the rumors. The underlying reputation stat keeps accumulating even if this is off.'}
 ];
 
 function openConsole(){
@@ -1619,7 +1622,7 @@ function makeNpc(name,arch,axes,form,mix,isPlayer=false,r18=false,cor=true,lewd0
     needs:{사교:ri(20,50),피로:ri(10,30),성취:ri(20,50)},stability:100,
     body:{체격:ri(35,75),운동:ri(30,70)},
     lewd:{흥분:0,취기:0,타락:clamp(lewd0,0,100),정력:maxEng, max정력:maxEng},
-    corruptible:cor,r18Mode:'기본',money:isPlayer?60:ri(0,30),매력base:ri(30,70),매력:50,노출도:5,outfit:'평상복',wardrobe:['평상복','알몸'],asleep:0,
+    corruptible:cor,r18Mode:'기본',money:isPlayer?60:ri(0,30),매력base:ri(30,70),매력:50,노출도:5,평판:0,outfit:'평상복',wardrobe:['평상복','알몸'],asleep:0,
     gender:'여성',genital:'여성기',under:{상:'브라',하:'팬티'},look:randomLook(),
     sens:sens?Object.assign(defSens(),sens):defSens(),
     hsex:null,
@@ -1925,6 +1928,7 @@ function grow(n,key,v){
   n.body[key]=clamp(cur+gain,0,100);
 }
 function arouse(n,v){n.lewd.흥분=clamp(n.lewd.흥분+v,0,100); if(n.lewd.흥분>=80)n.lewd.욕망Peak=1;}
+function gainRep(n,v){ if(n)n.평판=clamp((n.평판||0)+v,0,100); }
 function corrupt(a,b){
   if(!a.corruptible)return;
   const src=b.lewd.타락+b.lewd.흥분*.3;
@@ -2903,7 +2907,9 @@ function doHAct(s,t,actName){
 function startHSession(s,t,mode){
   s.hsex={with:t.id,mode,turns:0,party:[t.id],focusIdx:0}; t.hsex={with:s.id,lead:s.id,mode,turns:0,passive:true};
   milestone(s,t,'첫관계'); milestone(t,s,'첫관계');
-  
+  const _newPair=!(s.r18log[t.id]);
+  gainRep(s,_newPair?10:3); gainRep(t,_newPair?10:3);
+
   let introTxt = "";
   if (mode === '강압') {
     introTxt = "거칠고 강압적인 분위기 속에서 이성이 무너져 내린다";
@@ -2998,6 +3004,7 @@ function joinHSession(lead,joiner){
   arouse(lead,10); arouse(joiner,15);
   playSE('hstart');
   const cnt=lead.hsex.party.length+1;
+  { const _newPair=!(lead.r18log[joiner.id]); gainRep(lead,(_newPair?8:2)+(cnt>=3?4:0)); gainRep(joiner,(_newPair?8:2)+(cnt>=3?4:0)); }
   if(cnt>=3&&(lead.isPlayer||joiner.isPlayer)){ const pl=P(); if(pl)pl.flags._multiH=1; }
   log(`— ${NM(joiner)}이(가) ${joinLine(joiner)} · ${NM(lead)}의 정사에 합류, ${cnt}인이 뒤엉킨다 —`,'event',lead.space);
   return true;
@@ -3131,6 +3138,7 @@ function tickWorld(){
     checkRiotChase(pl);
     checkJealousWitness(pl);
     checkJealousyConfrontation(pl);
+    checkRepProposition(pl);
     windCheck(pl);
     rainCheck(pl);
     heatCheck(pl);
@@ -3157,6 +3165,7 @@ function tickWorld(){
     n.lewd.흥분=Math.max(0,n.lewd.흥분-CFG.arousalDecay); n.lewd.취기=Math.max(0,n.lewd.취기-6);
     if(!n.hsex)n.lewd.정력=clamp(n.lewd.정력+(slot()==='밤'&&n.space===n.home?4:1.5)*(CFG.engRegen/100)*(0.5+n.lewd.max정력/200),0,n.lewd.max정력);
     if(n.needs.피로>=85)n.body.운동=clamp(n.body.운동-0.15,0,100);
+    if(n.평판>0)n.평판=Math.max(0,n.평판-0.06);
     tickStatuses(n);
   }
   checkScenes();
@@ -3507,7 +3516,7 @@ function renderDetail(){
     h+=`<div class="bar"><span style="font-size:10px">${lbl('need',k)}</span><span class="tr"><span class="fl" style="width:${v}%;opacity:.45"></span></span><span class="bv">${Math.round(v)}</span></div>`});
   if(RATING>=2){
     h+=`<div class="psec">${tr('sec.sexstat')}${n.corruptible?'':' · '+tr('sec.corLock')}${RATING>=3?` · ${tr('sec.r18mode')} ${lbl('r18mode',n.r18Mode)}`:''}</div>`;
-    const lr=[['흥분',n.lewd.흥분],['취기',n.lewd.취기],['타락',n.lewd.타락]];
+    const lr=[['흥분',n.lewd.흥분],['취기',n.lewd.취기],['타락',n.lewd.타락],['평판',n.평판||0]];
     if(RATING>=3)lr.push(['정력',n.lewd.정력],['체격',n.body.체격],['운동',n.body.운동]);
     lr.forEach(([k,v])=>{
       let maxVal = (k === '정력') ? n.lewd.max정력 : 100;
@@ -3727,8 +3736,9 @@ function checkRiotChase(p){
     p.space=dest; chasers.forEach(c=>c.space=dest);
     log(`— <b style="color:#B23A6B">${pick(RIOT_CAUGHT)}</b> — ${NM(p)}이(가) ${chasers.map(c=>NM(c)).join(', ')}에게 붙잡혀 ${SPACES[dest].n}(으)로 끌려갔다 —`,'event',dest);
     const grp=chasers.map(c=>c.id), mode='강압';
-    grp.forEach(id=>{ const o=npcs.find(x=>x.id===id); if(o){ o.hsex={with:p.id,mode,turns:0,party:[p.id],focusIdx:0}; d(o,p,'욕망',10); arouse(o,15); } });
+    grp.forEach(id=>{ const o=npcs.find(x=>x.id===id); if(o){ o.hsex={with:p.id,mode,turns:0,party:[p.id],focusIdx:0}; d(o,p,'욕망',10); arouse(o,15); gainRep(o,8); } });
     p.hsex={passive:true,mode,turns:0,with:grp[0],sharedGroup:grp};
+    gainRep(p,10+grp.length*4);
     if(grp.length>=3)p.flags._multiH=1;
     playSE('hstart');
   } else if(Math.random()<0.5){
@@ -3781,6 +3791,19 @@ function checkJealousyConfrontation(p){
   const cand=npcs.find(n=>!n.isPlayer&&n.space===p.space&&n.relations[p.id]&&n.relations[p.id].긴장>=65&&n.relations[p.id].애정>=35&&(!n.flags._jealousCD||n.flags._jealousCD<turn));
   if(!cand)return;
   if(Math.random()<0.25)startJealousyEvent(p,cand);
+}
+/* ── 성적 평판이 높으면, 아직 친하지 않은 인물이 소문을 듣고 먼저 은밀한 제안을 걸어온다 ── */
+const REP_PROPOSE_LINES=['...소문 들었어. 나도, 혹시 안 될까?','전부터 이름은 알고 있었어. 그... 이따 잠깐 시간 괜찮아?','다들 그러던데, 너 꽤 화끈하다며? 나도 좀 궁금해서.'];
+function checkRepProposition(p){
+  if(!CFG.repProposition||RATING<3||!p)return;
+  if(p.hsex||p.asleep>0||curEvent||workState||document.getElementById('modal')||leadQueue.length>0)return;
+  if((p.평판||0)<50)return;
+  if(turn%6!==0||Math.random()>0.2)return;
+  const cand=npcs.find(n=>!n.isPlayer&&n.r18&&!n.hsex&&n.space===p.space&&n.relations[p.id]&&(n.relations[p.id].호감||0)<25&&!(n.r18log&&n.r18log[p.id])&&(!n.flags._repPropCD||n.flags._repPropCD<turn));
+  if(!cand)return;
+  cand.flags._repPropCD=turn+40;
+  leadQueue.push({s:cand,t:p,line:pick(REP_PROPOSE_LINES)});
+  log(`${NM(cand)}이(가) 소문을 들었다는 듯 은밀히 다가와 말을 건넨다 — 응답 대기`,'event',p.space);
 }
 function checkFetishEvent(p){
   if(!p||p.hsex||p.asleep>0||curEvent||document.getElementById('modal')||RATING<3)return;
@@ -4194,7 +4217,7 @@ function renderPlayerPanel(){
   [['사교욕',p.needs.사교],['피로',p.needs.피로],['성취욕',p.needs.성취],['안정도',p.stability],['매력',p.매력||0],['노출도',p.노출도||0]].forEach(([k,v])=>{
     h+=`<div class="bar"><span style="font-size:10.5px">${lbl('need',k)}</span><span class="tr"><span class="fl" style="width:${v}%"></span></span><span class="bv">${Math.round(v)}</span></div>`});
   if(RATING>=2){
-    const rows=[['흥분',p.lewd.흥분],['취기',p.lewd.취기],['타락',p.lewd.타락]];
+    const rows=[['흥분',p.lewd.흥분],['취기',p.lewd.취기],['타락',p.lewd.타락],['평판',p.평판||0]];
     if(RATING>=3)rows.push(['정력',p.lewd.정력],['체격',p.body.체격],['운동',p.body.운동]);
     rows.forEach(([k,v])=>{
       let maxVal = (k === '정력') ? p.lewd.max정력 : 100;
@@ -4493,7 +4516,7 @@ function applySave(data){
   if(!data||!Array.isArray(data.npcs))throw new Error(tr('err.badSaveFile'));
   npcs=data.npcs; turn=data.turn||0; RATING=data.RATING||0;
   npcs.forEach(ensureSens);
-  npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); equipOutfit(n,n.outfit); n.asleep=0; });
+  npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; equipOutfit(n,n.outfit); n.asleep=0; });
   autoH=false;
   uid=data.uid||(npcs.length+1); colorIdx=data.colorIdx||0;
   playerId=data.playerId||null; pTarget=null; sel=[]; editId=null; logFilter=null; workState=null;
