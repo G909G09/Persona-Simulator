@@ -495,7 +495,8 @@ Object.assign(I18N.ko,{
  'modal.busTitle':'🚌 셔틀버스 (5코인)','modal.bikeTitle':'🚲 자전거로 이동',
  'modal.busDesc':'노선을 따라 원하는 곳까지 한 번에. 낯선 승객과 밀착될 수도 있다...','modal.bikeDesc':'페달을 밟아 어디든 빠르고 안전하게.',
  'err.badSaveFile':'형식이 올바르지 않은 저장 파일','alert.saveBlocked':'이 환경에서는 브라우저 저장이 차단되어 있습니다.\n⬇ 버튼으로 파일 내보내기를 사용해 주세요.',
- 'alert.noSaveData':'브라우저 저장 데이터가 없습니다.','alert.loadFailed':'불러오기 실패: ','alert.fileReadFailed':'파일을 읽을 수 없습니다: ','btn.delete':'삭제'
+ 'alert.noSaveData':'브라우저 저장 데이터가 없습니다.','alert.loadFailed':'불러오기 실패: ','alert.fileReadFailed':'파일을 읽을 수 없습니다: ','btn.delete':'삭제',
+ 'btn.followAlong':'따라간다','btn.decline':'거절한다','btn.accept':'받아들인다'
 });
 Object.assign(I18N.en,{
  'tab.stat':'Stats','tab.rel':'Relations','btn.pairEditDone':'Done Adjusting','btn.pairEdit':'Adjust Relation ✎',
@@ -530,7 +531,8 @@ Object.assign(I18N.en,{
  'modal.busTitle':'🚌 Shuttle Bus (5 coins)','modal.bikeTitle':'🚲 Travel by Bike',
  'modal.busDesc':'Ride the route straight to your destination in one go. You might end up pressed against a stranger...','modal.bikeDesc':'Pedal your way anywhere, fast and safe.',
  'err.badSaveFile':'Malformed save file','alert.saveBlocked':'Browser storage is blocked in this environment.\nPlease use the ⬇ Export to File button instead.',
- 'alert.noSaveData':'No browser save data found.','alert.loadFailed':'Load failed: ','alert.fileReadFailed':'Could not read file: ','btn.delete':'Delete'
+ 'alert.noSaveData':'No browser save data found.','alert.loadFailed':'Load failed: ','alert.fileReadFailed':'Could not read file: ','btn.delete':'Delete',
+ 'btn.followAlong':'Go with them','btn.decline':'Decline','btn.accept':'Accept'
 });
 Object.assign(I18N.en,{
  'title.sub':'Persona Simulation Prototype v39',
@@ -3166,7 +3168,7 @@ function showLeadPrompt() {
     <div class="who" style="color:${s.color}">${esc(s.name)} · 은밀한 제안</div>
     <div style="font-size:11.5px;color:var(--muted)">${esc(s.name)}이(가) 단둘이 방으로 가자고 유도하고 있다.</div>
     <div class="say">${esc(line)}</div>
-    <div class="btns"><button class="primary" id="leadYes">따라간다</button><button id="leadNo">거절한다</button></div></div>`;
+    <div class="btns"><button class="primary" id="leadYes">${tr('btn.followAlong')}</button><button id="leadNo">${tr('btn.decline')}</button></div></div>`;
   document.body.appendChild(m);
   
   document.getElementById('leadYes').onclick = () => resolveLead(true);
@@ -3203,7 +3205,7 @@ function showR18Prompt(){
   wrap.innerHTML=`<div class="card" style="border-top-color:${s.color}">
     <div class="who" style="color:${s.color}">${esc(s.name)} · ${A.r18.label} (${A.r18.mode})</div>
     <div class="say">${esc(line)}</div>
-    <div class="btns"><button class="primary" id="r18Yes">받아들인다</button><button id="r18No">거절한다</button></div></div>`;
+    <div class="btns"><button class="primary" id="r18Yes">${tr('btn.accept')}</button><button id="r18No">${tr('btn.decline')}</button></div></div>`;
   document.body.appendChild(wrap);
   document.getElementById('r18Yes').onclick=()=>resolveR18(true);
   document.getElementById('r18No').onclick=()=>resolveR18(false);
@@ -3239,7 +3241,7 @@ function showConfession(){
     <div class="who" style="color:${s.color}">${esc(s.name)} · ${s.arch}</div>
     <div style="font-size:11.5px;color:var(--muted)">${esc(s.name)}이(가) 고백해 왔다.</div>
     <div class="say">${esc(line)}</div>
-    <div class="btns"><button class="primary" id="confYes">받아들인다</button><button id="confNo">거절한다</button></div></div>`;
+    <div class="btns"><button class="primary" id="confYes">${tr('btn.accept')}</button><button id="confNo">${tr('btn.decline')}</button></div></div>`;
   document.body.appendChild(m);
   document.getElementById('confYes').onclick=()=>resolveConfession(true);
   document.getElementById('confNo').onclick=()=>resolveConfession(false);
