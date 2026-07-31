@@ -405,7 +405,7 @@ function applyI18n(root){
   r.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=tr(el.dataset.i18nPh); });
   r.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title=tr(el.dataset.i18nTitle); });
 }
-function setLang(v){ LANG=v; saveLang(); applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; }
+function setLang(v){ LANG=v; saveLang(); applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; if(document.getElementById('consoleWrap')&&typeof openConsole==='function'){ document.getElementById('consoleWrap').remove(); openConsole(); } }
 Object.assign(I18N.ko,{
  'title.sub':'성격 시뮬레이션 프로토타입 v39',
  'rate.title':'관찰 등급','rate.0':'등급: 전체이용가','rate.1':'등급: 15세','rate.2':'등급: 성인','rate.3':'등급: R18',
