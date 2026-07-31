@@ -486,6 +486,7 @@ Object.assign(I18N.ko,{
  'btn.sleep':'잠자기 💤','btn.autoFaint':'자동 기절','btn.reputation':'평판 📊','btn.batchAdmin':'⚙ 일괄',
  'sec.useItem':'아이템 사용 🧪','sec.solo':'혼자 하기','btn.doNothing':'아무것도 하지 않고 지켜본다 ⏭','label.partnerTier':'상대 반응단계',
  'label.partnerLeading':'상대가 주도하고 있다.','label.choosePartner':'상대 선택','label.proficiency':'숙련도',
+ 'label.riotChasing':'⚠ 무리가 당신을 쫓고 있다','btn.flee':'도망친다 ⏭',
  'btn.close':'닫기 ✕','btn.restoreDefaults':'기본값 복원','btn.applyClose':'적용하고 닫기','confirm.resetCfg':'모든 설정을 기본값으로 되돌릴까요?',
  'modal.sleepPrompt':'몇 턴 동안 잘까? 자는 동안 턴이 자동으로 흐르고, 말을 걸어도 듣지 못한다.',
  'modal.sleepShort':'짧게 (3턴)','modal.sleepNormal':'보통 (5턴)','modal.sleepDeep':'깊이 (8턴)',
@@ -523,6 +524,7 @@ Object.assign(I18N.en,{
  'btn.sleep':'Sleep 💤','btn.autoFaint':'Auto-Faint','btn.reputation':'Reputation 📊','btn.batchAdmin':'⚙ Batch',
  'sec.useItem':'Use Item 🧪','sec.solo':'Solo Actions','btn.doNothing':'Do nothing and watch ⏭','label.partnerTier':'Partner tier',
  'label.partnerLeading':'Your partner is taking the lead.','label.choosePartner':'Choose Partner','label.proficiency':'Proficiency',
+ 'label.riotChasing':'⚠ A group is chasing you','btn.flee':'Flee ⏭',
  'btn.close':'Close ✕','btn.restoreDefaults':'Restore Defaults','btn.applyClose':'Apply & Close','confirm.resetCfg':'Reset all settings to their defaults?',
  'modal.sleepPrompt':'How many turns should you sleep? Turns pass automatically while asleep, and you won\'t hear anyone talking to you.',
  'modal.sleepShort':'Short (3 turns)','modal.sleepNormal':'Normal (5 turns)','modal.sleepDeep':'Deep (8 turns)',
@@ -3730,7 +3732,11 @@ function checkRiotChase(p){
   riotChase.chasers=riotChase.chasers.filter(id=>{ const c=npcs.find(n=>n.id===id); return c&&!c.hsex; });
   if(riotChase.chasers.length===0){ riotChase=null; return; }
   riotChase.turnsLeft--;
-  if(riotChase.turnsLeft<=0||Math.random()<0.4){
+  const avgArousal=riotChase.chasers.reduce((s,id)=>{ const c=npcs.find(n=>n.id===id); return s+(c?c.lewd.흥분:50); },0)/riotChase.chasers.length;
+  const fleeBonus=riotChase.fleeBonus||0; riotChase.fleeBonus=0;
+  let catchChance=0.25+(avgArousal-50)*0.003-(p.body.운동-50)*0.003-fleeBonus;
+  catchChance=clamp(catchChance,0.1,0.75);
+  if(riotChase.turnsLeft<=0||Math.random()<catchChance){
     const chasers=riotChase.chasers.map(id=>npcs.find(n=>n.id===id)).filter(Boolean);
     riotChase=null;
     if(chasers.length===0)return;
@@ -3743,9 +3749,16 @@ function checkRiotChase(p){
     gainRep(p,10+grp.length*4);
     if(grp.length>=3)p.flags._multiH=1;
     playSE('hstart');
+  } else if(fleeBonus>0){
+    log('안간힘을 써 봤지만, 완전히 벗어나진 못했다 — 그래도 거리는 좀 벌렸다.','event',p.space);
   } else if(Math.random()<0.5){
     log(pick(RIOT_CHASE_FLAVOR),'event',p.space);
   }
+}
+function attemptFleeRiot(p){
+  if(!riotChase||!p)return;
+  riotChase.fleeBonus=clamp((p.body.운동-50)*0.006,0,0.3);
+  step();
 }
 /* ══════════════ 질투·소문 시스템 — 목격/누적된 긴장이 대치 이벤트로, 대치 결과가 관계망에 파문을 남긴다 ══════════════ */
 function hasGiftItem(p){ return Object.keys(GIFTS).some(it=>(p.flags['아이템:'+it]||0)>0); }
@@ -3756,10 +3769,12 @@ function checkJealousWitness(p){
   const partyIds=new Set([p.id]);
   if(lead){ partyIds.add(lead.id); (lead.hsex&&lead.hsex.party||[]).forEach(id=>partyIds.add(id)); }
   (p.hsex.sharedGroup||[]).forEach(id=>partyIds.add(id));
+  const repDampen=clamp(1-(p.평판||0)/150,0.4,1);   /* 이미 소문이 자자하면 목격 한 번의 충격은 덜하다 */
   npcs.filter(n=>!partyIds.has(n.id)&&n.space===p.space&&!n.hsex).forEach(n=>{
     const r=n.relations[p.id]; if(!r)return;
     if(r.애정>=35||r.욕망>=45){
-      d(n,p,'긴장',ri(4,9));
+      const isLover=!!n.flags['연인:'+p.id];
+      d(n,p,'긴장',ri(4,9)*repDampen*(isLover?1.6:1));
       if(Math.random()<0.15)log(`${NM(n)}이(가) ${NM(p)}의 정사 기척에 안절부절못한다.`,'',p.space);
     }
   });
@@ -3800,9 +3815,11 @@ function checkRepProposition(p){
   if(!CFG.repProposition||RATING<3||!p)return;
   if(p.hsex||p.asleep>0||curEvent||workState||document.getElementById('modal')||leadQueue.length>0)return;
   if((p.평판||0)<50)return;
-  if(turn%6!==0||Math.random()>0.2)return;
+  if(turn%6!==0)return;
   const cand=npcs.find(n=>!n.isPlayer&&n.r18&&!n.hsex&&n.space===p.space&&n.relations[p.id]&&(n.relations[p.id].호감||0)<25&&!(n.r18log&&n.r18log[p.id])&&(!n.flags._repPropCD||n.flags._repPropCD<turn));
   if(!cand)return;
+  const boldness=cand.axes[1]/100;   /* 대담(axis[1])이 높을수록 소문만 믿고도 먼저 다가온다 */
+  if(Math.random()>0.08+boldness*0.25)return;
   cand.flags._repPropCD=turn+40;
   leadQueue.push({s:cand,t:p,line:pick(REP_PROPOSE_LINES)});
   log(`${NM(cand)}이(가) 소문을 들었다는 듯 은밀히 다가와 말을 건넨다 — 응답 대기`,'event',p.space);
@@ -4218,6 +4235,7 @@ function renderPlayerPanel(){
   if(p.outfit!=='알몸')h+=`<div style="font-family:var(--mono);font-size:10.5px;color:var(--muted);margin:1px 0">${tr('sec.underwear').replace(' 🩲','')} — ${lbl('ud','상')}: ${esc(lbl('under',p.under.상))} · ${lbl('ud','하')}: ${esc(lbl('under',p.under.하))}</div>`;
   { const sts=activeStatuses(p);
     if(sts.length)h+=`<div style="font-size:11px;margin:3px 0 5px">${sts.map(k=>`<span style="border:1px solid #B23A6B;color:#B23A6B;border-radius:2px;padding:1px 6px;margin-right:4px;display:inline-block">${STATUS_DEF[k].icon} ${lbl('status',STATUS_DEF[k].label)} <span style="opacity:.7">(${p.flags['status:'+k]}${tr('unit.turn')})</span></span>`).join('')}</div>`; }
+  if(riotChase)h+=`<div style="border:1px solid #B23A6B;border-radius:6px;padding:6px 9px;margin:2px 0 8px;background:rgba(178,58,107,.08)"><div style="font-size:11px;color:#B23A6B;margin-bottom:4px">${tr('label.riotChasing')}</div><button class="waitBtn" id="pFlee" style="margin-top:0;border-color:#B23A6B;color:#B23A6B">${tr('btn.flee')}</button></div>`;
   h+=`<div style="font-family:var(--mono);font-size:11px;color:#8A6A1F;margin:1px 0 6px">💰 ${p.money||0} ${tr('unit.coin')}${_inv?' · 🎒 '+_inv:''}</div>`;
   { const _act=activeQuests(p), _tot=QUESTS.filter(q=>!q.minR||RATING>=q.minR).length, _done=_tot-_act.length;
     h+=`<div style="border:1px solid var(--line);border-radius:8px;padding:6px 9px;margin:2px 0 8px;background:rgba(201,146,42,.05)">`;
@@ -4443,6 +4461,7 @@ function renderPlayerPanel(){
   PP.querySelectorAll('[data-buy]').forEach(b=>{if(!b.disabled)b.onclick=()=>doBuy(P(),P().space,+b.dataset.buy)});
   PP.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>useItem(P(),b.dataset.use));
   PP.querySelectorAll('[data-work]').forEach(b=>b.onclick=()=>startWork(P()));
+  if($('#pFlee'))$('#pFlee').onclick=()=>attemptFleeRiot(P());
   if($('#pSleep'))$('#pSleep').onclick=()=>showSleepModal();
   if($('#pAutoFaint'))$('#pAutoFaint').onclick=()=>{ CFG.autoFaint=!CFG.autoFaint; cfgSave(); renderPlayerPanel(); };
   if($('#pRep'))$('#pRep').onclick=()=>showRepMatrix();
