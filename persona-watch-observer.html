@@ -307,11 +307,11 @@ h2.sec:first-child{margin-top:0}
   <button id="btnStep" data-i18n="btn.step">1턴 ⏭</button>
   <button id="btnStep5" title="모달이 뜨면 자동으로 멈춥니다" data-i18n-title="btn.step5.title" data-i18n="btn.step5">5턴 ⏭⏭</button>
   <button id="btnPlay" class="primary" data-i18n="btn.play">▶ 자동재생</button>
-  <select id="speedSel"><option value="1600">1×</option><option value="900">2×</option><option value="500">4×</option></select>
+  <select id="speedSel" title="재생 속도" data-i18n-title="speed.title"><option value="1600">1×</option><option value="900">2×</option><option value="500">4×</option></select>
 </div>
 
 <div id="sheetBackdrop"></div>
-<button id="actFab" title="행동 패널 열기/닫기" data-i18n-title="btn.actFab">⚡</button>
+<button id="actFab" title="행동 패널 열기/닫기" data-i18n-title="btn.actFab" aria-label="행동 패널 열기/닫기" data-i18n-aria="btn.actFab">⚡</button>
 
 <nav id="mobileNav">
   <button data-mtab="mapWrap" class="on"><span class="ico">▦</span><span data-i18n="nav.map">지도</span></button>
@@ -329,11 +329,11 @@ h2.sec:first-child{margin-top:0}
     <h2 class="sec" data-i18n="sec.addChar">캐릭터 추가</h2>
     <div id="createForm">
       <div id="cLookWrap"></div>
-      <div class="row"><label data-i18n="form.name">이름</label><input type="text" id="cName" placeholder="비우면 자동" data-i18n-ph="form.name.ph" style="flex:1"></div>
-      <div class="row"><label data-i18n="form.arch">성격</label>
+      <div class="row"><label for="cName" data-i18n="form.name">이름</label><input type="text" id="cName" placeholder="비우면 자동" data-i18n-ph="form.name.ph" style="flex:1"></div>
+      <div class="row"><label for="cArch" data-i18n="form.arch">성격</label>
         <select id="cArch" style="flex:1"></select>
       </div>
-      <div class="row"><label data-i18n="form.form">격식</label>
+      <div class="row"><label for="cForm" data-i18n="form.form">격식</label>
         <select id="cForm" style="flex:1">
           <option value="반말" data-i18n="form.반말">반말</option><option value="존댓말" data-i18n="form.존댓말">존댓말</option><option value="혼합" data-i18n="form.혼합">혼합</option>
         </select>
@@ -345,9 +345,9 @@ h2.sec:first-child{margin-top:0}
       <div class="psec" style="margin-top:8px"><span data-i18n="form.sens">신체 민감도</span> <span style="font-weight:400;color:var(--muted)" data-i18n="form.sens.std">(40 = 표준)</span></div>
       <div id="cSensRows"></div>
       <div id="mixOpts">
-        <div class="row"><label style="width:52px" data-i18n="form.mixBase">기본</label>
+        <div class="row"><label style="width:52px" for="cMixBase" data-i18n="form.mixBase">기본</label>
           <select id="cMixBase" style="flex:1"><option value="반말" data-i18n="form.반말">반말</option><option value="존댓말" data-i18n="form.존댓말">존댓말</option></select></div>
-        <div class="row"><label style="width:52px" data-i18n="form.mixTrig">전환</label>
+        <div class="row"><label style="width:52px" for="cMixTrig" data-i18n="form.mixTrig">전환</label>
           <select id="cMixTrig" style="flex:1"><option value="감정고조" data-i18n="form.trig.emo">감정고조 시</option><option value="친밀" data-i18n="form.trig.close">친밀 대상에게</option></select></div>
       </div>
       <div id="axSliders"></div>
@@ -405,11 +405,12 @@ function applyI18n(root){
   r.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=tr(el.dataset.i18n); });
   r.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=tr(el.dataset.i18nPh); });
   r.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title=tr(el.dataset.i18nTitle); });
+  r.querySelectorAll('[data-i18n-aria]').forEach(el=>{ el.setAttribute('aria-label',tr(el.dataset.i18nAria)); });
 }
 function setLang(v){ LANG=v; saveLang(); applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; if(document.getElementById('consoleWrap')&&typeof openConsole==='function'){ document.getElementById('consoleWrap').remove(); openConsole(); } }
 Object.assign(I18N.ko,{
  'title.sub':'관찰판 — NPC 군상극 관찰 모드',
- 'rate.title':'관찰 등급','rate.0':'등급: 전체이용가','rate.1':'등급: 15세','rate.2':'등급: 성인','rate.3':'등급: R18',
+ 'rate.title':'관찰 등급','rate.0':'등급: 전체이용가','rate.1':'등급: 15세','rate.2':'등급: 성인','rate.3':'등급: R18','speed.title':'재생 속도',
  'btn.console':'시스템 설정','btn.se':'효과음 켬/끔','btn.save':'브라우저에 저장','btn.load':'저장 불러오기','btn.export':'파일로 내보내기','btn.import':'파일 가져오기',
  'btn.step':'1턴 ⏭','btn.stepWait':'대기 ⏭','btn.step5':'5턴 ⏭⏭','btn.step5.title':'모달이 뜨면 자동으로 멈춥니다','btn.play':'▶ 자동재생','btn.pause':'∥ 정지','btn.actFab':'행동 패널 열기/닫기',
  'nav.map':'지도','nav.people':'인물','nav.activity':'활동',
@@ -553,7 +554,7 @@ Object.assign(I18N.en,{
 });
 Object.assign(I18N.en,{
  'title.sub':'Observer Board — NPC Ensemble Watching Mode',
- 'rate.title':'Content rating','rate.0':'Rating: All Ages','rate.1':'Rating: 15+','rate.2':'Rating: Adult','rate.3':'Rating: R18',
+ 'rate.title':'Content rating','rate.0':'Rating: All Ages','rate.1':'Rating: 15+','rate.2':'Rating: Adult','rate.3':'Rating: R18','speed.title':'Playback speed',
  'btn.console':'System settings','btn.se':'Toggle sound effects','btn.save':'Save to browser','btn.load':'Load save','btn.export':'Export to file','btn.import':'Import from file',
  'btn.step':'1 Turn ⏭','btn.stepWait':'Wait ⏭','btn.step5':'5 Turns ⏭⏭','btn.step5.title':'Stops automatically if a modal pops up','btn.play':'▶ Auto-play','btn.pause':'■ Pause','btn.actFab':'Open/close action panel',
  'nav.map':'Map','nav.people':'People','nav.activity':'Activity',
@@ -1177,10 +1178,13 @@ const CFG_SCHEMA=[
  {k:'repProposition', t:'toggle', l:'평판 기반 제안', l_en:'Reputation-Based Propositions', d:'성적 평판이 높으면(50 이상), 아직 친하지 않은 인물이 소문을 들었다며 먼저 은밀한 제안을 걸어올 수 있습니다. 평판 수치 자체는 이 옵션을 꺼도 계속 쌓입니다.', d_en:'Once your sexual reputation is high (50+), characters you barely know may approach you first with a proposition, having heard the rumors. The underlying reputation stat keeps accumulating even if this is off.'}
 ];
 
+let consoleKeyHandler=null;
 function openConsole(){
   stopPlay();
   if(document.getElementById('consoleWrap'))return;
+  if(consoleKeyHandler){ document.removeEventListener('keydown',consoleKeyHandler); consoleKeyHandler=null; }
   const w=document.createElement('div'); w.id='consoleWrap';
+  w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true'); w.setAttribute('aria-label','SYSTEM CONSOLE');
   let b='';
   for(const it of CFG_SCHEMA){
     if(it.g){ b+='<div class="cGroup">'+(LANG==='en'?(it.g_en||it.g):it.g)+'</div>'; continue; }
@@ -1224,10 +1228,12 @@ function openConsole(){
   w.querySelectorAll('select[data-ck]').forEach(function(sl){
     sl.onchange=function(){ apply(sl.dataset.ck,+sl.value); };
   });
-  const close=function(){ w.remove(); render(); };
+  const close=function(){ w.remove(); if(consoleKeyHandler){ document.removeEventListener('keydown',consoleKeyHandler); consoleKeyHandler=null; } render(); };
   w.querySelector('#cClose').onclick=close;
   w.querySelector('#cDone').onclick=close;
   w.onclick=function(e){ if(e.target===w)close(); };
+  consoleKeyHandler=function(e){ if(e.key==='Escape')close(); };
+  document.addEventListener('keydown',consoleKeyHandler);
   w.querySelector('#cReset').onclick=function(){
     if(!confirm(tr('confirm.resetCfg')))return;
     Object.assign(CFG,CFG_DEF); cfgSave(); syncSEBtn();
@@ -3584,7 +3590,7 @@ function renderRoster(){
     const it=document.createElement('div');
     const isSel=sel.includes(n.id);
     it.className='rosterItem'+(isSel?' sel':'');
-    it.innerHTML=`<span class="mini" style="${isSel?'':`border-color:${n.color};color:${n.color}`}">${n.name[0]}</span><span class="nm">${n.fixed?'<span style="color:#C9A227">✦</span>':''}${esc(n.name)}${n.isPlayer?' <small style="opacity:.5">P</small>':''}</span><span class="at">${lbl('arch',n.arch)}·${lbl('form',n.form)}</span><button class="del" title="${tr('btn.delete')}">×</button>`;
+    it.innerHTML=`<span class="mini" style="${isSel?'':`border-color:${n.color};color:${n.color}`}">${n.name[0]}</span><span class="nm">${n.fixed?'<span style="color:#C9A227">✦</span>':''}${esc(n.name)}${n.isPlayer?' <small style="opacity:.5">P</small>':''}</span><span class="at">${lbl('arch',n.arch)}·${lbl('form',n.form)}</span><button class="del" title="${tr('btn.delete')}" aria-label="${tr('btn.delete')}">×</button>`;
     it.onclick=e=>{if(e.target.className==='del'){ if(confirm(tr('confirm.deleteChar').replace('{name}',n.name)+(n.isPlayer?' '+tr('confirm.deletePlayerNote'):'')))removeNpc(n.id); }else select(n.id)};
     R.appendChild(it);
   }
@@ -4402,7 +4408,7 @@ function renderPlayerPanel(){
     PP.innerHTML=`<div class="psec">${tr('pp.createTitle')}</div>
       <div style="display:flex;flex-direction:column;gap:6px">
       ${lookEditorHTML('p')}
-      <input type="text" id="pName" placeholder="${tr('pp.namePh')}">
+      <input type="text" id="pName" placeholder="${tr('pp.namePh')}" maxlength="16">
       <div style="display:flex;gap:6px"><select id="pGender" style="flex:1"><option value="여성">${lbl('gender','여성')}</option><option value="남성">${lbl('gender','남성')}</option></select>
       <select id="pGenital" style="flex:1"><option value="여성기">${lbl('genital','여성기')}</option><option value="남성기">${lbl('genital','남성기')}</option><option value="양성">${lbl('genital','양성')}</option></select></div>
       <select id="pArch">${opts}</select>
