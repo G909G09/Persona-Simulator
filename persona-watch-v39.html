@@ -374,9 +374,9 @@ h2.sec:first-child{margin-top:0}
   <!-- 우: 플레이어 + 상세 + 이야기(1인칭) / 전체 로그(백그라운드) -->
   <div class="col" id="rightCol">
     <div id="playerPanel"></div>
-    <div id="logHead"><span id="logHeadLabel" data-i18n="log.story">이야기</span><span id="logFilterTag"></span><button id="btnLogMode" title="당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환" data-i18n-title="log.mode.title" data-i18n="log.full">전체 로그</button><button id="btnClearLog" data-i18n="log.clear">비우기</button></div>
-    <div id="story"></div>
-    <div id="log" style="display:none"></div>
+    <div id="logHead"><span id="logHeadLabel">이야기</span><span id="logFilterTag"></span><button id="btnLogMode" title="당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환" data-i18n-title="log.mode.title">전체 로그</button><button id="btnClearLog" data-i18n="log.clear">비우기</button></div>
+    <div id="story" aria-live="polite"></div>
+    <div id="log" style="display:none" aria-live="polite"></div>
   </div>
 </div>
 
@@ -407,7 +407,7 @@ function applyI18n(root){
   r.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title=tr(el.dataset.i18nTitle); });
   r.querySelectorAll('[data-i18n-aria]').forEach(el=>{ el.setAttribute('aria-label',tr(el.dataset.i18nAria)); });
 }
-function setLang(v){ LANG=v; saveLang(); applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; if(document.getElementById('consoleWrap')&&typeof openConsole==='function'){ document.getElementById('consoleWrap').remove(); openConsole(); } }
+function setLang(v){ LANG=v; saveLang(); applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); if(typeof setStoryMode==='function'&&typeof storyMode!=='undefined')setStoryMode(storyMode); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; if(document.getElementById('consoleWrap')&&typeof openConsole==='function'){ document.getElementById('consoleWrap').remove(); openConsole(); } }
 Object.assign(I18N.ko,{
  'title.sub':'성격 시뮬레이션 프로토타입 v39',
  'rate.title':'관찰 등급','rate.0':'등급: 전체이용가','rate.1':'등급: 15세','rate.2':'등급: 성인','rate.3':'등급: R18','speed.title':'재생 속도',
@@ -423,7 +423,7 @@ Object.assign(I18N.ko,{
  'btn.randArch':'아키타입 ±15','btn.randFull':'완전 랜덤','btn.addChar':'캐릭터 추가',
  'help.createForm':'아키타입 선택 시 축 값이 프리셋으로 채워지며, 슬라이더로 자유 조정할 수 있습니다. 토큰·목록 클릭 = 캐릭터 단일 확인, 두 사람의 관계는 상세의 [관계] 탭에서 행을 눌러 확인합니다.',
  'map.title':'FLOOR PLAN — 휴양지 숙소동','map.sub':'P0 공공 – P3 밀실 · 이동은 인접 1칸/턴',
- 'log.story':'이야기','log.full':'전체 로그','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기'
+ 'log.story':'이야기','log.full':'전체 로그','log.toStory':'이야기로','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기','confirm.clearLog':'로그를 모두 비울까요? 되돌릴 수 없습니다.','avatar.preview':'아바타 미리보기'
 });
 /* ── 데이터 라벨 사전: 내부 키(한국어)는 그대로 두고, 화면 표시용 영어만 매핑 ── */
 Object.assign(LABEL_EN,{
@@ -567,7 +567,7 @@ Object.assign(I18N.en,{
  'btn.randArch':'Archetype ±15','btn.randFull':'Fully random','btn.addChar':'Add Character',
  'help.createForm':'Picking an archetype fills the axis sliders with a preset, which you can then adjust freely. Click a token/roster entry to inspect one character; to see how two characters relate, open the [Relations] tab in the detail panel and click a row.',
  'map.title':'FLOOR PLAN — Resort Lodge','map.sub':'P0 Public – P3 Private · Move 1 adjacent room/turn',
- 'log.story':'Story','log.full':'Full Log','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear'
+ 'log.story':'Story','log.full':'Full Log','log.toStory':'To Story','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear','confirm.clearLog':'Clear the entire log? This cannot be undone.','avatar.preview':'Avatar preview'
 });
 /* ══════════════ 데이터 ══════════════ */
 const AXES=['외향','대담','온화','솔직','성실','감수'];
@@ -1724,7 +1724,7 @@ function renderAvatarInto(canvasEl,n){
   if(AV_PNG_MODE){ drawAvatarPNG(ctx,n).catch(()=>{ drawAvatarCtx(ctx,n); }); }
   else{ drawAvatarCtx(ctx,n); }
 }
-function avatarCanvasHTML(id,size){ size=size||96; return `<canvas id="${id}" width="${AV_W}" height="${AV_H}" style="width:${size}px;height:${Math.round(size*AV_H/AV_W)}px;image-rendering:pixelated;border:1px solid var(--line);border-radius:4px;background:var(--soft);flex-shrink:0"></canvas>`; }
+function avatarCanvasHTML(id,size){ size=size||96; return `<canvas id="${id}" width="${AV_W}" height="${AV_H}" role="img" aria-label="${tr('avatar.preview')}" style="width:${size}px;height:${Math.round(size*AV_H/AV_W)}px;image-rendering:pixelated;border:1px solid var(--line);border-radius:4px;background:var(--soft);flex-shrink:0"></canvas>`; }
 /* 외형 커스터마이징 UI: 미리보기 캔버스 + 피부/헤어스타일/머리색/눈동자색 스와치.
    생성 폼·수정 폼·플레이어 시작 화면에서 공통으로 재사용한다. */
 function lookEditorHTML(idp){
@@ -3511,8 +3511,8 @@ function setStoryMode(v){
   storyMode=v;
   $('#story').style.display=v?'flex':'none';
   $('#log').style.display=v?'none':'flex';
-  $('#logHeadLabel').textContent=v?'이야기':'전체 로그';
-  $('#btnLogMode').textContent=v?'전체 로그':'이야기로';
+  $('#logHeadLabel').textContent=v?tr('log.story'):tr('log.full');
+  $('#btnLogMode').textContent=v?tr('log.full'):tr('log.toStory');
   scrollLog();
 }
 function scrollLog(){
@@ -4804,7 +4804,7 @@ function applySave(data){
   log('저장 데이터를 불러왔다 (T'+turn+')','event');
 }
 function saveLocal(silent){
-  try{ localStorage.setItem(SAVE_KEY, serialize()); if(!silent)log('브라우저에 저장했다 💾 (12턴마다 자동 저장됨)','event'); return true; }
+  try{ localStorage.setItem(SAVE_KEY, serialize()); if(!silent)log('브라우저에 저장했다 💾'+(CFG.autosave>0?` (${CFG.autosave}턴마다 자동 저장됨)`:' (자동 저장은 꺼져 있음 — 설정에서 켤 수 있습니다)'),'event'); return true; }
   catch(e){ if(!silent)alert(tr('alert.saveBlocked')); return false; }
 }
 function loadLocal(){
@@ -4846,7 +4846,7 @@ $('#btnStep').onclick=()=>{stopPlay(); step();};
 $('#btnStep5').onclick=()=>{stopPlay(); step(5);};
 $('#btnPlay').onclick=()=>{timer?stopPlay():startPlay();};
 $('#speedSel').onchange=()=>{if(timer){stopPlay();startPlay();}};
-$('#btnClearLog').onclick=()=>{ $('#log').innerHTML=''; $('#story').innerHTML=''; };
+$('#btnClearLog').onclick=()=>{ if(!confirm(tr('confirm.clearLog')))return; $('#log').innerHTML=''; $('#story').innerHTML=''; };
 $('#btnLogMode').onclick=()=>setStoryMode(!storyMode);
 $('#rateSel').onchange=e=>{
   RATING=+e.target.value;
