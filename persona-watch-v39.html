@@ -297,12 +297,12 @@ h2.sec:first-child{margin-top:0}
     <option value="ko">한국어</option><option value="en">English</option>
   </select>
   <span class="grow"></span>
-  <button id="btnConsole" class="icoBtn" title="시스템 설정" data-i18n-title="btn.console">⚙</button>
-  <button id="btnSE" class="icoBtn" title="효과음 켬/끔" data-i18n-title="btn.se">🔊</button>
-  <button id="btnSave" class="icoBtn" title="브라우저에 저장" data-i18n-title="btn.save">💾</button>
-  <button id="btnLoad" class="icoBtn" title="저장 불러오기" data-i18n-title="btn.load">📂</button>
-  <button id="btnExport" class="icoBtn" title="파일로 내보내기" data-i18n-title="btn.export">⬇</button>
-  <button id="btnImport" class="icoBtn" title="파일 가져오기" data-i18n-title="btn.import">⬆</button>
+  <button id="btnConsole" class="icoBtn" title="시스템 설정" data-i18n-title="btn.console" aria-label="시스템 설정" data-i18n-aria="btn.console">⚙</button>
+  <button id="btnSE" class="icoBtn" title="효과음 켬/끔" data-i18n-title="btn.se" aria-label="효과음 켬/끔" data-i18n-aria="btn.se">🔊</button>
+  <button id="btnSave" class="icoBtn" title="브라우저에 저장" data-i18n-title="btn.save" aria-label="브라우저에 저장" data-i18n-aria="btn.save">💾</button>
+  <button id="btnLoad" class="icoBtn" title="저장 불러오기" data-i18n-title="btn.load" aria-label="저장 불러오기" data-i18n-aria="btn.load">📂</button>
+  <button id="btnExport" class="icoBtn" title="파일로 내보내기" data-i18n-title="btn.export" aria-label="파일로 내보내기" data-i18n-aria="btn.export">⬇</button>
+  <button id="btnImport" class="icoBtn" title="파일 가져오기" data-i18n-title="btn.import" aria-label="파일 가져오기" data-i18n-aria="btn.import">⬆</button>
   <input type="file" id="fileLoad" accept=".json,application/json">
   <button id="btnStep" data-i18n="btn.step">1턴 ⏭</button>
   <button id="btnStep5" title="모달이 뜨면 자동으로 멈춥니다" data-i18n-title="btn.step5.title" data-i18n="btn.step5">5턴 ⏭⏭</button>
@@ -393,6 +393,7 @@ window.onerror=function(msg,src,line,col){
    속성 + applyI18n()으로, 동적으로 다시 그려지는 패널은 tr()/lbl() 호출로 전환한다. */
 let LANG='ko';
 try{ LANG=localStorage.getItem('personaWatchLang')||'ko'; }catch(e){}
+document.documentElement.lang=LANG==='en'?'en':'ko';
 function saveLang(){ try{ localStorage.setItem('personaWatchLang',LANG); }catch(e){} }
 const I18N={ ko:{}, en:{} };
 /* 함수명은 tr() — 코드 전반에서 대상 NPC를 가리키는 지역 변수/매개변수 이름으로 t가
@@ -407,7 +408,7 @@ function applyI18n(root){
   r.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title=tr(el.dataset.i18nTitle); });
   r.querySelectorAll('[data-i18n-aria]').forEach(el=>{ el.setAttribute('aria-label',tr(el.dataset.i18nAria)); });
 }
-function setLang(v){ LANG=v; saveLang(); applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; if(document.getElementById('consoleWrap')&&typeof openConsole==='function'){ document.getElementById('consoleWrap').remove(); openConsole(); } }
+function setLang(v){ LANG=v; saveLang(); document.documentElement.lang=LANG==='en'?'en':'ko'; applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; if(document.getElementById('consoleWrap')&&typeof openConsole==='function'){ document.getElementById('consoleWrap').remove(); openConsole(); } }
 Object.assign(I18N.ko,{
  'title.sub':'성격 시뮬레이션 프로토타입 v39',
  'rate.title':'관찰 등급','rate.0':'등급: 전체이용가','rate.1':'등급: 15세','rate.2':'등급: 성인','rate.3':'등급: R18','speed.title':'재생 속도',
@@ -1179,10 +1180,12 @@ const CFG_SCHEMA=[
 ];
 
 let consoleKeyHandler=null;
+let consolePrevFocus=null;
 function openConsole(){
   stopPlay();
   if(document.getElementById('consoleWrap'))return;
   if(consoleKeyHandler){ document.removeEventListener('keydown',consoleKeyHandler); consoleKeyHandler=null; }
+  consolePrevFocus=document.activeElement;
   const w=document.createElement('div'); w.id='consoleWrap';
   w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true'); w.setAttribute('aria-label','SYSTEM CONSOLE');
   let b='';
@@ -1206,6 +1209,7 @@ function openConsole(){
     +'<div class="cfoot"><button id="cReset">'+tr('btn.restoreDefaults')+'</button><button id="cDone" class="primary">'+tr('btn.applyClose')+'</button></div>'
     +'</div>';
   document.body.appendChild(w);
+  const cCloseBtn=w.querySelector('#cClose'); if(cCloseBtn)cCloseBtn.focus();
   const apply=function(k,v){
     CFG[k]=v; cfgSave();
     if(k==='se')syncSEBtn();
@@ -1228,7 +1232,7 @@ function openConsole(){
   w.querySelectorAll('select[data-ck]').forEach(function(sl){
     sl.onchange=function(){ apply(sl.dataset.ck,+sl.value); };
   });
-  const close=function(){ w.remove(); if(consoleKeyHandler){ document.removeEventListener('keydown',consoleKeyHandler); consoleKeyHandler=null; } render(); };
+  const close=function(){ w.remove(); if(consoleKeyHandler){ document.removeEventListener('keydown',consoleKeyHandler); consoleKeyHandler=null; } render(); if(consolePrevFocus&&typeof consolePrevFocus.focus==='function'&&document.body.contains(consolePrevFocus))consolePrevFocus.focus(); };
   w.querySelector('#cClose').onclick=close;
   w.querySelector('#cDone').onclick=close;
   w.onclick=function(e){ if(e.target===w)close(); };
@@ -3590,8 +3594,10 @@ function renderRoster(){
     const it=document.createElement('div');
     const isSel=sel.includes(n.id);
     it.className='rosterItem'+(isSel?' sel':'');
-    it.innerHTML=`<span class="mini" style="${isSel?'':`border-color:${n.color};color:${n.color}`}">${n.name[0]}</span><span class="nm">${n.fixed?'<span style="color:#C9A227">✦</span>':''}${esc(n.name)}${n.isPlayer?' <small style="opacity:.5">P</small>':''}</span><span class="at">${lbl('arch',n.arch)}·${lbl('form',n.form)}</span><button class="del" title="${tr('btn.delete')}" aria-label="${tr('btn.delete')}">×</button>`;
+    it.tabIndex=0; it.setAttribute('role','button'); it.setAttribute('aria-pressed',String(isSel)); it.setAttribute('aria-label',n.name);
+    it.innerHTML=`<span class="mini" style="${isSel?'':`border-color:${n.color};color:${n.color}`}">${esc(n.name[0])}</span><span class="nm">${n.fixed?'<span style="color:#C9A227">✦</span>':''}${esc(n.name)}${n.isPlayer?' <small style="opacity:.5">P</small>':''}</span><span class="at">${lbl('arch',n.arch)}·${lbl('form',n.form)}</span><button class="del" title="${tr('btn.delete')}" aria-label="${tr('btn.delete')}">×</button>`;
     it.onclick=e=>{if(e.target.className==='del'){ if(confirm(tr('confirm.deleteChar').replace('{name}',n.name)+(n.isPlayer?' '+tr('confirm.deletePlayerNote'):'')))removeNpc(n.id); }else select(n.id)};
+    it.onkeydown=e=>{if(e.target.className==='del')return; if(e.key==='Enter'||e.key===' '){e.preventDefault(); select(n.id);}};
     R.appendChild(it);
   }
 }
