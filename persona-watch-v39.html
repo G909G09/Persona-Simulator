@@ -329,7 +329,7 @@ h2.sec:first-child{margin-top:0}
     <h2 class="sec" data-i18n="sec.addChar">캐릭터 추가</h2>
     <div id="createForm">
       <div id="cLookWrap"></div>
-      <div class="row"><label data-i18n="form.name">이름</label><input type="text" id="cName" placeholder="비우면 자동" data-i18n-ph="form.name.ph" style="flex:1"></div>
+      <div class="row"><label data-i18n="form.name">이름</label><input type="text" id="cName" placeholder="비우면 자동" data-i18n-ph="form.name.ph" maxlength="16" style="flex:1"></div>
       <div class="row"><label data-i18n="form.arch">성격</label>
         <select id="cArch" style="flex:1"></select>
       </div>
@@ -422,7 +422,8 @@ Object.assign(I18N.ko,{
  'btn.randArch':'아키타입 ±15','btn.randFull':'완전 랜덤','btn.addChar':'캐릭터 추가',
  'help.createForm':'아키타입 선택 시 축 값이 프리셋으로 채워지며, 슬라이더로 자유 조정할 수 있습니다. 토큰·목록 클릭 = 캐릭터 단일 확인, 두 사람의 관계는 상세의 [관계] 탭에서 행을 눌러 확인합니다.',
  'map.title':'FLOOR PLAN — 휴양지 숙소동','map.sub':'P0 공공 – P3 밀실 · 이동은 인접 1칸/턴',
- 'log.story':'이야기','log.full':'전체 로그','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기'
+ 'log.story':'이야기','log.full':'전체 로그','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기',
+ 'log.saved':'브라우저에 저장했다 💾 ({n}턴마다 자동 저장됨)','log.saved.off':'브라우저에 저장했다 💾 (자동 저장 꺼짐)'
 });
 /* ── 데이터 라벨 사전: 내부 키(한국어)는 그대로 두고, 화면 표시용 영어만 매핑 ── */
 Object.assign(LABEL_EN,{
@@ -566,7 +567,8 @@ Object.assign(I18N.en,{
  'btn.randArch':'Archetype ±15','btn.randFull':'Fully random','btn.addChar':'Add Character',
  'help.createForm':'Picking an archetype fills the axis sliders with a preset, which you can then adjust freely. Click a token/roster entry to inspect one character; to see how two characters relate, open the [Relations] tab in the detail panel and click a row.',
  'map.title':'FLOOR PLAN — Resort Lodge','map.sub':'P0 Public – P3 Private · Move 1 adjacent room/turn',
- 'log.story':'Story','log.full':'Full Log','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear'
+ 'log.story':'Story','log.full':'Full Log','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear',
+ 'log.saved':'Saved to browser 💾 (auto-saves every {n} turns)','log.saved.off':'Saved to browser 💾 (autosave off)'
 });
 /* ══════════════ 데이터 ══════════════ */
 const AXES=['외향','대담','온화','솔직','성실','감수'];
@@ -3462,7 +3464,7 @@ function resolveConfession(accept){
 
 /* ══════════════ 렌더링 ══════════════ */
 const $=q=>document.querySelector(q);
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 let logFilter=null;
 let storyMode=CFG.immersion;   /* true = 이야기(1인칭 직접 상황만) 패널 표시, false = 전체 로그(백그라운드) 표시. #btnLogMode로 언제든 전환 */
 /* ── 이야기 모드: '중요 사건'(event)이거나, 텍스트에 플레이어 본인이 직접 등장하는
@@ -3505,8 +3507,8 @@ function setStoryMode(v){
   storyMode=v;
   $('#story').style.display=v?'flex':'none';
   $('#log').style.display=v?'none':'flex';
-  $('#logHeadLabel').textContent=v?'이야기':'전체 로그';
-  $('#btnLogMode').textContent=v?'전체 로그':'이야기로';
+  $('#logHeadLabel').textContent=v?tr('log.story'):tr('log.full');
+  $('#btnLogMode').textContent=v?tr('log.full'):tr('log.story');
   scrollLog();
 }
 function scrollLog(){
@@ -3720,7 +3722,7 @@ function drawEditForm(){
   D.innerHTML=`<div class="psec">${tr('edit.title')} — ${esc(n.name)}${n.isPlayer?' ('+tr('edit.player')+')':''}</div>
    <div style="display:flex;flex-direction:column;gap:7px">
    ${lookEditorHTML('e')}
-   <input type="text" id="eName" value="${esc(n.name)}">
+   <input type="text" id="eName" value="${esc(n.name)}" maxlength="16">
    <select id="eArch">${opts}</select>
    ${axRows}
    <select id="eForm">${['반말','존댓말','혼합'].map(f=>`<option value="${f}"${f===n.form?' selected':''}>${lbl('form',f)}</option>`).join('')}</select>
@@ -4798,7 +4800,7 @@ function applySave(data){
   log('저장 데이터를 불러왔다 (T'+turn+')','event');
 }
 function saveLocal(silent){
-  try{ localStorage.setItem(SAVE_KEY, serialize()); if(!silent)log('브라우저에 저장했다 💾 (12턴마다 자동 저장됨)','event'); return true; }
+  try{ localStorage.setItem(SAVE_KEY, serialize()); if(!silent)log(CFG.autosave>0?tr('log.saved').replace('{n}',CFG.autosave):tr('log.saved.off'),'event'); return true; }
   catch(e){ if(!silent)alert(tr('alert.saveBlocked')); return false; }
 }
 function loadLocal(){
