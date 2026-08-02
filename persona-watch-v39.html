@@ -2906,10 +2906,10 @@ function execAct(s,A,t){
       milestone(s,t,'연인'); milestone(t,s,'연인');
       d(t,s,'애정',10);d(s,t,'애정',5);
       if(perfect){ d(t,s,'애정',4); d(s,t,'애정',4); s.stability=clamp(s.stability+6,0,100); t.stability=clamp(t.stability+6,0,100); }
-      log(`${s.name}이(가) ${t.name}에게 고백했다 <q>${esc(line)}</q> — ${t.name} <q>${esc(speakReact(t,s,'수락'))}</q> ♦ 두 사람은 연인이 되었다`+(perfect?STAR:''),'event',s.space);
+      log(`${esc(s.name)}이(가) ${esc(t.name)}에게 고백했다 <q>${esc(line)}</q> — ${esc(t.name)} <q>${esc(speakReact(t,s,'수락'))}</q> ♦ 두 사람은 연인이 되었다`+(perfect?STAR:''),'event',s.space);
     }else{
       s.stability=clamp(s.stability-15,0,100); d(t,s,'긴장',5);
-      log(`${s.name}이(가) ${t.name}에게 고백했다 <q>${esc(line)}</q> — ${t.name} <q>${esc(speakReact(t,s,'거절'))}</q> · 거절당했다`,'event',s.space);
+      log(`${esc(s.name)}이(가) ${esc(t.name)}에게 고백했다 <q>${esc(line)}</q> — ${esc(t.name)} <q>${esc(speakReact(t,s,'거절'))}</q> · 거절당했다`,'event',s.space);
     }
     return;
   }
@@ -3813,7 +3813,7 @@ function removeNpc(id){
 function makePlayer(nm,arch,axes,form,mix,r18,cor=true){
   const p=makeNpc(nm,arch,axes,form,mix,true,r18,cor);
   playerId=p.id;
-  log(`${p.name}(플레이어)이(가) 입주했다 — ${SPACES[p.home].n} 배정`,'event');
+  log(`${esc(p.name)}(플레이어)이(가) 입주했다 — ${SPACES[p.home].n} 배정`,'event');
   render();
 }
 /* ══════════════ 재화·상점·조우·해변 시스템 ══════════════ */
@@ -4127,7 +4127,7 @@ function doBuy(p,sp,i){
   const price=Math.max(1,Math.round(it.price*shopPriceMult(sp)));
   if(p.money<price){ log(`돈이 부족하다. (${it.name} · ${price}코인 / 보유 ${p.money})`,'event',p.space); render(); return; }
   p.money-=price; try{it.fx(p);}catch(e){}
-  log(`${p.name}이(가) ${SPACES[sp].n}에서 <b>${esc(it.name)}</b>을(를) 샀다 (−${price}코인)`,'event',p.space);
+  log(`${esc(p.name)}이(가) ${SPACES[sp].n}에서 <b>${esc(it.name)}</b>을(를) 샀다 (−${price}코인)`,'event',p.space);
   flashToken(p.id); step();
 }
 /* ── 근속 숙련도: 같은 일자리를 연속으로 하면 보수 배율이 오르고, 다른 일을 하면 초기화 ── */
@@ -4142,7 +4142,7 @@ function doWork(p){
   p.money+=pay; p.needs.피로=clamp(p.needs.피로+16,0,100); p.needs.성취=clamp(p.needs.성취-18,0,100);
   grow(p,'체격',0.3);
   bumpJobStreak(p,p.space);
-  log(`${p.name}이(가) ${j[0]}(으)로 <b>+${pay}코인</b> 벌었다${mult>1?` <span class="rx">(숙련도 ×${mult.toFixed(2)})</span>`:''} (보유 ${p.money})`,'event',p.space);
+  log(`${esc(p.name)}이(가) ${j[0]}(으)로 <b>+${pay}코인</b> 벌었다${mult>1?` <span class="rx">(숙련도 ×${mult.toFixed(2)})</span>`:''} (보유 ${p.money})`,'event',p.space);
   flashToken(p.id); step();
 }
 /* ── 근무 과정: 선택에 따라 완성도(quality)가 달라지고 보수가 변동. R18 선택지는 RATING 3에서만 노출 ── */
@@ -4240,14 +4240,14 @@ const WORKFLOWS={
   ]}
 };
 function startWork(p){
-  if(WORKFLOWS[p.space]){ const wf=WORKFLOWS[p.space]; const steps=(wf.fetSteps&&fetOn())?wf.steps.concat(wf.fetSteps):wf.steps; workState={sp:p.space,step:0,quality:0,steps}; log(`${p.name}이(가) ${SPACES[p.space].n}에서 일을 시작한다`,'event',p.space); renderPlayerPanel(); return; }
+  if(WORKFLOWS[p.space]){ const wf=WORKFLOWS[p.space]; const steps=(wf.fetSteps&&fetOn())?wf.steps.concat(wf.fetSteps):wf.steps; workState={sp:p.space,step:0,quality:0,steps}; log(`${esc(p.name)}이(가) ${SPACES[p.space].n}에서 일을 시작한다`,'event',p.space); renderPlayerPanel(); return; }
   doWork(p);
 }
 function workChoose(i){
   if(!workState)return; const p=P();
   const steps=workState.steps||WORKFLOWS[workState.sp].steps, st=steps[workState.step], o=st.opts[i]; if(!o)return;
   workState.quality+=o.q;
-  if(o.txt)log(`${p.name}이(가) ${esc(o.txt)}`,'',p.space);
+  if(o.txt)log(`${esc(p.name)}이(가) ${esc(o.txt)}`,'',p.space);
   if(o.fx)try{o.fx(p);}catch(e){}
   workState.step++;
   if(workState.step>=steps.length)finishWork(p);
@@ -4262,7 +4262,7 @@ function finishWork(p){
   p.flags._jobs=p.flags._jobs||{}; p.flags._jobs[workState.sp]=1;
   bumpJobStreak(p,workState.sp);
   const g=workState.quality>=wf.maxQ*0.8?'훌륭한 솜씨였다':workState.quality>=wf.maxQ*0.4?'무난하게 해냈다':'서툴러 팁이 시원찮았다';
-  log(`${p.name}이(가) ${wf.title}을(를) 마쳤다 — ${g}. <b>+${pay}코인</b>${streakMult>1?` <span class="rx">(숙련도 ×${streakMult.toFixed(2)})</span>`:''} (보유 ${p.money})`,'event',p.space);
+  log(`${esc(p.name)}이(가) ${wf.title}을(를) 마쳤다 — ${g}. <b>+${pay}코인</b>${streakMult>1?` <span class="rx">(숙련도 ×${streakMult.toFixed(2)})</span>`:''} (보유 ${p.money})`,'event',p.space);
   workState=null; flashToken(p.id); step(3);
 }
 /* 이동 중 조우 (깊은 숲길 등 transit 공간) */
@@ -4323,7 +4323,7 @@ function giftGive(p,t,item){
   if(g.욕망&&RATING>=3)d(t,p,'욕망',g.욕망);
   t.needs.사교=clamp(t.needs.사교-8,0,100);
   p.lastAct='선물';
-  log(`${p.name}이(가) ${NM(t)}에게 ${esc(g.line)} — <b>${esc(g.label)}</b>`,'event',p.space);
+  log(`${esc(p.name)}이(가) ${NM(t)}에게 ${esc(g.line)} — <b>${esc(g.label)}</b>`,'event',p.space);
   flashToken(p.id); step();
 }
 /* ── 고속 이동: 셔틀버스(유료·성추행 리스크) / 자전거(무료·안전) ── */
@@ -4381,7 +4381,7 @@ function chaseEvent(p,st,to){
 function _completeMove(p,to){
   p.space=to; p.lastAct=null;
   p.flags._visited=p.flags._visited||{}; p.flags._visited[to]=1;
-  log(`${p.name} → ${SPACES[to].n}`,'move'); flashToken(p.id); render();
+  log(`${esc(p.name)} → ${SPACES[to].n}`,'move'); flashToken(p.id); render();
 }
 function playerMove(to){
   const p=P();
@@ -4392,7 +4392,7 @@ function playerMove(to){
   }
   p.space=to; p.lastAct=null;
   p.flags._visited=p.flags._visited||{}; p.flags._visited[to]=1;
-  log(`${p.name} → ${SPACES[to].n}`,'move');
+  log(`${esc(p.name)} → ${SPACES[to].n}`,'move');
   flashToken(p.id); step(SPACES[to]&&SPACES[to].transit?2:1);
 }
 function playerAct(name,tgtId){
@@ -4451,13 +4451,13 @@ function renderPlayerPanel(){
     wh+=`</div><button class="waitBtn" id="wCancel">${tr('btn.quitWork')}</button>`;
     PP.innerHTML=wh;
     PP.querySelectorAll('[data-wopt]').forEach(b=>b.onclick=()=>workChoose(+b.dataset.wopt));
-    $('#wCancel').onclick=()=>{workState=null; log(`${p.name}이(가) 일을 그만두고 나왔다`,'event',p.space); render();};
+    $('#wCancel').onclick=()=>{workState=null; log(`${esc(p.name)}이(가) 일을 그만두고 나왔다`,'event',p.space); render();};
     return;
   }
   const mates=npcs.filter(o=>o.id!==p.id&&o.space===p.space);
   if(pTarget&&!mates.some(m=>m.id===pTarget))pTarget=null;
   let h=`<div class="phead">${avatarCanvasHTML('pAvatar',38)}
-    <div><div class="pname">${p.name}</div>
+    <div><div class="pname">${esc(p.name)}</div>
     <div class="ploc">${lbl('arch',p.arch)} · ${lbl('form',p.form)} — ${tr('label.now')} ${lbl('space',SPACES[p.space].n)}</div></div></div>`;
   const _inv=[...Object.keys(GIFTS),...Object.keys(USABLES)].filter(it=>(p.flags['아이템:'+it]||0)>0).map(it=>`${it}×${p.flags['아이템:'+it]}`).join(' · ');
   const _day=Math.floor(turn/12)+1, _sl=slot();
@@ -4760,7 +4760,7 @@ function buildForm(){
     $('#cR18').checked=CFG.defR18; $('#cCor').checked=CFG.defCor; $('#cLewd0').value=0; window.__setSens(defSens()); $('#cLewd0v').textContent='0';
     $('#cMaxEng').value=100; $('#cMaxEngV').textContent='100'; 
     $('#cName').value='';
-    log(`${n.name}(${n.arch}·${n.form})이(가) 입주했다 — ${SPACES[n.home].n} 배정`,'event');
+    log(`${esc(n.name)}(${n.arch}·${n.form})이(가) 입주했다 — ${SPACES[n.home].n} 배정`,'event');
     render();
   };
 }
