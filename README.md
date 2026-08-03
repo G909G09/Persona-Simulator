@@ -28,7 +28,7 @@
 - **질투·소문 / 성적 평판 (R18)**: 애정 깊은 인물이 H 세션을 목격하면 긴장이 쌓이다 대치 이벤트로 번지며(선택에 따라 다른 인물에게까지 파문), 별도로 누적되는 성적 평판 수치가 높아지면 낯선 인물이 소문을 듣고 먼저 다가오기도 합니다. 두 시스템 모두 평판·연인 여부·성격(대담함) 등 캐릭터 맥락에 따라 확률이 달라집니다.
 - **폭동 모드 (R18, 설정에서 켜기)**: 활성화하면 주기적으로 몇 명이 발정해 플레이어를 쫓아오며, 따돌리지 못하면 붙잡혀 다인 H가 시작됩니다. 포획 확률은 추격자의 흥분도와 플레이어의 운동 스탯에 따라 달라지고, "도망친다" 버튼으로 탈출을 시도할 수 있습니다.
 - **1인칭 이야기 로그 / 전체 로그 전환**: 우측 패널 헤더 버튼으로 "당신에게 직접 벌어지는 일만" 보여주는 이야기 모드와, 모든 인물의 행동을 기록하는 전체 로그를 언제든 전환할 수 있습니다.
-- **저장/불러오기**: 브라우저 로컬 저장, 파일로 내보내기/가져오기 지원. 자동 저장 간격은 설정에서 조절합니다.
+- **저장/불러오기**: 브라우저 로컬 저장, 파일로 내보내기/가져오기 지원. 자동 저장 간격은 설정에서 조절합니다. 날씨나 폭동 모드 추격 상태처럼 턴 사이에 유지되는 진행 중인 상황도 함께 저장·복원됩니다.
 - **시스템 설정 콘솔**: 툴바의 ⚙ 버튼에서 기절/절정/난입 반응, 각종 확률·배율, 신규 캐릭터 기본값, R18+ 페티시 요소 토글 등을 세밀하게 조정할 수 있습니다.
 - **언어 전환 (한국어/English)**: 두 버전 모두 툴바에서 인터페이스 언어를 한국어/영어로 전환할 수 있습니다. 툴바·버튼·패널 라벨·설정 콘솔·퀘스트 설명 등 UI 전반이 번역되며, 선택은 브라우저에 저장됩니다. NPC 대사·이벤트·스토리 본문 등 서사 콘텐츠는 한국어로 고정되어 있습니다.
 
@@ -74,7 +74,7 @@ The two files keep separate save data and settings, so they never interfere with
 - **Jealousy/gossip & sexual reputation (R18)**: Characters who care about you may notice if they witness you in an H session, building tension that can escalate into a confrontation event (with consequences that ripple to others who care about them). Separately, a sexual reputation stat builds up from your activity, and once it's high enough, strangers may proposition you first, having heard the rumors. Both systems weigh reputation, relationship status, and personality (boldness) rather than using flat odds.
 - **Riot Mode (R18, opt-in in settings)**: When enabled, characters periodically go into heat and chase you; if you can't shake them off, they catch you and start a group H session. Capture odds depend on the chasers' arousal and your athletics, and you can attempt to Flee.
 - **First-person story log / full log toggle**: A header button on the right panel lets you switch anytime between Story mode (only what happens directly to you) and the Full Log (every character's actions recorded).
-- **Save / load**: Local browser save plus export/import to file. Autosave interval is adjustable in settings.
+- **Save / load**: Local browser save plus export/import to file. Autosave interval is adjustable in settings. In-progress state that persists across turns, such as the current weather or an ongoing Riot Mode chase, is also saved and restored.
 - **System settings console**: The ⚙ toolbar button gives fine-grained control over fainting/climax/interruption reactions, various probabilities and multipliers, new-character defaults, and individual R18+ fetish content toggles.
 - **Language toggle (한국어/English)**: Both versions' toolbars let you switch the interface language between Korean and English. The toolbar, buttons, panel labels, settings console, quest descriptions, and the rest of the UI chrome are translated, and your choice is saved in the browser. NPC dialogue, events, and story text remain Korean-only.
 

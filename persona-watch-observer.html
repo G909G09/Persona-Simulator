@@ -525,7 +525,7 @@ Object.assign(I18N.ko,{
  'confirm.overwriteProgress':'저장하지 않은 진행 상황(T{n})이 있습니다. 지금 불러오면 사라집니다. 계속할까요?',
  'btn.followAlong':'따라간다','btn.decline':'거절한다','btn.accept':'받아들인다',
  'confirm.deleteChar':'{name}을(를) 삭제할까요? 되돌릴 수 없습니다.','confirm.deletePlayerNote':'(플레이어 캐릭터입니다!)',
- 'confirm.clearLog':'로그를 모두 지울까요? 되돌릴 수 없습니다.'
+ 'confirm.clearLog':'로그를 모두 지울까요? 되돌릴 수 없습니다.','confirm.batchOp':'전 인물에게 일괄 적용됩니다. 되돌릴 수 없습니다. 계속할까요?'
 });
 Object.assign(I18N.en,{
  'tab.stat':'Stats','tab.rel':'Relations','btn.pairEditDone':'Done Adjusting','btn.pairEdit':'Adjust Relation ✎',
@@ -565,7 +565,7 @@ Object.assign(I18N.en,{
  'confirm.overwriteProgress':'You have unsaved progress (T{n}). Loading now will discard it. Continue?',
  'btn.followAlong':'Go with them','btn.decline':'Decline','btn.accept':'Accept',
  'confirm.deleteChar':'Delete {name}? This cannot be undone.','confirm.deletePlayerNote':'(This is your player character!)',
- 'confirm.clearLog':'Clear the whole log? This cannot be undone.'
+ 'confirm.clearLog':'Clear the whole log? This cannot be undone.','confirm.batchOp':'This applies instantly to every character and cannot be undone. Continue?'
 });
 Object.assign(I18N.en,{
  'title.sub':'Observer Board — NPC Ensemble Watching Mode',
@@ -2875,7 +2875,7 @@ function showAdminPanel(){
       <button id="admClose">${tr('btn.close').replace(' ✕','')}</button></div></div>`;
   document.body.appendChild(m);
   const mc=withModalEscape(m,()=>{ m.remove(); render(); });
-  m.querySelectorAll('[data-adm]').forEach(b=>b.onclick=()=>{ admBatch(b.dataset.adm); mc.close(); });
+  m.querySelectorAll('[data-adm]').forEach(b=>b.onclick=()=>{ if(!confirm(tr('confirm.batchOp')))return; admBatch(b.dataset.adm); mc.close(); });
   document.getElementById('admClose').onclick=mc.close;
 }
 function admBatch(op){
@@ -4845,7 +4845,7 @@ function setSliders(vals){
 /* ══════════════ 저장 / 불러오기 ══════════════ */
 const SAVE_KEY='personaWatchSave_observer';
 function serialize(){
-  return JSON.stringify({v:11, turn, RATING, uid, colorIdx, playerId, npcs, sceneCD, cfg:CFG,
+  return JSON.stringify({v:12, turn, RATING, uid, colorIdx, playerId, npcs, sceneCD, cfg:CFG, weather:WEATHER, riotChase,
     logHTML:[...document.querySelectorAll('#log .lg')].slice(-150).map(e=>e.outerHTML),
     storyHTML:[...document.querySelectorAll('#story .lg')].slice(-150).map(e=>e.outerHTML)});
 }
@@ -4871,15 +4871,19 @@ function sanitizeLogEntries(list){
 }
 function applySave(data){
   if(!data||!Array.isArray(data.npcs)||!data.npcs.length||!data.npcs.every(n=>n&&typeof n==='object'&&n.id!=null&&typeof n.name==='string'))throw new Error(tr('err.badSaveFile'));
+  curEvent=null;
+  const exModal=document.getElementById('modal'); if(exModal)exModal.remove();
   npcs=data.npcs;
   /* turn/RATING은 손상되거나 조작된 파일에서 음수·비정상적으로 큰 값·문자열 등이 들어올 수 있으니
      항상 유효 범위로 정규화한다 (RATING은 UI select가 0~3 옵션만 가지므로 그 범위로 고정). */
   turn=Math.max(0,Math.floor(Number(data.turn))||0); RATING=clamp(Math.floor(Number(data.RATING))||0,0,3);
   npcs.forEach(ensureSens);
-  npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; equipOutfit(n,n.outfit); n.asleep=0; });
+  npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; if(!n.flags)n.flags={}; if(!n.r18log)n.r18log={}; if(!n.relations)n.relations={}; equipOutfit(n,n.outfit); n.asleep=0; });
   autoH=false;
   uid=data.uid||(npcs.length+1); colorIdx=data.colorIdx||0;
   playerId=data.playerId||null; pTarget=null; sel=[]; editId=null; logFilter=null; workState=null;
+  WEATHER=(data.weather&&WEATHER_ICON[data.weather])?data.weather:'맑음';
+  riotChase=(data.riotChase&&Array.isArray(data.riotChase.chasers)&&data.riotChase.chasers.every(id=>npcs.some(n=>n.id===id)))?data.riotChase:null;
   for(const k in sceneCD)delete sceneCD[k];
   Object.assign(sceneCD, data.sceneCD||{});
   leadQueue.length=0; confQueue.length=0; r18Queue.length=0;
@@ -4899,9 +4903,14 @@ function applySave(data){
   stopPlay(); render();
   log(tr('log.loaded').replace('{n}',turn),'event');
 }
+let __autosaveWarned=false;
 function saveLocal(silent){
   try{ localStorage.setItem(SAVE_KEY, serialize()); hasUnsaved=false; if(!silent)log(CFG.autosave>0?tr('log.saved').replace('{n}',CFG.autosave):tr('log.saved.off'),'event'); return true; }
-  catch(e){ if(!silent)alert(tr('alert.saveBlocked')); return false; }
+  catch(e){
+    if(!silent)alert(tr('alert.saveBlocked'));
+    else if(!__autosaveWarned){ __autosaveWarned=true; log('⚠ '+tr('alert.saveBlocked'),'event'); }
+    return false;
+  }
 }
 function loadLocal(){
   if(hasUnsaved&&!confirm(tr('confirm.overwriteProgress').replace('{n}',turn)))return;
@@ -5311,6 +5320,8 @@ window.addEventListener('beforeunload',e=>{ if(hasUnsaved){ e.preventDefault(); 
 
 $('#cR18').checked=CFG.defR18; $('#cCor').checked=CFG.defCor;
 syncSEBtn();
+applyI18n();
+{ const _ls=document.getElementById('langSel'); if(_ls)_ls.value=LANG; }
 setStoryMode(storyMode);
 render();
 syncMobile();
