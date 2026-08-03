@@ -340,8 +340,8 @@ h2.sec:first-child{margin-top:0}
       </div>
       <div class="row"><label style="width:auto;font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="cR18" checked><span data-i18n="form.r18">R18 행동 참여 (등급 3 전용)</span></label></div>
       <div class="row"><label style="width:auto;font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="cCor" checked><span data-i18n="form.cor">타락 허용</span></label></div>
-      <div class="axRow"><span style="font-size:11px" data-i18n="form.lewd0">초기 타락</span><input type="range" id="cLewd0" min="0" max="100" value="0"><span class="val" id="cLewd0v">0</span></div>
-      <div class="axRow"><span style="font-size:11px" data-i18n="form.maxeng">최대 정력</span><input type="range" id="cMaxEng" min="100" max="500" step="10" value="100"><span class="val" id="cMaxEngV">100</span></div>
+      <div class="axRow"><span style="font-size:11px" data-i18n="form.lewd0">초기 타락</span><input type="range" id="cLewd0" min="0" max="100" value="0" aria-label="초기 타락" data-i18n-aria="form.lewd0"><span class="val" id="cLewd0v">0</span></div>
+      <div class="axRow"><span style="font-size:11px" data-i18n="form.maxeng">최대 정력</span><input type="range" id="cMaxEng" min="100" max="500" step="10" value="100" aria-label="최대 정력" data-i18n-aria="form.maxeng"><span class="val" id="cMaxEngV">100</span></div>
       <div class="psec" style="margin-top:8px"><span data-i18n="form.sens">신체 민감도</span> <span style="font-weight:400;color:var(--muted)" data-i18n="form.sens.std">(40 = 표준)</span></div>
       <div id="cSensRows"></div>
       <div id="mixOpts">
@@ -1198,6 +1198,17 @@ const CFG_SCHEMA=[
  {g:'성적 평판 (R18)',g_en:'Sexual Reputation (R18)'},
  {k:'repProposition', t:'toggle', l:'평판 기반 제안', l_en:'Reputation-Based Propositions', d:'성적 평판이 높으면(50 이상), 아직 친하지 않은 인물이 소문을 들었다며 먼저 은밀한 제안을 걸어올 수 있습니다. 평판 수치 자체는 이 옵션을 꺼도 계속 쌓입니다.', d_en:'Once your sexual reputation is high (50+), characters you barely know may approach you first with a proposition, having heard the rumors. The underlying reputation stat keeps accumulating even if this is off.'}
 ];
+/* CFG_SCHEMA에 정의된 min/max·opts·toggle 여부를 기준으로 CFG 값을 정규화한다.
+   불러오기(가져오기 파일 등 조작 가능한 입력)로 들어온 비정상적인 값(범위 밖 숫자,
+   select에 없는 옵션, 문자열 등)이 조용히 자동 저장을 끄거나 밸런스를 깨는 것을 막는다. */
+function normalizeCfg(){
+  for(const it of CFG_SCHEMA){
+    if(!it.k)continue;
+    if(it.t==='toggle'){ CFG[it.k]=!!CFG[it.k]; }
+    else if(it.t==='range'){ let v=Number(CFG[it.k]); if(!Number.isFinite(v))v=CFG_DEF[it.k]; CFG[it.k]=clamp(v,it.min,it.max); }
+    else if(it.t==='select'){ const opts=(it.opts||[]).map(o=>o[0]); if(!opts.includes(CFG[it.k]))CFG[it.k]=CFG_DEF[it.k]; }
+  }
+}
 
 let consoleKeyHandler=null;
 let consolePrevFocus=null;
@@ -1213,14 +1224,14 @@ function openConsole(){
     if(it.g){ b+='<div class="cGroup">'+(LANG==='en'?(it.g_en||it.g):it.g)+'</div>'; continue; }
     let ctrl='';
     const optList=(LANG==='en'&&it.opts_en)?it.opts_en:it.opts;
-    if(it.t==='toggle'){
-      ctrl='<button class="cSwitch'+(CFG[it.k]?' on':'')+'" data-ck="'+it.k+'" role="switch" aria-checked="'+(!!CFG[it.k])+'"></button>';
-    }else if(it.t==='range'){
-      ctrl='<span class="ctrl"><input type="range" min="'+it.min+'" max="'+it.max+'" step="'+it.step+'" value="'+CFG[it.k]+'" data-ck="'+it.k+'"><span class="cv">'+CFG[it.k]+(it.u||'')+'</span></span>';
-    }else if(it.t==='select'){
-      ctrl='<select data-ck="'+it.k+'">'+optList.map(function(o){return '<option value="'+o[0]+'"'+(CFG[it.k]==o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>';
-    }
     const itLabel=LANG==='en'?(it.l_en||it.l):it.l, itDesc=LANG==='en'?(it.d_en||it.d):it.d;
+    if(it.t==='toggle'){
+      ctrl='<button class="cSwitch'+(CFG[it.k]?' on':'')+'" data-ck="'+it.k+'" role="switch" aria-checked="'+(!!CFG[it.k])+'" aria-label="'+itLabel+'"></button>';
+    }else if(it.t==='range'){
+      ctrl='<span class="ctrl"><input type="range" min="'+it.min+'" max="'+it.max+'" step="'+it.step+'" value="'+CFG[it.k]+'" data-ck="'+it.k+'" aria-label="'+itLabel+'"><span class="cv">'+CFG[it.k]+(it.u||'')+'</span></span>';
+    }else if(it.t==='select'){
+      ctrl='<select data-ck="'+it.k+'" aria-label="'+itLabel+'">'+optList.map(function(o){return '<option value="'+o[0]+'"'+(CFG[it.k]==o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>';
+    }
     b+='<div class="cItem"><span class="cl">'+itLabel+'</span>'+ctrl+(itDesc?'<span class="cd">'+itDesc+'</span>':'')+'</div>';
   }
   w.innerHTML='<div class="ccard">'
@@ -2486,7 +2497,7 @@ function runStoryArc(p,arc){
   return false;
 }
 function checkMainStory(p){
-  if(!p||p.hsex||p.asleep>0||curEvent||document.getElementById('modal')||document.getElementById('r18modal'))return;
+  if(!p||p.hsex||p.asleep>0||curEvent||document.getElementById('modal'))return;
   for(const arc of STORY_ARCS){ if(runStoryArc(p,arc))return; }
 }
 /* ══════════════ 일상 스크립트 — 아크에 속하지 않는 짧은 하루의 순간들 ══════════════
@@ -2833,11 +2844,16 @@ function shareWorries(s,t){
    속성을 부여한다. close()는 버튼 클릭을 포함한 모든 닫기 경로에서 호출해야 리스너가 새지
    않는다. detach()만 호출하면 리스너만 정리하고 직접 다른 동작(예: 이동 확정)을 이어갈 수 있다. */
 function withModalEscape(m,close){
+  const prevFocus=document.activeElement;
+  const restoreFocus=()=>{ if(prevFocus&&document.body.contains(prevFocus)&&typeof prevFocus.focus==='function')prevFocus.focus(); };
   const detach=()=>document.removeEventListener('keydown',onKey);
-  const onKey=e=>{ if(e.key==='Escape'){ detach(); close(); } };
+  const runClose=()=>{ detach(); restoreFocus(); close(); };
+  const onKey=e=>{ if(e.key==='Escape')runClose(); };
   document.addEventListener('keydown',onKey);
-  m.addEventListener('click',e=>{ if(e.target===m){ detach(); close(); } });
-  return { close:()=>{ detach(); close(); }, detach };
+  m.addEventListener('click',e=>{ if(e.target===m)runClose(); });
+  const focusable=m.querySelector('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+  if(focusable)focusable.focus();
+  return { close:runClose, detach };
 }
 /* ── 관리자 일괄 편집: 전 NPC 파라미터 배치 조작/랜덤화 ── */
 function showAdminPanel(){
@@ -2860,6 +2876,7 @@ function showAdminPanel(){
   document.getElementById('admClose').onclick=mc.close;
 }
 function admBatch(op){
+  hasUnsaved=true;
   const list=npcs.filter(n=>!n.isPlayer);
   if(op==='randStat'){ list.forEach(n=>{ n.매력base=ri(20,90); n.lewd.타락=n.corruptible?ri(0,80):0; n.lewd.max정력=ri(10,30)*10; n.lewd.정력=n.lewd.max정력; if(n.sens)for(const k in n.sens)n.sens[k]=ri(20,80); equipOutfit(n,n.outfit); }); log(tr('adm.randStatDone'),'event',null); }
   else if(op==='randRel'){ list.forEach(a=>{ npcs.forEach(b=>{ if(a.id===b.id||!a.relations[b.id])return; const r=a.relations[b.id]; r.호감=ri(0,80); r.신뢰=ri(0,70); r.애정=ri(0,50); r.긴장=ri(0,40); r.욕망=RATING>=3?ri(0,60):0; }); }); log(tr('adm.randRelDone'),'event',null); }
@@ -3334,9 +3351,9 @@ function fireScene(S,a,b){
 function shuffle(arr){return [...arr].sort(()=>Math.random()-.5);}
 function step(cnt){
   sheetToggle(false);   /* 턴 진행 시 행동 시트 닫고 로그로 복귀 */
-  if(document.getElementById('modal')||document.getElementById('r18modal'))return;
+  if(document.getElementById('modal'))return;
   cnt=Math.max(1,Math.round(cnt||1));
-  for(let _i=0;_i<cnt;_i++){ if(document.getElementById('modal')||document.getElementById('r18modal'))break; tickWorld(); }
+  for(let _i=0;_i<cnt;_i++){ if(document.getElementById('modal'))break; tickWorld(); }
   render();
 }
 function tickWorld(){
@@ -3349,7 +3366,7 @@ function tickWorld(){
   const pl=P();
   if(pl){
     if(pl.lewd.취기<90&&pl.flags._drowsy)delete pl.flags._drowsy;
-    if(RATING>=2&&pl.lewd.취기>=100&&pl.asleep<=0&&!pl.hsex&&!pl.flags._drowsy&&!document.getElementById('modal')&&!document.getElementById('r18modal')){ setTimeout(showDrowsyModal,60); }
+    if(RATING>=2&&pl.lewd.취기>=100&&pl.asleep<=0&&!pl.hsex&&!pl.flags._drowsy&&!document.getElementById('modal')){ setTimeout(showDrowsyModal,60); }
     checkQuests(pl);
     checkMainStory(pl);
     checkDailyEvent(pl);
@@ -3415,6 +3432,7 @@ function showLeadPrompt() {
   
   document.getElementById('leadYes').onclick = () => resolveLead(true);
   document.getElementById('leadNo').onclick = () => resolveLead(false);
+  document.getElementById('leadYes').focus();
 }
 
 function resolveLead(accept) {
@@ -3454,6 +3472,7 @@ function showR18Prompt(){
   document.body.appendChild(wrap);
   document.getElementById('r18Yes').onclick=()=>resolveR18(true);
   document.getElementById('r18No').onclick=()=>resolveR18(false);
+  document.getElementById('r18Yes').focus();
 }
 function resolveR18(accept){
   const {s,A,t,mode}=r18Queue.shift(); const p=P();
@@ -3491,6 +3510,7 @@ function showConfession(){
   document.body.appendChild(m);
   document.getElementById('confYes').onclick=()=>resolveConfession(true);
   document.getElementById('confNo').onclick=()=>resolveConfession(false);
+  document.getElementById('confYes').focus();
 }
 function resolveConfession(accept){
   const {s}=confQueue.shift(); const p=P();
@@ -3692,7 +3712,7 @@ function renderDetail(){
         h+=`<div class="pairArrow">${esc(x.name)} → ${esc(y.name)}</div>`;
         [['호감',r.호감],['애정',r.애정],['신뢰',r.신뢰],['긴장',r.긴장]].concat(RATING>=3?[['욕망',r.욕망]]:[]).forEach(([k,v])=>{
           if(pairEditMode){
-            h+=`<div class="axRow"><span style="font-size:11px">${lbl('rel',k)}</span><input type="range" min="0" max="100" value="${Math.round(v)}" data-redit="${x.id}|${y.id}|${k}"><span class="val">${Math.round(v)}</span></div>`;
+            h+=`<div class="axRow"><span style="font-size:11px">${lbl('rel',k)}</span><input type="range" min="0" max="100" value="${Math.round(v)}" data-redit="${x.id}|${y.id}|${k}" aria-label="${lbl('rel',k)}"><span class="val">${Math.round(v)}</span></div>`;
           }else{
             h+=`<div class="bar"><span>${lbl('rel',k)}</span><span class="tr"><span class="fl" style="width:${v}%;background:${x.color}"></span></span><span class="bv">${Math.round(v)}</span></div>`;
           }
@@ -3719,7 +3739,7 @@ function renderDetail(){
         inp.onchange=()=>{
           const [xid,yid,key]=inp.dataset.redit.split('|');
           const x=npcs.find(o=>String(o.id)===xid);
-          if(x&&x.relations[yid])x.relations[yid][key]=+inp.value;
+          if(x&&x.relations[yid]){x.relations[yid][key]=+inp.value; hasUnsaved=true;}
         };
       });
       return;
@@ -3767,7 +3787,7 @@ function drawEditForm(){
   if(!n){editId=null; renderDetail(); return;}
   D.className='show';
   const opts=Object.keys(ARCH).map(k=>`<option${k===n.arch?' selected':''}>${k}</option>`).join('');
-  const axRows=AXES.map((a,i)=>`<div class="axRow"><span>${lbl('axis',a)}</span><input type="range" min="0" max="100" value="${n.axes[i]}" data-eax="${i}"><span class="val">${n.axes[i]}</span></div>`).join('');
+  const axRows=AXES.map((a,i)=>`<div class="axRow"><span>${lbl('axis',a)}</span><input type="range" min="0" max="100" value="${n.axes[i]}" data-eax="${i}" aria-label="${lbl('axis',a)}"><span class="val">${n.axes[i]}</span></div>`).join('');
   const sw=n.isPlayer?'':`<div class="psec">${tr('edit.themeColor')}</div><div class="chipRow">${PALETTE.map(c=>`<button class="chip" data-col="${c}" style="width:22px;height:22px;padding:0;background:${c};border-color:${c};outline:${c===n.color?'2px solid var(--ink)':'none'}"></button>`).join('')}</div>`;
   D.innerHTML=`<div class="psec">${tr('edit.title')} — ${esc(n.name)}${n.isPlayer?' ('+tr('edit.player')+')':''}</div>
    <div style="display:flex;flex-direction:column;gap:7px">
@@ -3782,15 +3802,15 @@ function drawEditForm(){
    </div>
    <label style="font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="eR18"${n.r18?' checked':''}>${tr('form.r18')}</label>
    <label style="font-size:11.5px;color:var(--muted);display:flex;gap:5px;align-items:center"><input type="checkbox" id="eCor"${n.corruptible?' checked':''}>${tr('form.cor')}</label>
-   <div class="axRow"><span style="font-size:11px">${lbl('sexstat','타락')}</span><input type="range" id="eLewd" min="0" max="100" value="${Math.round(n.lewd.타락)}"><span class="val">${Math.round(n.lewd.타락)}</span></div>
-      <div class="axRow"><span style="font-size:11px">${tr('edit.maxEng')}</span><input type="range" id="eMaxEng" min="100" max="500" step="10" value="${n.lewd.max정력}"><span class="val">${n.lewd.max정력}</span></div>
-      <div class="axRow"><span style="font-size:11px">${tr('edit.curEng')}</span><input type="range" id="eCurEng" min="0" max="500" step="5" value="${Math.round(n.lewd.정력)}"><span class="val">${Math.round(n.lewd.정력)}</span></div>
+   <div class="axRow"><span style="font-size:11px">${lbl('sexstat','타락')}</span><input type="range" id="eLewd" min="0" max="100" value="${Math.round(n.lewd.타락)}" aria-label="${lbl('sexstat','타락')}"><span class="val">${Math.round(n.lewd.타락)}</span></div>
+      <div class="axRow"><span style="font-size:11px">${tr('edit.maxEng')}</span><input type="range" id="eMaxEng" min="100" max="500" step="10" value="${n.lewd.max정력}" aria-label="${tr('edit.maxEng')}"><span class="val">${n.lewd.max정력}</span></div>
+      <div class="axRow"><span style="font-size:11px">${tr('edit.curEng')}</span><input type="range" id="eCurEng" min="0" max="500" step="5" value="${Math.round(n.lewd.정력)}" aria-label="${tr('edit.curEng')}"><span class="val">${Math.round(n.lewd.정력)}</span></div>
       <div class="psec">${tr('sec.sens')}</div>
-      ${PARTS.map(p=>`<div class="axRow"><span style="font-size:11px">${lbl('part',p)}</span><input type="range" min="0" max="100" value="${sensOf(n,p)}" data-esens="${p}"><span class="val">${sensOf(n,p)}</span></div>`).join('')}
-   <div class="axRow"><span style="font-size:11px">${tr('edit.build')}</span><input type="range" id="eBody" min="0" max="100" value="${n.body.체격}"><span class="val">${n.body.체격}</span></div>
-   <div class="axRow"><span style="font-size:11px">${tr('edit.athletic')}</span><input type="range" id="eAth" min="0" max="100" value="${n.body.운동}"><span class="val">${n.body.운동}</span></div>
-   <div class="axRow"><span style="font-size:11px">${tr('edit.charm')}</span><input type="range" id="eCharm" min="0" max="100" value="${n.매력||0}"><span class="val">${n.매력||0}</span></div>
-   <div class="axRow"><span style="font-size:11px">${tr('edit.exposure')}</span><input type="range" id="eExpose" min="0" max="100" value="${n.노출도||0}"><span class="val">${n.노출도||0}</span></div>
+      ${PARTS.map(p=>`<div class="axRow"><span style="font-size:11px">${lbl('part',p)}</span><input type="range" min="0" max="100" value="${sensOf(n,p)}" data-esens="${p}" aria-label="${lbl('part',p)}"><span class="val">${sensOf(n,p)}</span></div>`).join('')}
+   <div class="axRow"><span style="font-size:11px">${tr('edit.build')}</span><input type="range" id="eBody" min="0" max="100" value="${n.body.체격}" aria-label="${tr('edit.build')}"><span class="val">${n.body.체격}</span></div>
+   <div class="axRow"><span style="font-size:11px">${tr('edit.athletic')}</span><input type="range" id="eAth" min="0" max="100" value="${n.body.운동}" aria-label="${tr('edit.athletic')}"><span class="val">${n.body.운동}</span></div>
+   <div class="axRow"><span style="font-size:11px">${tr('edit.charm')}</span><input type="range" id="eCharm" min="0" max="100" value="${n.매력||0}" aria-label="${tr('edit.charm')}"><span class="val">${n.매력||0}</span></div>
+   <div class="axRow"><span style="font-size:11px">${tr('edit.exposure')}</span><input type="range" id="eExpose" min="0" max="100" value="${n.노출도||0}" aria-label="${tr('edit.exposure')}"><span class="val">${n.노출도||0}</span></div>
    <select id="eR18Mode"><option value="기본"${n.r18Mode==='기본'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','기본')}</option><option value="부탁"${n.r18Mode==='부탁'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','부탁')}</option><option value="강압"${n.r18Mode==='강압'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','강압')}</option><option value="복종"${n.r18Mode==='복종'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','복종')}</option></select>
    ${sw}
    <div style="display:flex;gap:6px"><button class="primary" id="eSave" style="flex:1">${tr('edit.save')}</button><button id="eCancel" style="flex:1">${tr('edit.cancel')}</button></div>
@@ -3828,6 +3848,7 @@ function drawEditForm(){
     n.look=getLook();
     if(!n.isPlayer)n.color=pickedCol;
     editId=null;
+    hasUnsaved=true;
     log(`${NM(n)}의 설정이 변경되었다`,'move');
     render();
   };
@@ -4765,7 +4786,7 @@ function buildForm(){
   const S=$('#axSliders');
   AXES.forEach((a,i)=>{
     const row=document.createElement('div'); row.className='axRow';
-    row.innerHTML=`<span>${lbl('axis',a)}</span><input type="range" min="0" max="100" data-ax="${i}"><span class="val">50</span>`;
+    row.innerHTML=`<span>${lbl('axis',a)}</span><input type="range" min="0" max="100" data-ax="${i}" aria-label="${lbl('axis',a)}"><span class="val">50</span>`;
     S.appendChild(row);
   });
   S.addEventListener('input',e=>{
@@ -4773,7 +4794,7 @@ function buildForm(){
   });
   $('#cLewd0').oninput=e=>$('#cLewd0v').textContent=e.target.value;
   $('#cMaxEng').oninput=e=>$('#cMaxEngV').textContent=e.target.value;
-  $('#cSensRows').innerHTML=PARTS.map(p=>`<div class="axRow"><span style="font-size:11px">${lbl('part',p)}</span><input type="range" min="0" max="100" value="40" data-csens="${p}"><span class="val">40</span></div>`).join('');
+  $('#cSensRows').innerHTML=PARTS.map(p=>`<div class="axRow"><span style="font-size:11px">${lbl('part',p)}</span><input type="range" min="0" max="100" value="40" data-csens="${p}" aria-label="${lbl('part',p)}"><span class="val">40</span></div>`).join('');
   document.querySelectorAll('[data-csens]').forEach(inp=>inp.oninput=()=>inp.nextElementSibling.textContent=inp.value);
   const readSens=()=>{ const o={}; document.querySelectorAll('[data-csens]').forEach(inp=>o[inp.dataset.csens]=+inp.value); return o; };
   const setSens=o=>{ document.querySelectorAll('[data-csens]').forEach(inp=>{ inp.value=o[inp.dataset.csens]; inp.nextElementSibling.textContent=inp.value; }); };
@@ -4825,6 +4846,26 @@ function serialize(){
     logHTML:[...document.querySelectorAll('#log .lg')].slice(-150).map(e=>e.outerHTML),
     storyHTML:[...document.querySelectorAll('#story .lg')].slice(-150).map(e=>e.outerHTML)});
 }
+/* 불러오기/가져오기 파일은 사용자가 직접 만든 임의의 JSON일 수 있으므로, logHTML/storyHTML을
+   그대로 innerHTML에 꽂아 넣지 않고 위험한 태그·이벤트 핸들러 속성·javascript: 링크를 제거한 뒤 사용한다.
+   DOMParser로 만든 문서는 실제 DOM에 붙지 않으므로 이 과정에서 스크립트/이벤트가 실행되지 않는다. */
+function sanitizeLogEntries(list){
+  if(!Array.isArray(list))return [];
+  const DANGEROUS_TAGS=['script','iframe','object','embed','link','style','meta','base','form','svg','math'];
+  return list.filter(h=>typeof h==='string').map(h=>{
+    const doc=new DOMParser().parseFromString('<div id="_root">'+h+'</div>','text/html');
+    const root=doc.getElementById('_root'); if(!root)return '';
+    DANGEROUS_TAGS.forEach(t=>root.querySelectorAll(t).forEach(e=>e.remove()));
+    root.querySelectorAll('*').forEach(el=>{
+      [...el.attributes].forEach(a=>{
+        const n=a.name.toLowerCase();
+        if(n.startsWith('on')){el.removeAttribute(a.name);return;}
+        if((n==='href'||n==='src'||n==='xlink:href')&&/^\s*javascript:/i.test(a.value))el.removeAttribute(a.name);
+      });
+    });
+    return root.innerHTML;
+  }).filter(Boolean);
+}
 function applySave(data){
   if(!data||!Array.isArray(data.npcs)||!data.npcs.length||!data.npcs.every(n=>n&&typeof n==='object'&&n.id!=null&&typeof n.name==='string'))throw new Error(tr('err.badSaveFile'));
   npcs=data.npcs;
@@ -4839,14 +4880,15 @@ function applySave(data){
   for(const k in sceneCD)delete sceneCD[k];
   Object.assign(sceneCD, data.sceneCD||{});
   leadQueue.length=0; confQueue.length=0; r18Queue.length=0;
-  if(data.cfg){ Object.assign(CFG,data.cfg); cfgSave(); syncSEBtn(); }
+  if(data.cfg){ Object.assign(CFG,data.cfg); normalizeCfg(); cfgSave(); syncSEBtn(); }
   $('#rateSel').value=String(RATING);
   document.querySelectorAll('.room').forEach(r=>r.classList.remove('watch'));
   $('#logFilterTag').textContent='';
-  $('#log').innerHTML=(data.logHTML||[]).join('');
+  const logEntries=sanitizeLogEntries(data.logHTML);
+  $('#log').innerHTML=logEntries.join('');
   /* 구버전 저장 파일 등 storyHTML이 없으면 전체 로그에서 '직접 상황'만 골라 이야기 패널을 복원 */
   const p0=P();
-  $('#story').innerHTML=(data.storyHTML||(data.logHTML||[]).filter(h=>{
+  $('#story').innerHTML=(Array.isArray(data.storyHTML)?sanitizeLogEntries(data.storyHTML):logEntries.filter(h=>{
     const cls=(h.match(/class="lg( ([^"]*))?"/)||[])[2]||'';
     return cls.includes('event')||(p0&&(h.indexOf(NM(p0))!==-1||h.indexOf(p0.name+'이(가)')!==-1||h.indexOf(p0.name+' →')!==-1));
   })).join('');
@@ -4999,6 +5041,7 @@ function renderEventBeat(){
   m.innerHTML=`<div class="card" style="border-top-color:${col}"><div class="who" style="color:${col}">${esc(ev.title)}${ev.beats.length>1?` <span style="opacity:.5;font-size:11px">(${beat+1}/${ev.beats.length})</span>`:''}</div><div class="say">${txt}</div><div class="btns">${btns}</div></div>`;
   document.body.appendChild(m);
   m.querySelectorAll('[data-ev]').forEach(btn=>{ if(!btn.disabled)btn.onclick=()=>eventChoose(+btn.dataset.ev); });
+  const firstBtn=m.querySelector('[data-ev]:not([disabled])'); if(firstBtn)firstBtn.focus();
 }
 function eventChoose(i){
   if(!curEvent)return;
@@ -5170,7 +5213,7 @@ function checkRent(p){
   if(turn%RENT_PERIOD!==0)return;
   const wk=Math.floor(turn/RENT_PERIOD);
   if(p.flags._rentPaidWk===wk)return;   /* 이미 처리 */
-  if(curEvent||document.getElementById('modal')||document.getElementById('r18modal'))return;
+  if(curEvent||document.getElementById('modal'))return;
   showRentEvent(p);
 }
 function startSleep(p,turns,intro){
@@ -5181,7 +5224,7 @@ function startSleep(p,turns,intro){
 function sleepLoop(){
   const p=P();
   if(!p||p.asleep<=0){ if(p){log(`${NM(p)}이(가) 잠에서 깨어났다`,'event',p.space);} render(); return; }
-  if(document.getElementById('modal')||document.getElementById('r18modal')){ setTimeout(sleepLoop,500); return; }
+  if(document.getElementById('modal')){ setTimeout(sleepLoop,500); return; }
   p.asleep--; step();
   const q=P();
   if(q&&q.asleep>0)setTimeout(sleepLoop,650);
