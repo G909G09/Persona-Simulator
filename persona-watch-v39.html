@@ -512,6 +512,7 @@ Object.assign(I18N.ko,{
  'modal.busDesc':'노선을 따라 원하는 곳까지 한 번에. 낯선 승객과 밀착될 수도 있다...','modal.bikeDesc':'페달을 밟아 어디든 빠르고 안전하게.',
  'err.badSaveFile':'형식이 올바르지 않은 저장 파일','alert.saveBlocked':'이 환경에서는 브라우저 저장이 차단되어 있습니다.\n⬇ 버튼으로 파일 내보내기를 사용해 주세요.',
  'alert.noSaveData':'브라우저 저장 데이터가 없습니다.','alert.loadFailed':'불러오기 실패: ','alert.fileReadFailed':'파일을 읽을 수 없습니다: ','btn.delete':'삭제',
+ 'confirm.overwriteProgress':'저장하지 않은 진행 상황이 있습니다. 지금 불러오면 사라집니다. 계속할까요?',
  'btn.followAlong':'따라간다','btn.decline':'거절한다','btn.accept':'받아들인다',
  'confirm.deleteChar':'{name}을(를) 삭제할까요? 되돌릴 수 없습니다.','confirm.deletePlayerNote':'(플레이어 캐릭터입니다!)'
 });
@@ -550,6 +551,7 @@ Object.assign(I18N.en,{
  'modal.busDesc':'Ride the route straight to your destination in one go. You might end up pressed against a stranger...','modal.bikeDesc':'Pedal your way anywhere, fast and safe.',
  'err.badSaveFile':'Malformed save file','alert.saveBlocked':'Browser storage is blocked in this environment.\nPlease use the ⬇ Export to File button instead.',
  'alert.noSaveData':'No browser save data found.','alert.loadFailed':'Load failed: ','alert.fileReadFailed':'Could not read file: ','btn.delete':'Delete',
+ 'confirm.overwriteProgress':'You have unsaved progress. Loading now will discard it. Continue?',
  'btn.followAlong':'Go with them','btn.decline':'Decline','btn.accept':'Accept',
  'confirm.deleteChar':'Delete {name}? This cannot be undone.','confirm.deletePlayerNote':'(This is your player character!)'
 });
@@ -1337,7 +1339,7 @@ function playSE(kind){
 document.addEventListener('pointerdown', seInit, true);
 
 /* ══════════════ 상태 ══════════════ */
-let npcs=[], turn=0, timer=null, sel=[], uid=1, playerId=null, pTarget=null, pairEditMode=false, workState=null;
+let npcs=[], turn=0, timer=null, sel=[], uid=1, playerId=null, pTarget=null, pairEditMode=false, workState=null, hasUnsaved=false;
 let RATING=0, colorIdx=0, autoH=false; const confQueue=[], r18Queue=[];
 const leadQueue=[]; // 밀실 유도 큐
 let riotChase=null; // 폭동 모드: {chasers:[id...], turnsLeft} — 발정한 무리가 플레이어를 쫓는 중
@@ -3307,6 +3309,7 @@ function step(cnt){
 }
 function tickWorld(){
   turn++;
+  hasUnsaved=true;
   updateWeather();
   const order=npcs.filter(n=>!n.isPlayer).sort(()=>Math.random()-.5);
   order.forEach(npcTurn);
@@ -4810,14 +4813,16 @@ function applySave(data){
   log('저장 데이터를 불러왔다 (T'+turn+')','event');
 }
 function saveLocal(silent){
-  try{ localStorage.setItem(SAVE_KEY, serialize()); if(!silent)log('브라우저에 저장했다 💾 (12턴마다 자동 저장됨)','event'); return true; }
+  try{ localStorage.setItem(SAVE_KEY, serialize()); hasUnsaved=false; if(!silent)log('브라우저에 저장했다 💾 (12턴마다 자동 저장됨)','event'); return true; }
   catch(e){ if(!silent)alert(tr('alert.saveBlocked')); return false; }
 }
 function loadLocal(){
+  if(hasUnsaved&&!confirm(tr('confirm.overwriteProgress')))return;
   try{
     const s=localStorage.getItem(SAVE_KEY);
     if(!s){alert(tr('alert.noSaveData'));return;}
     applySave(JSON.parse(s));
+    hasUnsaved=false;
   }catch(e){ alert(tr('alert.loadFailed')+e.message); }
 }
 function exportFile(){
@@ -4839,8 +4844,9 @@ $('#btnExport').onclick=()=>exportFile();
 $('#btnImport').onclick=()=>$('#fileLoad').click();
 $('#fileLoad').onchange=e=>{
   const f=e.target.files[0]; if(!f)return;
+  if(hasUnsaved&&!confirm(tr('confirm.overwriteProgress'))){ e.target.value=''; return; }
   const r=new FileReader();
-  r.onload=()=>{ try{ applySave(JSON.parse(r.result)); }catch(err){ alert(tr('alert.fileReadFailed')+err.message); } };
+  r.onload=()=>{ try{ applySave(JSON.parse(r.result)); hasUnsaved=false; }catch(err){ alert(tr('alert.fileReadFailed')+err.message); } };
   r.readAsText(f);
   e.target.value='';
 };
@@ -5198,6 +5204,7 @@ function syncMobile(){
   document.documentElement.style.setProperty('--tbH', $('#toolbar').offsetHeight+'px');
 }
 window.addEventListener('resize',syncMobile);
+window.addEventListener('beforeunload',e=>{ if(hasUnsaved){ e.preventDefault(); e.returnValue=''; } });
 
 $('#cR18').checked=CFG.defR18; $('#cCor').checked=CFG.defCor;
 syncSEBtn();
