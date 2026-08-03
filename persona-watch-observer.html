@@ -301,6 +301,7 @@ h2.sec:first-child{margin-top:0}
   <button id="btnSE" class="icoBtn" title="효과음 켬/끔" data-i18n-title="btn.se" aria-label="효과음 켬/끔" data-i18n-aria="btn.se">🔊</button>
   <button id="btnSave" class="icoBtn" title="브라우저에 저장" data-i18n-title="btn.save" aria-label="브라우저에 저장" data-i18n-aria="btn.save">💾</button>
   <button id="btnLoad" class="icoBtn" title="저장 불러오기" data-i18n-title="btn.load" aria-label="저장 불러오기" data-i18n-aria="btn.load">📂</button>
+  <button id="btnDeleteSave" class="icoBtn" title="저장 데이터 삭제" data-i18n-title="btn.deleteSave" aria-label="저장 데이터 삭제" data-i18n-aria="btn.deleteSave">🗑</button>
   <button id="btnExport" class="icoBtn" title="파일로 내보내기" data-i18n-title="btn.export" aria-label="파일로 내보내기" data-i18n-aria="btn.export">⬇</button>
   <button id="btnImport" class="icoBtn" title="파일 가져오기" data-i18n-title="btn.import" aria-label="파일 가져오기" data-i18n-aria="btn.import">⬆</button>
   <input type="file" id="fileLoad" accept=".json,application/json">
@@ -412,7 +413,8 @@ function setLang(v){ LANG=v; saveLang(); document.documentElement.lang=LANG==='e
 Object.assign(I18N.ko,{
  'title.sub':'관찰판 — NPC 군상극 관찰 모드',
  'rate.title':'관찰 등급','rate.0':'등급: 전체이용가','rate.1':'등급: 15세','rate.2':'등급: 성인','rate.3':'등급: R18','speed.title':'재생 속도',
- 'btn.console':'시스템 설정','btn.se':'효과음 켬/끔','btn.save':'브라우저에 저장','btn.load':'저장 불러오기','btn.export':'파일로 내보내기','btn.import':'파일 가져오기',
+ 'btn.console':'시스템 설정','btn.se':'효과음 켬/끔','btn.save':'브라우저에 저장','btn.load':'저장 불러오기','btn.deleteSave':'저장 데이터 삭제','btn.export':'파일로 내보내기','btn.import':'파일 가져오기',
+ 'confirm.deleteSave':'브라우저에 저장된 데이터를 삭제할까요? 되돌릴 수 없습니다.','log.saveDeleted':'저장 데이터를 삭제했다 🗑',
  'btn.step':'1턴 ⏭','btn.stepWait':'대기 ⏭','btn.step5':'5턴 ⏭⏭','btn.step5.title':'모달이 뜨면 자동으로 멈춥니다','btn.play':'▶ 자동재생','btn.pause':'∥ 정지','btn.actFab':'행동 패널 열기/닫기',
  'nav.map':'지도','nav.people':'인물','nav.activity':'활동',
  'sec.roster':'등장인물','sec.addChar':'캐릭터 추가',
@@ -568,7 +570,8 @@ Object.assign(I18N.en,{
 Object.assign(I18N.en,{
  'title.sub':'Observer Board — NPC Ensemble Watching Mode',
  'rate.title':'Content rating','rate.0':'Rating: All Ages','rate.1':'Rating: 15+','rate.2':'Rating: Adult','rate.3':'Rating: R18','speed.title':'Playback speed',
- 'btn.console':'System settings','btn.se':'Toggle sound effects','btn.save':'Save to browser','btn.load':'Load save','btn.export':'Export to file','btn.import':'Import from file',
+ 'btn.console':'System settings','btn.se':'Toggle sound effects','btn.save':'Save to browser','btn.load':'Load save','btn.deleteSave':'Delete save data','btn.export':'Export to file','btn.import':'Import from file',
+ 'confirm.deleteSave':'Delete the save data stored in this browser? This cannot be undone.','log.saveDeleted':'Deleted the browser save data 🗑',
  'btn.step':'1 Turn ⏭','btn.stepWait':'Wait ⏭','btn.step5':'5 Turns ⏭⏭','btn.step5.title':'Stops automatically if a modal pops up','btn.play':'▶ Auto-play','btn.pause':'■ Pause','btn.actFab':'Open/close action panel',
  'nav.map':'Map','nav.people':'People','nav.activity':'Activity',
  'sec.roster':'Characters','sec.addChar':'Add Character',
@@ -4909,6 +4912,14 @@ function loadLocal(){
     hasUnsaved=false;
   }catch(e){ alert(tr('alert.loadFailed')+e.message); }
 }
+function deleteLocalSave(){
+  try{
+    if(!localStorage.getItem(SAVE_KEY)){ alert(tr('alert.noSaveData')); return; }
+    if(!confirm(tr('confirm.deleteSave')))return;
+    localStorage.removeItem(SAVE_KEY);
+    log(tr('log.saveDeleted'),'event');
+  }catch(e){ alert(tr('alert.saveBlocked')); }
+}
 function exportFile(){
   const data=serialize();
   const a=document.createElement('a');
@@ -4924,6 +4935,7 @@ function exportFile(){
 }
 $('#btnSave').onclick=()=>saveLocal(false);
 $('#btnLoad').onclick=()=>loadLocal();
+$('#btnDeleteSave').onclick=()=>deleteLocalSave();
 $('#btnExport').onclick=()=>exportFile();
 $('#btnImport').onclick=()=>$('#fileLoad').click();
 $('#fileLoad').onchange=e=>{
