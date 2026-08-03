@@ -375,8 +375,8 @@ h2.sec:first-child{margin-top:0}
   <div class="col" id="rightCol">
     <div id="playerPanel"></div>
     <div id="logHead"><span id="logHeadLabel" data-i18n="log.story">이야기</span><span id="logFilterTag"></span><button id="btnLogMode" title="당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환" data-i18n-title="log.mode.title" data-i18n="log.full">전체 로그</button><button id="btnClearLog" data-i18n="log.clear">비우기</button></div>
-    <div id="story"></div>
-    <div id="log" style="display:none"></div>
+    <div id="story" aria-live="polite" aria-atomic="false"></div>
+    <div id="log" style="display:none" aria-live="polite" aria-atomic="false"></div>
   </div>
 </div>
 
@@ -424,7 +424,15 @@ Object.assign(I18N.ko,{
  'btn.randArch':'아키타입 ±15','btn.randFull':'완전 랜덤','btn.addChar':'캐릭터 추가',
  'help.createForm':'아키타입 선택 시 축 값이 프리셋으로 채워지며, 슬라이더로 자유 조정할 수 있습니다. 토큰·목록 클릭 = 캐릭터 단일 확인, 두 사람의 관계는 상세의 [관계] 탭에서 행을 눌러 확인합니다.',
  'map.title':'FLOOR PLAN — 휴양지 숙소동','map.sub':'P0 공공 – P3 밀실 · 이동은 인접 1칸/턴',
- 'log.story':'이야기','log.full':'전체 로그','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기'
+ 'log.story':'이야기','log.full':'전체 로그','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기',
+ 'log.loaded':'저장 데이터를 불러왔다 (T{n})','log.exported':'저장 파일을 내보냈다 ⬇',
+ 'log.rating':'관찰 등급 변경 → {name}','rate.short.0':'전체이용가','rate.short.1':'15세','rate.short.2':'성인','rate.short.3':'R18',
+ 'log.r18template':'R18 행동 풀은 템플릿 상태(내용 미작성)입니다. 등급 3 행동은 캐릭터별 R18 참여 플래그 + 프라이버시 2 이상 공간이 조건입니다.',
+ 'log.hasSave':'이전 저장 데이터가 있습니다 — 📂 버튼으로 이어할 수 있습니다.',
+ 'adm.randStatDone':'⚙ 전 인물의 스탯을 랜덤화했다','adm.randRelDone':'⚙ 전 인물의 관계를 랜덤화했다','adm.calmDone':'⚙ 전 인물의 욕구·상태를 초기화했다',
+ 'adm.r18onDone':'⚙ 전 인물 R18 허용을 켰다','adm.r18offDone':'⚙ 전 인물 R18 허용을 껐다','adm.purifyDone':'⚙ 전 인물의 타락을 0으로 되돌렸다',
+ 'confirm.overwriteProgress':'현재 진행 상황(T{n})을 잃게 됩니다. 계속할까요?',
+ 'log.ready':'관찰판 준비 완료 — 6인 프리셋 입주. 플레이어 없이 ▶ 자동재생만으로도 인물 군상극을 지켜볼 수 있습니다. (1인칭 플레이는 좌측에서 선택)'
 });
 /* ── 데이터 라벨 사전: 내부 키(한국어)는 그대로 두고, 화면 표시용 영어만 매핑 ── */
 Object.assign(LABEL_EN,{
@@ -568,7 +576,15 @@ Object.assign(I18N.en,{
  'btn.randArch':'Archetype ±15','btn.randFull':'Fully random','btn.addChar':'Add Character',
  'help.createForm':'Picking an archetype fills the axis sliders with a preset, which you can then adjust freely. Click a token/roster entry to inspect one character; to see how two characters relate, open the [Relations] tab in the detail panel and click a row.',
  'map.title':'FLOOR PLAN — Resort Lodge','map.sub':'P0 Public – P3 Private · Move 1 adjacent room/turn',
- 'log.story':'Story','log.full':'Full Log','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear'
+ 'log.story':'Story','log.full':'Full Log','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear',
+ 'log.loaded':'Loaded save data (T{n})','log.exported':'Exported save file ⬇',
+ 'log.rating':'Rating changed → {name}','rate.short.0':'All Ages','rate.short.1':'15+','rate.short.2':'Adult','rate.short.3':'R18',
+ 'log.r18template':'The R18 action pool is still a template (content not yet written). Rating-3 actions require both the character\'s R18 participation flag and a room with privacy 2+.',
+ 'log.hasSave':'Previous save data found — use the 📂 button to continue.',
+ 'adm.randStatDone':'⚙ Randomized stats for all characters','adm.randRelDone':'⚙ Randomized relations for all characters','adm.calmDone':'⚙ Reset needs/status for all characters',
+ 'adm.r18onDone':'⚙ Turned R18 participation ON for all characters','adm.r18offDone':'⚙ Turned R18 participation OFF for all characters','adm.purifyDone':'⚙ Reset corruption to 0 for all characters',
+ 'confirm.overwriteProgress':'This will discard your current progress (T{n}). Continue?',
+ 'log.ready':'Observer board ready — 6-character preset moved in. Watch the NPC ensemble drama with ▶ Auto-play alone, no player required. (Choose first-person play from the left panel.)'
 });
 /* ══════════════ 데이터 ══════════════ */
 const AXES=['외향','대담','온화','솔직','성실','감수'];
@@ -2829,11 +2845,11 @@ function showAdminPanel(){
 }
 function admBatch(op){
   const list=npcs.filter(n=>!n.isPlayer);
-  if(op==='randStat'){ list.forEach(n=>{ n.매력base=ri(20,90); n.lewd.타락=n.corruptible?ri(0,80):0; n.lewd.max정력=ri(10,30)*10; n.lewd.정력=n.lewd.max정력; if(n.sens)for(const k in n.sens)n.sens[k]=ri(20,80); equipOutfit(n,n.outfit); }); log('⚙ 전 인물의 스탯을 랜덤화했다','event',null); }
-  else if(op==='randRel'){ list.forEach(a=>{ npcs.forEach(b=>{ if(a.id===b.id||!a.relations[b.id])return; const r=a.relations[b.id]; r.호감=ri(0,80); r.신뢰=ri(0,70); r.애정=ri(0,50); r.긴장=ri(0,40); r.욕망=RATING>=3?ri(0,60):0; }); }); log('⚙ 전 인물의 관계를 랜덤화했다','event',null); }
-  else if(op==='calm'){ list.forEach(n=>{ n.needs.피로=0; n.lewd.흥분=0; n.lewd.취기=0; n.asleep=0; n.stability=clamp(n.stability+20,0,100); }); log('⚙ 전 인물의 욕구·상태를 초기화했다','event',null); }
-  else if(op==='r18all'){ const on=!list.every(n=>n.r18); list.forEach(n=>n.r18=on); log(`⚙ 전 인물 R18 허용을 ${on?'켰다':'껐다'}`,'event',null); }
-  else if(op==='purify'){ list.forEach(n=>n.lewd.타락=0); log('⚙ 전 인물의 타락을 0으로 되돌렸다','event',null); }
+  if(op==='randStat'){ list.forEach(n=>{ n.매력base=ri(20,90); n.lewd.타락=n.corruptible?ri(0,80):0; n.lewd.max정력=ri(10,30)*10; n.lewd.정력=n.lewd.max정력; if(n.sens)for(const k in n.sens)n.sens[k]=ri(20,80); equipOutfit(n,n.outfit); }); log(tr('adm.randStatDone'),'event',null); }
+  else if(op==='randRel'){ list.forEach(a=>{ npcs.forEach(b=>{ if(a.id===b.id||!a.relations[b.id])return; const r=a.relations[b.id]; r.호감=ri(0,80); r.신뢰=ri(0,70); r.애정=ri(0,50); r.긴장=ri(0,40); r.욕망=RATING>=3?ri(0,60):0; }); }); log(tr('adm.randRelDone'),'event',null); }
+  else if(op==='calm'){ list.forEach(n=>{ n.needs.피로=0; n.lewd.흥분=0; n.lewd.취기=0; n.asleep=0; n.stability=clamp(n.stability+20,0,100); }); log(tr('adm.calmDone'),'event',null); }
+  else if(op==='r18all'){ const on=!list.every(n=>n.r18); list.forEach(n=>n.r18=on); log(tr(on?'adm.r18onDone':'adm.r18offDone'),'event',null); }
+  else if(op==='purify'){ list.forEach(n=>n.lewd.타락=0); log(tr('adm.purifyDone'),'event',null); }
 }
 function showRepMatrix(){
   stopPlay();
@@ -4807,13 +4823,18 @@ function applySave(data){
   })).join('');
   setStoryMode(storyMode); scrollLog();
   stopPlay(); render();
-  log('저장 데이터를 불러왔다 (T'+turn+')','event');
+  log(tr('log.loaded').replace('{n}',turn),'event');
+}
+/* 진행 중인 턴(T1 이상)이 있는 상태에서 불러오기/가져오기를 누르면 현재 진행 상황을 잃게 되므로 확인을 받는다 */
+function confirmOverwrite(){
+  return turn<=0 || confirm(tr('confirm.overwriteProgress').replace('{n}',turn));
 }
 function saveLocal(silent){
   try{ localStorage.setItem(SAVE_KEY, serialize()); if(!silent)log('브라우저에 저장했다 💾 (12턴마다 자동 저장됨)','event'); return true; }
   catch(e){ if(!silent)alert(tr('alert.saveBlocked')); return false; }
 }
 function loadLocal(){
+  if(!confirmOverwrite())return;
   try{
     const s=localStorage.getItem(SAVE_KEY);
     if(!s){alert(tr('alert.noSaveData'));return;}
@@ -4831,7 +4852,7 @@ function exportFile(){
   a.download='persona-watch-save-T'+turn+'.json';
   document.body.appendChild(a); a.click(); a.remove();
   if(a.href.indexOf('blob:')===0)setTimeout(()=>URL.revokeObjectURL(a.href),3000);
-  log('저장 파일을 내보냈다 ⬇','event');
+  log(tr('log.exported'),'event');
 }
 $('#btnSave').onclick=()=>saveLocal(false);
 $('#btnLoad').onclick=()=>loadLocal();
@@ -4839,8 +4860,12 @@ $('#btnExport').onclick=()=>exportFile();
 $('#btnImport').onclick=()=>$('#fileLoad').click();
 $('#fileLoad').onchange=e=>{
   const f=e.target.files[0]; if(!f)return;
+  const looksJson=/\.json$/i.test(f.name)||f.type==='application/json'||f.type==='';
+  if(!looksJson||f.size>10*1024*1024){ alert(tr('alert.fileReadFailed')+tr('err.badSaveFile')); e.target.value=''; return; }
+  if(!confirmOverwrite()){ e.target.value=''; return; }
   const r=new FileReader();
   r.onload=()=>{ try{ applySave(JSON.parse(r.result)); }catch(err){ alert(tr('alert.fileReadFailed')+err.message); } };
+  r.onerror=()=>{ alert(tr('alert.fileReadFailed')+(r.error?r.error.message:'')); };
   r.readAsText(f);
   e.target.value='';
 };
@@ -4856,9 +4881,8 @@ $('#btnClearLog').onclick=()=>{ $('#log').innerHTML=''; $('#story').innerHTML=''
 $('#btnLogMode').onclick=()=>setStoryMode(!storyMode);
 $('#rateSel').onchange=e=>{
   RATING=+e.target.value;
-  const names=['전체이용가','15세','성인','R18'];
-  log(`관찰 등급 변경 → ${names[RATING]}`,'event');
-  if(RATING>=3)log('R18 행동 풀은 템플릿 상태(내용 미작성)입니다. 등급 3 행동은 캐릭터별 R18 참여 플래그 + 프라이버시 2 이상 공간이 조건입니다.','move');
+  log(tr('log.rating').replace('{name}',tr('rate.short.'+RATING)),'event');
+  if(RATING>=3)log(tr('log.r18template'),'move');
   render();
 };
 $('#langSel').onchange=e=>setLang(e.target.value);
@@ -5205,8 +5229,8 @@ setStoryMode(storyMode);
 render();
 syncMobile();
 document.getElementById('bootBanner').style.display='none';
-log('관찰판 준비 완료 — 6인 프리셋 입주. 플레이어 없이 ▶ 자동재생만으로도 인물 군상극을 지켜볼 수 있습니다. (1인칭 플레이는 좌측에서 선택)','event');
-try{ if(localStorage.getItem(SAVE_KEY))log('이전 저장 데이터가 있습니다 — 📂 버튼으로 이어할 수 있습니다.','move'); }catch(e){}
+log(tr('log.ready'),'event');
+try{ if(localStorage.getItem(SAVE_KEY))log(tr('log.hasSave'),'move'); }catch(e){}
 </script>
 </body>
 </html>
