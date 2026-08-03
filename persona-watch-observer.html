@@ -301,6 +301,7 @@ h2.sec:first-child{margin-top:0}
   <button id="btnSE" class="icoBtn" title="효과음 켬/끔" data-i18n-title="btn.se" aria-label="효과음 켬/끔" data-i18n-aria="btn.se">🔊</button>
   <button id="btnSave" class="icoBtn" title="브라우저에 저장" data-i18n-title="btn.save" aria-label="브라우저에 저장" data-i18n-aria="btn.save">💾</button>
   <button id="btnLoad" class="icoBtn" title="저장 불러오기" data-i18n-title="btn.load" aria-label="저장 불러오기" data-i18n-aria="btn.load">📂</button>
+  <button id="btnDeleteSave" class="icoBtn" title="저장 데이터 삭제" data-i18n-title="btn.deleteSave" aria-label="저장 데이터 삭제" data-i18n-aria="btn.deleteSave">🗑</button>
   <button id="btnExport" class="icoBtn" title="파일로 내보내기" data-i18n-title="btn.export" aria-label="파일로 내보내기" data-i18n-aria="btn.export">⬇</button>
   <button id="btnImport" class="icoBtn" title="파일 가져오기" data-i18n-title="btn.import" aria-label="파일 가져오기" data-i18n-aria="btn.import">⬆</button>
   <input type="file" id="fileLoad" accept=".json,application/json">
@@ -374,7 +375,7 @@ h2.sec:first-child{margin-top:0}
   <!-- 우: 플레이어 + 상세 + 이야기(1인칭) / 전체 로그(백그라운드) -->
   <div class="col" id="rightCol">
     <div id="playerPanel"></div>
-    <div id="logHead"><span id="logHeadLabel" data-i18n="log.story">이야기</span><span id="logFilterTag"></span><button id="btnLogMode" title="당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환" data-i18n-title="log.mode.title" data-i18n="log.full">전체 로그</button><button id="btnClearLog" data-i18n="log.clear">비우기</button></div>
+    <div id="logHead"><span id="logHeadLabel">이야기</span><span id="logFilterTag"></span><button id="btnLogMode" title="당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환" data-i18n-title="log.mode.title">전체 로그</button><button id="btnClearLog" data-i18n="log.clear">비우기</button></div>
     <div id="story" aria-live="polite" aria-atomic="false"></div>
     <div id="log" style="display:none" aria-live="polite" aria-atomic="false"></div>
   </div>
@@ -408,11 +409,12 @@ function applyI18n(root){
   r.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title=tr(el.dataset.i18nTitle); });
   r.querySelectorAll('[data-i18n-aria]').forEach(el=>{ el.setAttribute('aria-label',tr(el.dataset.i18nAria)); });
 }
-function setLang(v){ LANG=v; saveLang(); document.documentElement.lang=LANG==='en'?'en':'ko'; applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; if(document.getElementById('consoleWrap')&&typeof openConsole==='function'){ document.getElementById('consoleWrap').remove(); openConsole(); } }
+function setLang(v){ LANG=v; saveLang(); document.documentElement.lang=LANG==='en'?'en':'ko'; applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); if(typeof setStoryMode==='function'&&typeof storyMode!=='undefined')setStoryMode(storyMode); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; if(document.getElementById('consoleWrap')&&typeof openConsole==='function'){ document.getElementById('consoleWrap').remove(); openConsole(); } }
 Object.assign(I18N.ko,{
  'title.sub':'관찰판 — NPC 군상극 관찰 모드',
  'rate.title':'관찰 등급','rate.0':'등급: 전체이용가','rate.1':'등급: 15세','rate.2':'등급: 성인','rate.3':'등급: R18','speed.title':'재생 속도',
- 'btn.console':'시스템 설정','btn.se':'효과음 켬/끔','btn.save':'브라우저에 저장','btn.load':'저장 불러오기','btn.export':'파일로 내보내기','btn.import':'파일 가져오기',
+ 'btn.console':'시스템 설정','btn.se':'효과음 켬/끔','btn.save':'브라우저에 저장','btn.load':'저장 불러오기','btn.deleteSave':'저장 데이터 삭제','btn.export':'파일로 내보내기','btn.import':'파일 가져오기',
+ 'confirm.deleteSave':'브라우저에 저장된 데이터를 삭제할까요? 되돌릴 수 없습니다.','log.saveDeleted':'저장 데이터를 삭제했다 🗑',
  'btn.step':'1턴 ⏭','btn.stepWait':'대기 ⏭','btn.step5':'5턴 ⏭⏭','btn.step5.title':'모달이 뜨면 자동으로 멈춥니다','btn.play':'▶ 자동재생','btn.pause':'∥ 정지','btn.actFab':'행동 패널 열기/닫기',
  'nav.map':'지도','nav.people':'인물','nav.activity':'활동',
  'sec.roster':'등장인물','sec.addChar':'캐릭터 추가',
@@ -424,7 +426,7 @@ Object.assign(I18N.ko,{
  'btn.randArch':'아키타입 ±15','btn.randFull':'완전 랜덤','btn.addChar':'캐릭터 추가',
  'help.createForm':'아키타입 선택 시 축 값이 프리셋으로 채워지며, 슬라이더로 자유 조정할 수 있습니다. 토큰·목록 클릭 = 캐릭터 단일 확인, 두 사람의 관계는 상세의 [관계] 탭에서 행을 눌러 확인합니다.',
  'map.title':'FLOOR PLAN — 휴양지 숙소동','map.sub':'P0 공공 – P3 밀실 · 이동은 인접 1칸/턴',
- 'log.story':'이야기','log.full':'전체 로그','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기',
+ 'log.story':'이야기','log.full':'전체 로그','log.toStory':'이야기로','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기','avatar.preview':'아바타 미리보기',
  'log.loaded':'저장 데이터를 불러왔다 (T{n})','log.exported':'저장 파일을 내보냈다 ⬇',
  'log.rating':'관찰 등급 변경 → {name}','rate.short.0':'전체이용가','rate.short.1':'15세','rate.short.2':'성인','rate.short.3':'R18',
  'log.r18template':'R18 행동 풀은 템플릿 상태(내용 미작성)입니다. 등급 3 행동은 캐릭터별 R18 참여 플래그 + 프라이버시 2 이상 공간이 조건입니다.',
@@ -523,7 +525,7 @@ Object.assign(I18N.ko,{
  'confirm.overwriteProgress':'저장하지 않은 진행 상황(T{n})이 있습니다. 지금 불러오면 사라집니다. 계속할까요?',
  'btn.followAlong':'따라간다','btn.decline':'거절한다','btn.accept':'받아들인다',
  'confirm.deleteChar':'{name}을(를) 삭제할까요? 되돌릴 수 없습니다.','confirm.deletePlayerNote':'(플레이어 캐릭터입니다!)',
- 'confirm.clearLog':'로그를 모두 지울까요? 되돌릴 수 없습니다.'
+ 'confirm.clearLog':'로그를 모두 지울까요? 되돌릴 수 없습니다.','confirm.batchOp':'전 인물에게 일괄 적용됩니다. 되돌릴 수 없습니다. 계속할까요?'
 });
 Object.assign(I18N.en,{
  'tab.stat':'Stats','tab.rel':'Relations','btn.pairEditDone':'Done Adjusting','btn.pairEdit':'Adjust Relation ✎',
@@ -563,12 +565,13 @@ Object.assign(I18N.en,{
  'confirm.overwriteProgress':'You have unsaved progress (T{n}). Loading now will discard it. Continue?',
  'btn.followAlong':'Go with them','btn.decline':'Decline','btn.accept':'Accept',
  'confirm.deleteChar':'Delete {name}? This cannot be undone.','confirm.deletePlayerNote':'(This is your player character!)',
- 'confirm.clearLog':'Clear the whole log? This cannot be undone.'
+ 'confirm.clearLog':'Clear the whole log? This cannot be undone.','confirm.batchOp':'This applies instantly to every character and cannot be undone. Continue?'
 });
 Object.assign(I18N.en,{
  'title.sub':'Observer Board — NPC Ensemble Watching Mode',
  'rate.title':'Content rating','rate.0':'Rating: All Ages','rate.1':'Rating: 15+','rate.2':'Rating: Adult','rate.3':'Rating: R18','speed.title':'Playback speed',
- 'btn.console':'System settings','btn.se':'Toggle sound effects','btn.save':'Save to browser','btn.load':'Load save','btn.export':'Export to file','btn.import':'Import from file',
+ 'btn.console':'System settings','btn.se':'Toggle sound effects','btn.save':'Save to browser','btn.load':'Load save','btn.deleteSave':'Delete save data','btn.export':'Export to file','btn.import':'Import from file',
+ 'confirm.deleteSave':'Delete the save data stored in this browser? This cannot be undone.','log.saveDeleted':'Deleted the browser save data 🗑',
  'btn.step':'1 Turn ⏭','btn.stepWait':'Wait ⏭','btn.step5':'5 Turns ⏭⏭','btn.step5.title':'Stops automatically if a modal pops up','btn.play':'▶ Auto-play','btn.pause':'■ Pause','btn.actFab':'Open/close action panel',
  'nav.map':'Map','nav.people':'People','nav.activity':'Activity',
  'sec.roster':'Characters','sec.addChar':'Add Character',
@@ -580,7 +583,7 @@ Object.assign(I18N.en,{
  'btn.randArch':'Archetype ±15','btn.randFull':'Fully random','btn.addChar':'Add Character',
  'help.createForm':'Picking an archetype fills the axis sliders with a preset, which you can then adjust freely. Click a token/roster entry to inspect one character; to see how two characters relate, open the [Relations] tab in the detail panel and click a row.',
  'map.title':'FLOOR PLAN — Resort Lodge','map.sub':'P0 Public – P3 Private · Move 1 adjacent room/turn',
- 'log.story':'Story','log.full':'Full Log','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear',
+ 'log.story':'Story','log.full':'Full Log','log.toStory':'To Story','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear','avatar.preview':'Avatar preview',
  'log.loaded':'Loaded save data (T{n})','log.exported':'Exported save file ⬇',
  'log.rating':'Rating changed → {name}','rate.short.0':'All Ages','rate.short.1':'15+','rate.short.2':'Adult','rate.short.3':'R18',
  'log.r18template':'The R18 action pool is still a template (content not yet written). Rating-3 actions require both the character\'s R18 participation flag and a room with privacy 2+.',
@@ -1759,7 +1762,7 @@ function renderAvatarInto(canvasEl,n){
   if(AV_PNG_MODE){ drawAvatarPNG(ctx,n).catch(()=>{ drawAvatarCtx(ctx,n); }); }
   else{ drawAvatarCtx(ctx,n); }
 }
-function avatarCanvasHTML(id,size){ size=size||96; return `<canvas id="${id}" width="${AV_W}" height="${AV_H}" style="width:${size}px;height:${Math.round(size*AV_H/AV_W)}px;image-rendering:pixelated;border:1px solid var(--line);border-radius:4px;background:var(--soft);flex-shrink:0"></canvas>`; }
+function avatarCanvasHTML(id,size){ size=size||96; return `<canvas id="${id}" width="${AV_W}" height="${AV_H}" role="img" aria-label="${tr('avatar.preview')}" style="width:${size}px;height:${Math.round(size*AV_H/AV_W)}px;image-rendering:pixelated;border:1px solid var(--line);border-radius:4px;background:var(--soft);flex-shrink:0"></canvas>`; }
 /* 외형 커스터마이징 UI: 미리보기 캔버스 + 피부/헤어스타일/머리색/눈동자색 스와치.
    생성 폼·수정 폼·플레이어 시작 화면에서 공통으로 재사용한다. */
 function lookEditorHTML(idp){
@@ -2872,7 +2875,7 @@ function showAdminPanel(){
       <button id="admClose">${tr('btn.close').replace(' ✕','')}</button></div></div>`;
   document.body.appendChild(m);
   const mc=withModalEscape(m,()=>{ m.remove(); render(); });
-  m.querySelectorAll('[data-adm]').forEach(b=>b.onclick=()=>{ admBatch(b.dataset.adm); mc.close(); });
+  m.querySelectorAll('[data-adm]').forEach(b=>b.onclick=()=>{ if(!confirm(tr('confirm.batchOp')))return; admBatch(b.dataset.adm); mc.close(); });
   document.getElementById('admClose').onclick=mc.close;
 }
 function admBatch(op){
@@ -3576,7 +3579,7 @@ function setStoryMode(v){
   $('#story').style.display=v?'flex':'none';
   $('#log').style.display=v?'none':'flex';
   $('#logHeadLabel').textContent=v?tr('log.story'):tr('log.full');
-  $('#btnLogMode').textContent=v?tr('log.full'):tr('log.story');
+  $('#btnLogMode').textContent=v?tr('log.full'):tr('log.toStory');
   scrollLog();
 }
 function scrollLog(){
@@ -4842,7 +4845,7 @@ function setSliders(vals){
 /* ══════════════ 저장 / 불러오기 ══════════════ */
 const SAVE_KEY='personaWatchSave_observer';
 function serialize(){
-  return JSON.stringify({v:11, turn, RATING, uid, colorIdx, playerId, npcs, sceneCD, cfg:CFG,
+  return JSON.stringify({v:12, turn, RATING, uid, colorIdx, playerId, npcs, sceneCD, cfg:CFG, weather:WEATHER, riotChase,
     logHTML:[...document.querySelectorAll('#log .lg')].slice(-150).map(e=>e.outerHTML),
     storyHTML:[...document.querySelectorAll('#story .lg')].slice(-150).map(e=>e.outerHTML)});
 }
@@ -4868,15 +4871,19 @@ function sanitizeLogEntries(list){
 }
 function applySave(data){
   if(!data||!Array.isArray(data.npcs)||!data.npcs.length||!data.npcs.every(n=>n&&typeof n==='object'&&n.id!=null&&typeof n.name==='string'))throw new Error(tr('err.badSaveFile'));
+  curEvent=null;
+  const exModal=document.getElementById('modal'); if(exModal)exModal.remove();
   npcs=data.npcs;
   /* turn/RATING은 손상되거나 조작된 파일에서 음수·비정상적으로 큰 값·문자열 등이 들어올 수 있으니
      항상 유효 범위로 정규화한다 (RATING은 UI select가 0~3 옵션만 가지므로 그 범위로 고정). */
   turn=Math.max(0,Math.floor(Number(data.turn))||0); RATING=clamp(Math.floor(Number(data.RATING))||0,0,3);
   npcs.forEach(ensureSens);
-  npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; equipOutfit(n,n.outfit); n.asleep=0; });
+  npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; if(!n.flags)n.flags={}; if(!n.r18log)n.r18log={}; if(!n.relations)n.relations={}; equipOutfit(n,n.outfit); n.asleep=0; });
   autoH=false;
   uid=data.uid||(npcs.length+1); colorIdx=data.colorIdx||0;
   playerId=data.playerId||null; pTarget=null; sel=[]; editId=null; logFilter=null; workState=null;
+  WEATHER=(data.weather&&WEATHER_ICON[data.weather])?data.weather:'맑음';
+  riotChase=(data.riotChase&&Array.isArray(data.riotChase.chasers)&&data.riotChase.chasers.every(id=>npcs.some(n=>n.id===id)))?data.riotChase:null;
   for(const k in sceneCD)delete sceneCD[k];
   Object.assign(sceneCD, data.sceneCD||{});
   leadQueue.length=0; confQueue.length=0; r18Queue.length=0;
@@ -4896,9 +4903,14 @@ function applySave(data){
   stopPlay(); render();
   log(tr('log.loaded').replace('{n}',turn),'event');
 }
+let __autosaveWarned=false;
 function saveLocal(silent){
   try{ localStorage.setItem(SAVE_KEY, serialize()); hasUnsaved=false; if(!silent)log(CFG.autosave>0?tr('log.saved').replace('{n}',CFG.autosave):tr('log.saved.off'),'event'); return true; }
-  catch(e){ if(!silent)alert(tr('alert.saveBlocked')); return false; }
+  catch(e){
+    if(!silent)alert(tr('alert.saveBlocked'));
+    else if(!__autosaveWarned){ __autosaveWarned=true; log('⚠ '+tr('alert.saveBlocked'),'event'); }
+    return false;
+  }
 }
 function loadLocal(){
   if(hasUnsaved&&!confirm(tr('confirm.overwriteProgress').replace('{n}',turn)))return;
@@ -4908,6 +4920,14 @@ function loadLocal(){
     applySave(JSON.parse(s));
     hasUnsaved=false;
   }catch(e){ alert(tr('alert.loadFailed')+e.message); }
+}
+function deleteLocalSave(){
+  try{
+    if(!localStorage.getItem(SAVE_KEY)){ alert(tr('alert.noSaveData')); return; }
+    if(!confirm(tr('confirm.deleteSave')))return;
+    localStorage.removeItem(SAVE_KEY);
+    log(tr('log.saveDeleted'),'event');
+  }catch(e){ alert(tr('alert.saveBlocked')); }
 }
 function exportFile(){
   const data=serialize();
@@ -4924,6 +4944,7 @@ function exportFile(){
 }
 $('#btnSave').onclick=()=>saveLocal(false);
 $('#btnLoad').onclick=()=>loadLocal();
+$('#btnDeleteSave').onclick=()=>deleteLocalSave();
 $('#btnExport').onclick=()=>exportFile();
 $('#btnImport').onclick=()=>$('#fileLoad').click();
 $('#fileLoad').onchange=e=>{
@@ -5299,6 +5320,8 @@ window.addEventListener('beforeunload',e=>{ if(hasUnsaved){ e.preventDefault(); 
 
 $('#cR18').checked=CFG.defR18; $('#cCor').checked=CFG.defCor;
 syncSEBtn();
+applyI18n();
+{ const _ls=document.getElementById('langSel'); if(_ls)_ls.value=LANG; }
 setStoryMode(storyMode);
 render();
 syncMobile();
