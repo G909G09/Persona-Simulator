@@ -518,10 +518,12 @@ Object.assign(I18N.ko,{
  'btn.random':'랜덤','btn.cancel':'취소','btn.continue':'계속',
  'modal.batchTitle':'⚙ 전체 일괄 편집','modal.batchDesc':'모든 인물(플레이어 제외)의 파라미터를 한 번에 바꾼다.',
  'btn.randStat':'스탯 랜덤화','btn.randRel':'관계 랜덤화','btn.calmAll':'욕구·상태 초기화','btn.r18allToggle':'전원 R18 토글','btn.purifyAll':'전원 타락 0',
- 'modal.repMatrixTitle':'📊 평판 매트릭스','modal.repMatrixSub':'(행→열 호감)',
+ 'modal.repMatrixTitle':'📊 평판 매트릭스','modal.repMatrixSub':'(행→열 호감)','modal.repMatrixMore':' · 처음 10명만 표시 (전체 {n}명)','modal.systemConsole':'SYSTEM CONSOLE',
  'modal.busTitle':'🚌 셔틀버스 (5코인)','modal.bikeTitle':'🚲 자전거로 이동',
  'modal.busDesc':'노선을 따라 원하는 곳까지 한 번에. 낯선 승객과 밀착될 수도 있다...','modal.bikeDesc':'페달을 밟아 어디든 빠르고 안전하게.',
  'err.badSaveFile':'형식이 올바르지 않은 저장 파일','alert.saveBlocked':'이 환경에서는 브라우저 저장이 차단되어 있습니다.\n⬇ 버튼으로 파일 내보내기를 사용해 주세요.',
+ 'log.saveVariantMismatch':'⚠ 이 저장 파일은 다른 버전({v})에서 만들어졌습니다. 일부 기본값이 예상과 다를 수 있습니다.',
+ 'log.saveVersionMismatch':'⚠ 저장 파일 형식 버전이 다릅니다(v{v} → 현재 v{cur}). 일부 데이터가 예상과 다르게 불러와질 수 있습니다.',
  'alert.noSaveData':'브라우저 저장 데이터가 없습니다.','alert.loadFailed':'불러오기 실패: ','alert.fileReadFailed':'파일을 읽을 수 없습니다: ','btn.delete':'삭제',
  'confirm.overwriteProgress':'저장하지 않은 진행 상황(T{n})이 있습니다. 지금 불러오면 사라집니다. 계속할까요?',
  'btn.followAlong':'따라간다','btn.decline':'거절한다','btn.accept':'받아들인다',
@@ -559,10 +561,12 @@ Object.assign(I18N.en,{
  'btn.random':'Random','btn.cancel':'Cancel','btn.continue':'Continue',
  'modal.batchTitle':'⚙ Batch Edit All','modal.batchDesc':'Change parameters for every character (except the player) at once.',
  'btn.randStat':'Randomize Stats','btn.randRel':'Randomize Relations','btn.calmAll':'Reset Needs/Status','btn.r18allToggle':'Toggle R18 for All','btn.purifyAll':'Zero Corruption for All',
- 'modal.repMatrixTitle':'📊 Reputation Matrix','modal.repMatrixSub':'(row → column liking)',
+ 'modal.repMatrixTitle':'📊 Reputation Matrix','modal.repMatrixSub':'(row → column liking)','modal.repMatrixMore':' · showing first 10 of {n}','modal.systemConsole':'SYSTEM CONSOLE',
  'modal.busTitle':'🚌 Shuttle Bus (5 coins)','modal.bikeTitle':'🚲 Travel by Bike',
  'modal.busDesc':'Ride the route straight to your destination in one go. You might end up pressed against a stranger...','modal.bikeDesc':'Pedal your way anywhere, fast and safe.',
  'err.badSaveFile':'Malformed save file','alert.saveBlocked':'Browser storage is blocked in this environment.\nPlease use the ⬇ Export to File button instead.',
+ 'log.saveVariantMismatch':'⚠ This save file was made in a different variant ({v}). Some defaults may not match what you expect.',
+ 'log.saveVersionMismatch':'⚠ Save file format version differs (v{v} → current v{cur}). Some data may not load exactly as expected.',
  'alert.noSaveData':'No browser save data found.','alert.loadFailed':'Load failed: ','alert.fileReadFailed':'Could not read file: ','btn.delete':'Delete',
  'confirm.overwriteProgress':'You have unsaved progress (T{n}). Loading now will discard it. Continue?',
  'btn.followAlong':'Go with them','btn.decline':'Decline','btn.accept':'Accept',
@@ -1223,7 +1227,7 @@ function openConsole(){
   if(consoleKeyHandler){ document.removeEventListener('keydown',consoleKeyHandler); consoleKeyHandler=null; }
   consolePrevFocus=document.activeElement;
   const w=document.createElement('div'); w.id='consoleWrap';
-  w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true'); w.setAttribute('aria-label','SYSTEM CONSOLE');
+  w.setAttribute('role','dialog'); w.setAttribute('aria-modal','true'); w.setAttribute('aria-label',tr('modal.systemConsole'));
   let b='';
   for(const it of CFG_SCHEMA){
     if(it.g){ b+='<div class="cGroup">'+(LANG==='en'?(it.g_en||it.g):it.g)+'</div>'; continue; }
@@ -1240,7 +1244,7 @@ function openConsole(){
     b+='<div class="cItem"><span class="cl">'+itLabel+'</span>'+ctrl+(itDesc?'<span class="cd">'+itDesc+'</span>':'')+'</div>';
   }
   w.innerHTML='<div class="ccard">'
-    +'<div class="chead"><b>SYSTEM CONSOLE</b><button id="cClose">'+tr('btn.close')+'</button></div>'
+    +'<div class="chead"><b>'+tr('modal.systemConsole')+'</b><button id="cClose">'+tr('btn.close')+'</button></div>'
     +'<div class="cbody">'+b+'</div>'
     +'<div class="cfoot"><button id="cReset">'+tr('btn.restoreDefaults')+'</button><button id="cDone" class="primary">'+tr('btn.applyClose')+'</button></div>'
     +'</div>';
@@ -2853,10 +2857,25 @@ function shareWorries(s,t){
 /* ── 닫기 버튼이 있는 보조 모달(강제 선택형 프롬프트 제외)에 Escape/바깥 클릭 닫기 + 접근성
    속성을 부여한다. close()는 버튼 클릭을 포함한 모든 닫기 경로에서 호출해야 리스너가 새지
    않는다. detach()만 호출하면 리스너만 정리하고 직접 다른 동작(예: 이동 확정)을 이어갈 수 있다. */
+/* Tab/Shift+Tab이 모달 밖(가려진 배경 로스터/툴바)으로 빠져나가지 않도록 마지막↔첫 포커스
+   가능 요소 사이를 순환시킨다. 강제 선택형 프롬프트(showLeadPrompt 등)에서도 직접 호출한다. */
+function trapFocus(m){
+  const onKey=e=>{
+    if(e.key!=='Tab')return;
+    const items=[...m.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(el=>!el.disabled&&el.offsetParent!==null);
+    if(!items.length)return;
+    const first=items[0], last=items[items.length-1];
+    if(e.shiftKey&&document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey&&document.activeElement===last){ e.preventDefault(); first.focus(); }
+  };
+  m.addEventListener('keydown',onKey);
+  return ()=>m.removeEventListener('keydown',onKey);
+}
 function withModalEscape(m,close){
   const prevFocus=document.activeElement;
   const restoreFocus=()=>{ if(prevFocus&&document.body.contains(prevFocus)&&typeof prevFocus.focus==='function')prevFocus.focus(); };
-  const detach=()=>document.removeEventListener('keydown',onKey);
+  const detachTrap=trapFocus(m);
+  const detach=()=>{ document.removeEventListener('keydown',onKey); detachTrap(); };
   const runClose=()=>{ detach(); restoreFocus(); close(); };
   const onKey=e=>{ if(e.key==='Escape')runClose(); };
   document.addEventListener('keydown',onKey);
@@ -2910,7 +2929,8 @@ function showRepMatrix(){
   t+='</table>';
   const m=document.createElement('div'); m.id='modal';
   m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-label',tr('modal.repMatrixTitle'));
-  m.innerHTML=`<div class="card" style="max-width:520px"><div class="who">${tr('modal.repMatrixTitle')} <span style="opacity:.5;font-size:10px">${tr('modal.repMatrixSub')}</span></div><div class="say" style="overflow-x:auto">${t}</div><div class="btns"><button id="repClose">${tr('btn.close').replace(' ✕','')}</button></div></div>`;
+  const more=npcs.length>10?tr('modal.repMatrixMore').replace('{n}',npcs.length):'';
+  m.innerHTML=`<div class="card" style="max-width:520px"><div class="who">${tr('modal.repMatrixTitle')} <span style="opacity:.5;font-size:10px">${tr('modal.repMatrixSub')}${esc(more)}</span></div><div class="say" style="overflow-x:auto">${t}</div><div class="btns"><button id="repClose">${tr('btn.close').replace(' ✕','')}</button></div></div>`;
   document.body.appendChild(m);
   const mc=withModalEscape(m,()=>{ m.remove(); render(); });
   document.getElementById('repClose').onclick=mc.close;
@@ -3439,7 +3459,7 @@ function showLeadPrompt() {
     <div class="say">${esc(line)}</div>
     <div class="btns"><button class="primary" id="leadYes">${tr('btn.followAlong')}</button><button id="leadNo">${tr('btn.decline')}</button></div></div>`;
   document.body.appendChild(m);
-  
+  trapFocus(m);
   document.getElementById('leadYes').onclick = () => resolveLead(true);
   document.getElementById('leadNo').onclick = () => resolveLead(false);
   document.getElementById('leadYes').focus();
@@ -3480,6 +3500,7 @@ function showR18Prompt(){
     <div class="say">${esc(line)}</div>
     <div class="btns"><button class="primary" id="r18Yes">${tr('btn.accept')}</button><button id="r18No">${tr('btn.decline')}</button></div></div>`;
   document.body.appendChild(wrap);
+  trapFocus(wrap);
   document.getElementById('r18Yes').onclick=()=>resolveR18(true);
   document.getElementById('r18No').onclick=()=>resolveR18(false);
   document.getElementById('r18Yes').focus();
@@ -3518,6 +3539,7 @@ function showConfession(){
     <div class="say">${esc(line)}</div>
     <div class="btns"><button class="primary" id="confYes">${tr('btn.accept')}</button><button id="confNo">${tr('btn.decline')}</button></div></div>`;
   document.body.appendChild(m);
+  trapFocus(m);
   document.getElementById('confYes').onclick=()=>resolveConfession(true);
   document.getElementById('confNo').onclick=()=>resolveConfession(false);
   document.getElementById('confYes').focus();
@@ -4880,8 +4902,14 @@ function setSliders(vals){
 
 /* ══════════════ 저장 / 불러오기 ══════════════ */
 const SAVE_KEY='personaWatchSave_observer';
+/* v39/observer 두 파일이 SAVE_KEY/CFG_KEY는 서로 다른 브라우저 저장소를 쓰도록 이미 분리돼
+   있지만, 내보낸 파일을 불러올 때는 이 값을 전혀 확인하지 않아 한쪽에서 내보낸 파일을
+   다른 쪽에 아무 경고 없이 불러올 수 있었다(기본값이 서로 다른데도). applySave()에서
+   비교해 경고만 남기고 계속 불러오도록(막지는 않음) 표시해둔다. */
+const SAVE_VARIANT='observer';
+const SAVE_VERSION=12;
 function serialize(){
-  return JSON.stringify({v:12, turn, RATING, uid, colorIdx, playerId, npcs, sceneCD, cfg:CFG, weather:WEATHER, riotChase,
+  return JSON.stringify({v:SAVE_VERSION, variant:SAVE_VARIANT, turn, RATING, uid, colorIdx, playerId, npcs, sceneCD, cfg:CFG, weather:WEATHER, riotChase,
     logHTML:[...document.querySelectorAll('#log .lg')].slice(-150).map(e=>e.outerHTML),
     storyHTML:[...document.querySelectorAll('#story .lg')].slice(-150).map(e=>e.outerHTML)});
 }
@@ -4956,6 +4984,8 @@ function applySave(data){
   setStoryMode(storyMode); scrollLog();
   stopPlay(); render();
   log(tr('log.loaded').replace('{n}',turn),'event');
+  if(data.variant&&data.variant!==SAVE_VARIANT)log(tr('log.saveVariantMismatch').replace('{v}',data.variant),'event');
+  if(data.v!=null&&data.v!==SAVE_VERSION)log(tr('log.saveVersionMismatch').replace('{v}',data.v).replace('{cur}',SAVE_VERSION),'event');
 }
 let __autosaveWarned=false;
 function saveLocal(silent){
@@ -4991,7 +5021,7 @@ function exportFile(){
   }else{
     a.href='data:application/json;charset=utf-8,'+encodeURIComponent(data);
   }
-  a.download='persona-watch-save-T'+turn+'.json';
+  a.download='persona-watch-save'+(SAVE_VARIANT!=='v39'?'-'+SAVE_VARIANT:'')+'-T'+turn+'.json';
   document.body.appendChild(a); a.click(); a.remove();
   if(a.href.indexOf('blob:')===0)setTimeout(()=>URL.revokeObjectURL(a.href),3000);
   log(tr('log.exported'),'event');
