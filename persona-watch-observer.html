@@ -23,7 +23,7 @@ button{font-family:inherit; cursor:pointer; background:var(--paper); border:1px 
 button:hover{background:var(--soft)}
 button.primary{background:var(--ink); color:var(--paper)}
 button.primary:hover{background:#333}
-button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--ink); outline-offset:1px}
+button:focus-visible,select:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--ink); outline-offset:1px}
 select,input[type=text]{font-family:inherit; font-size:12.5px; padding:5px 7px; border:1px solid var(--line); background:var(--paper); border-radius:2px; color:var(--ink)}
 input[type=range]{accent-color:var(--ink); width:100%}
 
@@ -1382,6 +1382,11 @@ const rnd=(a,b)=>a+Math.random()*(b-a);
 const ri=(a,b)=>Math.floor(rnd(a,b+1));
 const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+/* 시작 시 localStorage에서 읽어들인 CFG도 여기서 정규화한다(normalizeCfg는 clamp에 의존하므로
+   clamp 정의 이후 호출). 예전 버전이 저장해 둔 스키마 범위 밖 값이나 브라우저 프로필/확장
+   프로그램이 직접 조작한 값이 게임 시작부터 그대로 쓰이는 것을 막는다(가져오기 시점에만
+   정규화하던 것을 시작 시점까지 확장). */
+normalizeCfg();
 const slot=()=>SLOTS[Math.floor(turn/3)%4];
 /* ── 결정적 시간 엔진: 1턴=2시간, 06:00 기상 기준. 일/시/분 추적 ── */
 function gameTime(){ const d=Math.floor(turn/12)+1, h=(6+(turn%12)*2)%24; return {day:d,hour:h,min:0}; }
@@ -3600,13 +3605,17 @@ function buildMap(){
     el.className='room'+(s.hallway?' hallway':'');
     el.style.gridArea=s.area; el.dataset.space=id;
     el.innerHTML=`<span class="rname">${lbl('space',s.n)}</span><span class="rmeta">P${s.p}</span>`;
+    el.tabIndex=0; el.setAttribute('role','button'); el.setAttribute('aria-pressed','false'); el.setAttribute('aria-label',lbl('space',s.n));
     el.onclick=()=>toggleLogFilter(id);
+    el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleLogFilter(id); } };
     fp.appendChild(el);
   }
 }
+/* 지도의 방(.room)과 인물 마커(.token)는 원래 마우스 클릭으로만 조작 가능했다 — 로스터 항목처럼
+   Tab으로 포커스해 Enter/Space로 조작할 수 있도록 키보드 경로를 추가한다. */
 function toggleLogFilter(spId){
   logFilter=(logFilter===spId?null:spId);
-  document.querySelectorAll('.room').forEach(r=>r.classList.toggle('watch',r.dataset.space===logFilter));
+  document.querySelectorAll('.room').forEach(r=>{ r.classList.toggle('watch',r.dataset.space===logFilter); r.setAttribute('aria-pressed',String(r.dataset.space===logFilter)); });
   document.querySelectorAll('#log .lg, #story .lg').forEach(el=>{
     el.style.display=(!logFilter||!el.dataset.space||el.dataset.space===logFilter)?'':'none';
   });
@@ -3641,7 +3650,9 @@ function renderTokens(){
       if(isSel){tk.style.background=n.color; tk.style.color='#fff';}
       else tk.style.color=n.color;
       tk.textContent=n.name[0]; tk.title=`${n.fixed?'✦ ':''}${n.name} (${n.arch})`; if(n.fixed)tk.classList.add('fixTok');
+      tk.tabIndex=0; tk.setAttribute('role','button'); tk.setAttribute('aria-pressed',String(isSel)); tk.setAttribute('aria-label',`${n.fixed?'✦ ':''}${n.name} (${lbl('arch',n.arch)})`);
       tk.onclick=e=>{e.stopPropagation(); select(n.id);};
+      tk.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); e.stopPropagation(); select(n.id); } };
       room.appendChild(tk);
     }
   });
@@ -4878,7 +4889,25 @@ function applySave(data){
      항상 유효 범위로 정규화한다 (RATING은 UI select가 0~3 옵션만 가지므로 그 범위로 고정). */
   turn=Math.max(0,Math.floor(Number(data.turn))||0); RATING=clamp(Math.floor(Number(data.RATING))||0,0,3);
   npcs.forEach(ensureSens);
-  npcs.forEach(n=>{ if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; if(!n.flags)n.flags={}; if(!n.r18log)n.r18log={}; if(!n.relations)n.relations={}; equipOutfit(n,n.outfit); n.asleep=0; });
+  /* malformed/조작된 저장 파일은 id/name만 있고 axes·body·needs·lewd 같은 필수 중첩 객체가
+     아예 없거나 다른 타입일 수 있다 — 이전에는 이런 경우 render() 중간에 TypeError로 죽으면서도
+     npcs는 이미 전역에 반영된 뒤라 앱이 반쯤 깨진 상태로 멈췄다. 렌더 전에 최소 형태를 보장한다. */
+  npcs.forEach(n=>{
+    if(!ARCH[n.arch])n.arch=Object.keys(ARCH)[0];
+    if(!Array.isArray(n.axes)||n.axes.length!==6||!n.axes.every(v=>typeof v==='number'&&Number.isFinite(v)))n.axes=[...ARCH[n.arch]];
+    if(!['반말','존댓말','혼합'].includes(n.form))n.form='반말';
+    if(!n.needs||typeof n.needs!=='object')n.needs={사교:30,피로:20,성취:30};
+    if(!n.body||typeof n.body!=='object')n.body={체격:50,운동:50};
+    if(typeof n.stability!=='number'||!Number.isFinite(n.stability))n.stability=100;
+    if(!n.lewd||typeof n.lewd!=='object')n.lewd={흥분:0,취기:0,타락:0,정력:100,max정력:100};
+    if(typeof n.lewd.max정력!=='number'||!Number.isFinite(n.lewd.max정력))n.lewd.max정력=100;
+    if(typeof n.lewd.정력!=='number'||!Number.isFinite(n.lewd.정력))n.lewd.정력=n.lewd.max정력;
+    if(typeof n.lewd.타락!=='number'||!Number.isFinite(n.lewd.타락))n.lewd.타락=0;
+    if(typeof n.lewd.흥분!=='number'||!Number.isFinite(n.lewd.흥분))n.lewd.흥분=0;
+    if(typeof n.lewd.취기!=='number'||!Number.isFinite(n.lewd.취기))n.lewd.취기=0;
+    if(typeof n.money!=='number'||!Number.isFinite(n.money))n.money=n.isPlayer?60:0;
+    if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!n.look)n.look=randomLook(); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; if(!n.flags)n.flags={}; if(!n.r18log)n.r18log={}; if(!n.relations)n.relations={}; equipOutfit(n,n.outfit); n.asleep=0;
+  });
   autoH=false;
   uid=data.uid||(npcs.length+1); colorIdx=data.colorIdx||0;
   playerId=data.playerId||null; pTarget=null; sel=[]; editId=null; logFilter=null; workState=null;
