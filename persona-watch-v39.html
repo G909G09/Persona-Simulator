@@ -495,6 +495,7 @@ Object.assign(I18N.ko,{
  'edit.title':'설정 변경','edit.player':'플레이어','edit.themeColor':'테마색','edit.maxEng':'최대정력','edit.curEng':'현재정력',
  'edit.build':'체격','edit.athletic':'운동','edit.charm':'매력','edit.exposure':'노출도','edit.save':'저장','edit.cancel':'취소',
  'alert.dupName':'같은 이름이 이미 있습니다.','label.noOthers':'다른 인물이 없다.',
+ 'label.filterTag':'— {name}만 표시 ×','label.relLegend':'진한 바 = {name} → 상대 · 흐린 바 = 상대 → {name} · 행 클릭 시 2인 상세',
  'pp.createTitle':'컨트롤 캐릭터 만들기','pp.namePh':'이름 (비우면 자동)','pp.startBtn':'1인칭으로 시작',
  'pp.createHelp':'플레이어를 만들면 행동·이동·대기 하나가 1턴이 되고, 그 뒤에 다른 인물들이 움직입니다. 자동재생은 계속 대기하며 지켜보는 관찰 모드가 됩니다.',
  'alert.max20':'최대 20명까지 가능합니다.','pp.sleepingTitle':'잠자는 중 💤','pp.wake':'깨어나기',
@@ -535,6 +536,7 @@ Object.assign(I18N.en,{
  'edit.title':'Edit Settings','edit.player':'Player','edit.themeColor':'Theme Color','edit.maxEng':'Max Stamina','edit.curEng':'Current Stamina',
  'edit.build':'Build','edit.athletic':'Fitness','edit.charm':'Charm','edit.exposure':'Exposure','edit.save':'Save','edit.cancel':'Cancel',
  'alert.dupName':'That name is already taken.','label.noOthers':'No other characters.',
+ 'label.filterTag':'— {name} only ×','label.relLegend':'Dark bar = {name} → other · Light bar = other → {name} · Click a row for two-person detail',
  'pp.createTitle':'Create Control Character','pp.namePh':'Name (blank = random)','pp.startBtn':'Start in First Person',
  'pp.createHelp':'Once you create a player, each action, move, or wait becomes one turn, after which the other characters act. Auto-play becomes an observation mode that keeps waiting.',
  'alert.max20':'Up to 20 characters allowed.','pp.sleepingTitle':'Sleeping 💤','pp.wake':'Wake Up',
@@ -3619,9 +3621,24 @@ function toggleLogFilter(spId){
   document.querySelectorAll('#log .lg, #story .lg').forEach(el=>{
     el.style.display=(!logFilter||!el.dataset.space||el.dataset.space===logFilter)?'':'none';
   });
-  const tag=$('#logFilterTag');
-  tag.textContent=logFilter?`— ${SPACES[logFilter].n}만 표시 ×`:'';
-  tag.onclick=()=>toggleLogFilter(logFilter);
+  syncLogFilterTag();
+}
+/* #logFilterTag는 필터가 걸려 있을 때만 나타나는 "— 방이름만 표시 ×" 클릭 가능한 태그다.
+   이전에는 텍스트가 lbl()/tr()를 거치지 않아 언어를 English로 바꿔도 방 이름과 문구가
+   한국어 그대로 남았고, onclick만 있고 tabIndex/role/keydown이 없어 키보드로는 필터를
+   해제할 방법이 없었다(같은 방 타일을 다시 찾아가는 우회 경로뿐). applySave()로 저장을
+   불러와 logFilter가 초기화될 때도 이 함수를 통해 태그의 포커스 상태까지 함께 리셋한다. */
+function syncLogFilterTag(){
+  const tag=$('#logFilterTag'); if(!tag)return;
+  if(logFilter&&SPACES[logFilter]){
+    tag.textContent=tr('label.filterTag').replace(/\{name\}/g,lbl('space',SPACES[logFilter].n));
+    tag.tabIndex=0; tag.setAttribute('role','button');
+    tag.onclick=()=>toggleLogFilter(logFilter);
+    tag.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleLogFilter(logFilter); } };
+  }else{
+    tag.textContent=''; tag.removeAttribute('tabindex'); tag.removeAttribute('role');
+    tag.onclick=null; tag.onkeydown=null;
+  }
 }
 function flip(fn){ 
   const before={};
@@ -3698,16 +3715,21 @@ function renderRelTab(n,D){
     if(n.flags['연인:'+o.id])fl.push(lbl('relflag','연인'));
     if(n.flags['갈등:'+o.id])fl.push(lbl('relflag','갈등'));
     if(RATING>=3&&(n.r18log[o.id]||0)>0)fl.push('R18×'+n.r18log[o.id]);
-    h+=`<div class="relRow" data-pair="${o.id}" style="cursor:pointer">
+    h+=`<div class="relRow" data-pair="${o.id}" tabindex="0" role="button" aria-label="${esc(o.name)}" style="cursor:pointer">
       <div><div class="who"><span class="dot" style="background:${o.color}"></span>${esc(o.name)}
         <span class="tag">${lbl('rellabel',lb)}</span>${fl.map(f=>`<span class="tag">${f}</span>`).join('')}</div>
         <div class="miniBars">${bars}</div><div class="miniBars">${bars2}</div></div>
       <div class="rv" style="font-family:var(--mono);font-size:9.5px;color:var(--muted);text-align:right">${relNums(r)}<br><span style="opacity:.5">${relNums(r2)}</span></div>
     </div>`;
   }
-  h+=`<div style="font-size:10px;color:var(--muted);margin-top:6px">진한 바 = ${esc(n.name)} → 상대 · 흐린 바 = 상대 → ${esc(n.name)} · 행 클릭 시 2인 상세</div>`;
+  h+=`<div style="font-size:10px;color:var(--muted);margin-top:6px">${tr('label.relLegend').replace(/\{name\}/g,esc(n.name))}</div>`;
   D.innerHTML=h;
-  D.querySelectorAll('[data-pair]').forEach(el=>el.onclick=()=>{sel=[n.id,el.dataset.pair]; render();});
+  /* .relRow는 클릭으로만 2인 상세로 넘어갈 수 있었다(.room/.token처럼 tabIndex/keydown이 없었음) —
+     같은 방식으로 Enter/Space 키보드 경로를 추가한다. */
+  D.querySelectorAll('[data-pair]').forEach(el=>{
+    el.onclick=()=>{sel=[n.id,el.dataset.pair]; render();};
+    el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); sel=[n.id,el.dataset.pair]; render(); } };
+  });
 }
 function renderDetail(){
   const D=$('#detail');
@@ -3765,7 +3787,10 @@ function renderDetail(){
   const tabs=`<div class="tabRow"><button class="${dTab==='stat'?'on':''}" data-tab="stat">${tr('tab.stat')}</button><button class="${dTab==='rel'?'on':''}" data-tab="rel">${tr('tab.rel')}</button></div>`;
   const bind=()=>D.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{dTab=b.dataset.tab; renderDetail();});
   if(dTab==='rel'){ renderRelTab(n,D); D.innerHTML=tabs+D.innerHTML;
-    D.querySelectorAll('[data-pair]').forEach(el=>el.onclick=()=>{sel=[n.id,el.dataset.pair]; render();});
+    D.querySelectorAll('[data-pair]').forEach(el=>{
+      el.onclick=()=>{sel=[n.id,el.dataset.pair]; render();};
+      el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); sel=[n.id,el.dataset.pair]; render(); } };
+    });
     bind(); return; }
   let h=tabs+`<div style="display:flex;gap:9px;align-items:flex-start">${avatarCanvasHTML('detAvatar',60)}<div style="flex:1;min-width:0">
     <div class="dname" style="color:${n.color}">${n.fixed?'✦ ':''}${esc(n.name)}</div>
@@ -4918,8 +4943,8 @@ function applySave(data){
   leadQueue.length=0; confQueue.length=0; r18Queue.length=0;
   if(data.cfg){ Object.assign(CFG,data.cfg); normalizeCfg(); cfgSave(); syncSEBtn(); }
   $('#rateSel').value=String(RATING);
-  document.querySelectorAll('.room').forEach(r=>r.classList.remove('watch'));
-  $('#logFilterTag').textContent='';
+  document.querySelectorAll('.room').forEach(r=>{r.classList.remove('watch'); r.setAttribute('aria-pressed','false');});
+  syncLogFilterTag();
   const logEntries=sanitizeLogEntries(data.logHTML);
   $('#log').innerHTML=logEntries.join('');
   /* 구버전 저장 파일 등 storyHTML이 없으면 전체 로그에서 '직접 상황'만 골라 이야기 패널을 복원 */
