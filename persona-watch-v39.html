@@ -284,7 +284,7 @@ h2.sec:first-child{margin-top:0}
 <body>
 
 <div id="bootBanner">⚠ 이 메시지가 사라지지 않으면 스크립트가 실행되지 않은 것입니다. 카카오톡·메신저 내장 뷰어는 HTML의 스크립트를 차단합니다 — 파일을 저장한 뒤 <b>Chrome / Safari / Samsung Internet</b>으로 직접 열어주세요.</div>
-<div id="errOverlay"></div>
+<div id="errOverlay" role="alert" aria-live="assertive"></div>
 
 <div id="toolbar">
   <span class="title">PERSONA WATCH<small data-i18n="title.sub">성격 시뮬레이션 프로토타입 v39</small></span>
@@ -1250,6 +1250,9 @@ function openConsole(){
     +'</div>';
   document.body.appendChild(w);
   const cCloseBtn=w.querySelector('#cClose'); if(cCloseBtn)cCloseBtn.focus();
+  /* 시스템 설정 콘솔은 Escape/바깥 클릭 닫기는 있었지만 Tab 트랩이 없어, 콘솔이 떠 있는
+     동안에도 Tab으로 배경 요소까지 포커스가 새 나갔다. 다른 #modal 대화상자와 동일하게 트랩한다. */
+  const detachTrap=trapFocus(w);
   const apply=function(k,v){
     CFG[k]=v; cfgSave();
     if(k==='se')syncSEBtn();
@@ -1272,7 +1275,7 @@ function openConsole(){
   w.querySelectorAll('select[data-ck]').forEach(function(sl){
     sl.onchange=function(){ apply(sl.dataset.ck,+sl.value); };
   });
-  const close=function(){ w.remove(); if(consoleKeyHandler){ document.removeEventListener('keydown',consoleKeyHandler); consoleKeyHandler=null; } render(); if(consolePrevFocus&&typeof consolePrevFocus.focus==='function'&&document.body.contains(consolePrevFocus))consolePrevFocus.focus(); };
+  const close=function(){ w.remove(); detachTrap(); if(consoleKeyHandler){ document.removeEventListener('keydown',consoleKeyHandler); consoleKeyHandler=null; } render(); if(consolePrevFocus&&typeof consolePrevFocus.focus==='function'&&document.body.contains(consolePrevFocus))consolePrevFocus.focus(); };
   w.querySelector('#cClose').onclick=close;
   w.querySelector('#cDone').onclick=close;
   w.onclick=function(e){ if(e.target===w)close(); };
@@ -3934,6 +3937,7 @@ function removeNpc(id){
   npcs=npcs.filter(n=>n.id!==id);
   npcs.forEach(n=>delete n.relations[id]);
   sel=sel.filter(x=>x!==id);
+  hasUnsaved=true;
   render();
 }
 
@@ -4888,8 +4892,9 @@ function buildForm(){
     const n=makeNpc(nm,$('#cArch').value,axes,form,mix,false,$('#cR18').checked,$('#cCor').checked,+$('#cLewd0').value,+$('#cMaxEng').value,window.__readSens());
     if(getCLook)n.look=getCLook();
     $('#cR18').checked=CFG.defR18; $('#cCor').checked=CFG.defCor; $('#cLewd0').value=0; window.__setSens(defSens()); $('#cLewd0v').textContent='0';
-    $('#cMaxEng').value=100; $('#cMaxEngV').textContent='100'; 
+    $('#cMaxEng').value=100; $('#cMaxEngV').textContent='100';
     $('#cName').value='';
+    hasUnsaved=true;
     log(`${esc(n.name)}(${n.arch}·${n.form})이(가) 입주했다 — ${SPACES[n.home].n} 배정`,'event');
     render();
   };
@@ -5145,6 +5150,9 @@ function renderEventBeat(){
   m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-label',ev.title);
   m.innerHTML=`<div class="card" style="border-top-color:${col}"><div class="who" style="color:${col}">${esc(ev.title)}${ev.beats.length>1?` <span style="opacity:.5;font-size:11px">(${beat+1}/${ev.beats.length})</span>`:''}</div><div class="say">${txt}</div><div class="btns">${btns}</div></div>`;
   document.body.appendChild(m);
+  /* 다턴 팝업 이벤트 모달은 다른 #modal 대화상자와 달리 trapFocus가 빠져 있어, Tab으로
+     배경의 로스터·지도·툴바 버튼까지 포커스가 새 나가 이벤트 진행 중에도 조작이 가능했다. */
+  trapFocus(m);
   m.querySelectorAll('[data-ev]').forEach(btn=>{ if(!btn.disabled)btn.onclick=()=>eventChoose(+btn.dataset.ev); });
   const firstBtn=m.querySelector('[data-ev]:not([disabled])'); if(firstBtn)firstBtn.focus();
 }
@@ -5345,8 +5353,10 @@ function showDrowsyModal(){
     <div class="say">취기가 한계에 달했다. 이대로 잠들 것 같다. 어떻게 할까?</div>
     <div class="btns"><button class="primary" id="drSleep">그 자리에서 잠든다</button><button id="drStay">버틴다</button></div></div>`;
   document.body.appendChild(m);
+  trapFocus(m);
   document.getElementById('drSleep').onclick=()=>{ m.remove(); startSleep(P(), ri(3,9)); };
   document.getElementById('drStay').onclick=()=>{ m.remove(); P().flags._drowsy=1; render(); };
+  document.getElementById('drSleep').focus();
 }
 
 /* ══════════════ 초기화 ══════════════ */
