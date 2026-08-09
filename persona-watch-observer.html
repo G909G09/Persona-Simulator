@@ -308,7 +308,7 @@ h2.sec:first-child{margin-top:0}
   <button id="btnStep" data-i18n="btn.step">1턴 ⏭</button>
   <button id="btnStep5" title="모달이 뜨면 자동으로 멈춥니다" data-i18n-title="btn.step5.title" data-i18n="btn.step5">5턴 ⏭⏭</button>
   <button id="btnPlay" class="primary" data-i18n="btn.play">▶ 자동재생</button>
-  <select id="speedSel" title="재생 속도" data-i18n-title="speed.title"><option value="1600">1×</option><option value="900">2×</option><option value="500">4×</option></select>
+  <select id="speedSel" title="재생 속도" data-i18n-title="speed.title" aria-label="재생 속도" data-i18n-aria="speed.title"><option value="1600">1×</option><option value="900">2×</option><option value="500">4×</option></select>
 </div>
 
 <div id="sheetBackdrop"></div>
@@ -505,7 +505,7 @@ Object.assign(I18N.ko,{
  'unit.person':'인','label.orgyWord':'난교',
  'btn.continueWait':'계속한다 ⏭','btn.takeControl':'주도권 빼앗기','btn.autoOn':'자동 진행 ON ▶ — 누르면 끔','btn.autoOff':'자동 진행 OFF — 누르면 자동재생',
  'btn.leaveToPartner':'상대에게 맡긴다 ⏭','sec.move':'이동 — 인접 공간','btn.shuttle':'🚌 셔틀','btn.bike':'🚲 자전거',
- 'sec.interact':'상호작용 — 상대 선택','label.noOneHere':'이 공간에는 아무도 없다.','sec.bringAlong':'데려가기','sec.giveGift':'선물하기 🎁',
+ 'sec.interact':'상호작용 — 상대 선택','label.noOneHere':'이 공간에는 아무도 없다.','sec.bringAlong':'데려가기','btn.leadInvite':'잠깐 와줘 →','sec.giveGift':'선물하기 🎁',
  'label.specialInteract':'✦ 특수 교류','title.needMoreRel':'관계를 더 쌓으면 열립니다','sec.job':'일자리','sec.shop':'구매',
  'sec.underwear':'속옷 🩲','sec.wardrobe':'옷장 👗','label.needWardrobe':'👗 옷을 갈아입으려면 옷장이 있는 곳(개인실·트레이닝룸)으로 가야 한다',
  'btn.sleep':'잠자기 💤','btn.autoFaint':'자동 기절','btn.reputation':'평판 📊','btn.batchAdmin':'⚙ 일괄',
@@ -552,7 +552,7 @@ Object.assign(I18N.en,{
  'unit.person':'-person','label.orgyWord':'orgy',
  'btn.continueWait':'Continue ⏭','btn.takeControl':'Take Control Back','btn.autoOn':'Auto-progress ON ▶ — click to stop','btn.autoOff':'Auto-progress OFF — click to auto-play',
  'btn.leaveToPartner':'Leave it to them ⏭','sec.move':'Move — Adjacent Rooms','btn.shuttle':'🚌 Shuttle','btn.bike':'🚲 Bike',
- 'sec.interact':'Interact — Choose Partner','label.noOneHere':'No one is here.','sec.bringAlong':'Bring Along','sec.giveGift':'Give Gift 🎁',
+ 'sec.interact':'Interact — Choose Partner','label.noOneHere':'No one is here.','sec.bringAlong':'Bring Along','btn.leadInvite':'Come along →','sec.giveGift':'Give Gift 🎁',
  'label.specialInteract':'✦ Special Interaction','title.needMoreRel':'Build more relationship to unlock','sec.job':'Work','sec.shop':'Shop',
  'sec.underwear':'Underwear 🩲','sec.wardrobe':'Wardrobe 👗','label.needWardrobe':'👗 You need to be somewhere with a wardrobe (private room / gym) to change clothes',
  'btn.sleep':'Sleep 💤','btn.autoFaint':'Auto-Faint','btn.reputation':'Reputation 📊','btn.batchAdmin':'⚙ Batch',
@@ -3967,6 +3967,7 @@ function removeNpc(id){
 function makePlayer(nm,arch,axes,form,mix,r18,cor=true){
   const p=makeNpc(nm,arch,axes,form,mix,true,r18,cor);
   playerId=p.id;
+  hasUnsaved=true;
   log(`${esc(p.name)}(플레이어)이(가) 입주했다 — ${SPACES[p.home].n} 배정`,'event');
   render();
 }
@@ -4769,7 +4770,7 @@ function renderPlayerPanel(){
         h+=`</div>`;
       }
       h+=`<div style="font-size:9.5px;color:var(--muted);margin:5px 0 2px;letter-spacing:.1em">${tr('sec.bringAlong')}</div><div class="chipRow">`;
-      for(const adj of SPACES[p.space].adj)h+=`<button class="chip" data-lead="${adj}">잠깐 와줘 → ${lbl('space',SPACES[adj].n)}</button>`;
+      for(const adj of SPACES[p.space].adj)h+=`<button class="chip" data-lead="${adj}">${tr('btn.leadInvite')} ${lbl('space',SPACES[adj].n)}</button>`;
       h+=`</div>`;
       const _gifts=Object.keys(GIFTS).filter(it=>(p.flags['아이템:'+it]||0)>0 && (!GIFTS[it].minR||RATING>=GIFTS[it].minR));
       if(_gifts.length){
