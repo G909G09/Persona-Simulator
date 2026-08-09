@@ -434,7 +434,12 @@ Object.assign(I18N.ko,{
  'adm.randStatDone':'⚙ 전 인물의 스탯을 랜덤화했다','adm.randRelDone':'⚙ 전 인물의 관계를 랜덤화했다','adm.calmDone':'⚙ 전 인물의 욕구·상태를 초기화했다',
  'adm.r18onDone':'⚙ 전 인물 R18 허용을 켰다','adm.r18offDone':'⚙ 전 인물 R18 허용을 껐다','adm.purifyDone':'⚙ 전 인물의 타락을 0으로 되돌렸다',
  'log.saved':'브라우저에 저장했다 💾 ({n}턴마다 자동 저장됨)','log.saved.off':'브라우저에 저장했다 💾 (자동 저장 꺼짐)',
- 'log.ready':'시뮬레이션 준비 완료 — 6인 프리셋 입주. ▶ 자동재생 또는 1턴으로 관찰을 시작하세요.'
+ 'log.ready':'시뮬레이션 준비 완료 — 6인 프리셋 입주. ▶ 자동재생 또는 1턴으로 관찰을 시작하세요.',
+ 'log.notCloseEnough':'아직 그럴 만한 사이가 아닌 것 같다.',
+ 'log.staffExhausted':'— 지배인과 직원들이 모두 지쳐 물러났다. 이번 주 방값은 몸으로 치렀다 —',
+ 'log.fleeBonus':'안간힘을 써 봤지만, 완전히 벗어나진 못했다 — 그래도 거리는 좀 벌렸다.',
+ 'log.busNoMoney':'코인이 부족해 셔틀을 탈 수 없다 (5코인)',
+ 'log.rentBlockedSleep':'숙박료 미납으로 숙소동 시설을 이용할 수 없다. 다른 곳에서 쉬어야 한다.'
 });
 /* ── 데이터 라벨 사전: 내부 키(한국어)는 그대로 두고, 화면 표시용 영어만 매핑 ── */
 Object.assign(LABEL_EN,{
@@ -605,7 +610,12 @@ Object.assign(I18N.en,{
  'adm.randStatDone':'⚙ Randomized stats for all characters','adm.randRelDone':'⚙ Randomized relations for all characters','adm.calmDone':'⚙ Reset needs/status for all characters',
  'adm.r18onDone':'⚙ Turned R18 participation ON for all characters','adm.r18offDone':'⚙ Turned R18 participation OFF for all characters','adm.purifyDone':'⚙ Reset corruption to 0 for all characters',
  'log.saved':'Saved to browser 💾 (auto-saves every {n} turns)','log.saved.off':'Saved to browser 💾 (autosave off)',
- 'log.ready':'Simulation ready — 6-character preset moved in. Start observing with ▶ Auto-play or 1 Turn.'
+ 'log.ready':'Simulation ready — 6-character preset moved in. Start observing with ▶ Auto-play or 1 Turn.',
+ 'log.notCloseEnough':'It doesn\'t seem like you\'re close enough for that yet.',
+ 'log.staffExhausted':'— The manager and staff, all exhausted, gave up. This week\'s rent was paid in kind —',
+ 'log.fleeBonus':'Struggled with all your might, but couldn\'t fully break free — still, you put some distance between you.',
+ 'log.busNoMoney':'Not enough coins to take the shuttle (5 coins)',
+ 'log.rentBlockedSleep':'Unpaid rent blocks you from using the lodge facilities. You\'ll need to rest somewhere else.'
 });
 /* ══════════════ 데이터 ══════════════ */
 const AXES=['외향','대담','온화','솔직','성실','감수'];
@@ -1846,7 +1856,7 @@ function equipOutfit(n,name){
   let ex=o.노출, ch=o.매력;
   /* 속옷 슬롯 보정 (알몸은 속옷 무의미) */
   if(name!=='알몸'&&n.under){ ['상','하'].forEach(sl=>{ const u=UNDERWEAR[sl][n.under[sl]]; if(u){ ex+=u.노출||0; ch+=u.매력||0; } }); }
-  n.노출도=clamp(ex,0,100);
+  n.노출도=clamp((n.노출도base||0)+ex,0,100);
   n.매력=clamp((n.매력base||0)+ch,0,100);
   /* 크로스드레싱 판정: 의상 성별과 신체 성별 불일치 */
   const g=OUTFIT_G[name]||'U';
@@ -1876,7 +1886,7 @@ function makeNpc(name,arch,axes,form,mix,isPlayer=false,r18=false,cor=true,lewd0
     needs:{사교:ri(20,50),피로:ri(10,30),성취:ri(20,50)},stability:100,
     body:{체격:ri(35,75),운동:ri(30,70)},
     lewd:{흥분:0,취기:0,타락:clamp(lewd0,0,100),정력:maxEng, max정력:maxEng},
-    corruptible:cor,r18Mode:'기본',money:isPlayer?60:ri(0,30),매력base:ri(30,70),매력:50,노출도:5,평판:0,outfit:'평상복',wardrobe:['평상복','알몸'],asleep:0,
+    corruptible:cor,r18Mode:'기본',money:isPlayer?60:ri(0,30),매력base:ri(30,70),매력:50,노출도base:0,노출도:5,평판:0,outfit:'평상복',wardrobe:['평상복','알몸'],asleep:0,
     gender:'여성',genital:'여성기',under:{상:'브라',하:'팬티'},look:randomLook(),
     sens:sens?Object.assign(defSens(),sens):defSens(),
     hsex:null,
@@ -2768,7 +2778,7 @@ function startFixedH(p,n,lead,mode,intro){
 function doSpecial(p,n,i){
   const def=FIXED_DEF[n.fixedKey]; if(!def)return;
   const sp=def.specials[i]; if(!sp)return;
-  if(sp.req&&!sp.req(p,n)){ log('아직 그럴 만한 사이가 아닌 것 같다.','event',p.space); render(); return; }
+  if(sp.req&&!sp.req(p,n)){ log(tr('log.notCloseEnough'),'event',p.space); render(); return; }
   const key='sp:'+n.fixedKey+':'+i;
   const st=(p.flags[key]=(p.flags[key]||0)+1);
   try{ sp.eff&&sp.eff(p,n); }catch(e){}
@@ -3257,7 +3267,7 @@ function tickHSession(n){
       grp.forEach(x=>{ x.lewd.정력=clamp(x.lewd.정력-8,0,x.lewd.max정력); });   /* 정력 소진 진행 보장 */
       if(grp.length===0 || grp.every(x=>x.lewd.정력<=0)){
         grp.forEach(x=>{ if(x.extra)setTimeout(()=>despawnExtra(x),60); });
-        log('— 지배인과 직원들이 모두 지쳐 물러났다. 이번 주 방값은 몸으로 치렀다 —','event',t.space);
+        log(tr('log.staffExhausted'),'event',t.space);
         endHSession(t,null);
       }
     } else {
@@ -3929,10 +3939,11 @@ function drawEditForm(){
     ensureSens(n);
     D.querySelectorAll('[data-esens]').forEach(inp=>n.sens[inp.dataset.esens]=+inp.value);
     n.body.체격=+$('#eBody').value; n.body.운동=+$('#eAth').value;
-    n.매력=+$('#eCharm').value; n.노출도=+$('#eExpose').value;
+    n.매력base=clamp(+$('#eCharm').value,0,100); n.노출도base=clamp(+$('#eExpose').value,0,100);
     n.r18Mode=$('#eR18Mode').value;
     n.look=getLook();
     if(!n.isPlayer)n.color=pickedCol;
+    equipOutfit(n,n.outfit);
     editId=null;
     hasUnsaved=true;
     log(`${NM(n)}의 설정이 변경되었다`,'move');
@@ -4128,7 +4139,7 @@ function checkRiotChase(p){
     if(grp.length>=3)p.flags._multiH=1;
     playSE('hstart');
   } else if(fleeBonus>0){
-    log('안간힘을 써 봤지만, 완전히 벗어나진 못했다 — 그래도 거리는 좀 벌렸다.','event',p.space);
+    log(tr('log.fleeBonus'),'event',p.space);
   } else if(Math.random()<0.5){
     log(pick(RIOT_CHASE_FLAVOR),'event',p.space);
   }
@@ -4499,7 +4510,7 @@ function travelModal(mode){
 }
 function doTravel(p,dest,mode){
   if(mode==='bus'){
-    if(p.money<5){ log('코인이 부족해 셔틀을 탈 수 없다 (5코인)','event',p.space); render(); return; }
+    if(p.money<5){ log(tr('log.busNoMoney'),'event',p.space); render(); return; }
     p.money-=5;
     log(`🚌 ${NM(p)}이(가) 셔틀버스로 ${SPACES[dest].n}까지 이동했다 (−5코인)`,'move',dest);
     if(Math.random()<0.15){
@@ -4987,8 +4998,12 @@ function applySave(data){
     if(typeof n.lewd.흥분!=='number'||!Number.isFinite(n.lewd.흥분))n.lewd.흥분=0;
     if(typeof n.lewd.취기!=='number'||!Number.isFinite(n.lewd.취기))n.lewd.취기=0;
     if(typeof n.money!=='number'||!Number.isFinite(n.money))n.money=n.isPlayer?60:0;
-    if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; ensureLook(n); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; if(!n.flags)n.flags={}; if(!n.r18log)n.r18log={}; if(!n.relations)n.relations={}; equipOutfit(n,n.outfit); n.asleep=0;
+    if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(n.노출도base==null)n.노출도base=0; if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; ensureLook(n); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; if(!n.flags)n.flags={}; if(!n.r18log)n.r18log={}; if(!n.relations||typeof n.relations!=='object')n.relations={}; if(!n.isPlayer&&!PALETTE.includes(n.color))n.color=PALETTE[(colorIdx++)%PALETTE.length]; equipOutfit(n,n.outfit); n.asleep=0;
   });
+  /* 위 루프는 각 npc.relations가 객체인지만 보장할 뿐, 모든 상대와의 관계 항목이
+     실제로 존재하는지는 보장하지 않는다 — 손상되거나 일부만 담긴 저장 파일은 통과시켜
+     renderRelTab()이 존재하지 않는 관계(undefined)를 정렬하다 TypeError로 죽을 수 있었다. */
+  npcs.forEach(n=>{ npcs.forEach(o=>{ if(n.id===o.id)return; if(!n.relations[o.id])n.relations[o.id]=newRel(); }); });
   autoH=false;
   /* uid/colorIdx도 손상되거나 조작된 파일에서 숫자가 아닌 값·비정상적으로 작은 값이 들어올
      수 있다. 특히 uid가 기존 인물들의 id 번호보다 작으면, 이후 새로 만드는 캐릭터의
@@ -5135,7 +5150,7 @@ function sleeperInteraction(n,sl){
 /* ── 잠자기 ── */
 function showSleepModal(){
   const _p=P();
-  if(_p&&rentBlocked(_p)&&RESORT_INDOOR.includes(_p.space)){ log('숙박료 미납으로 숙소동 시설을 이용할 수 없다. 다른 곳에서 쉬어야 한다.','event',_p.space); render(); return; }
+  if(_p&&rentBlocked(_p)&&RESORT_INDOOR.includes(_p.space)){ log(tr('log.rentBlockedSleep'),'event',_p.space); render(); return; }
   stopPlay();
   const ex=document.getElementById('modal'); if(ex)ex.remove();
   const m=document.createElement('div'); m.id='modal';
