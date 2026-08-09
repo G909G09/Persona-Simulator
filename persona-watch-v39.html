@@ -409,7 +409,7 @@ function applyI18n(root){
   r.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title=tr(el.dataset.i18nTitle); });
   r.querySelectorAll('[data-i18n-aria]').forEach(el=>{ el.setAttribute('aria-label',tr(el.dataset.i18nAria)); });
 }
-function setLang(v){ LANG=v; saveLang(); document.documentElement.lang=LANG==='en'?'en':'ko'; applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); if(typeof setStoryMode==='function'&&typeof storyMode!=='undefined')setStoryMode(storyMode); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; if(document.getElementById('consoleWrap')&&typeof openConsole==='function'){ document.getElementById('consoleWrap').remove(); openConsole(); } }
+function setLang(v){ LANG=v; saveLang(); document.documentElement.lang=LANG==='en'?'en':'ko'; applyI18n(); if(typeof render==='function')render(); if(typeof buildMap==='function')buildMap(); if(typeof renderPlayerPanel==='function')renderPlayerPanel(); if(typeof setStoryMode==='function'&&typeof storyMode!=='undefined')setStoryMode(storyMode); const sw=document.getElementById('langSel'); if(sw)sw.value=LANG; if(document.getElementById('consoleWrap')&&typeof openConsole==='function'){ if(typeof consoleDetachTrap==='function'){ consoleDetachTrap(); consoleDetachTrap=null; } document.getElementById('consoleWrap').remove(); openConsole(); } }
 Object.assign(I18N.ko,{
  'title.sub':'성격 시뮬레이션 프로토타입 v39',
  'rate.title':'관찰 등급','rate.0':'등급: 전체이용가','rate.1':'등급: 15세','rate.2':'등급: 성인','rate.3':'등급: R18','speed.title':'재생 속도',
@@ -521,6 +521,10 @@ Object.assign(I18N.ko,{
  'modal.repMatrixTitle':'📊 평판 매트릭스','modal.repMatrixSub':'(행→열 호감)','modal.repMatrixMore':' · 처음 10명만 표시 (전체 {n}명)','modal.systemConsole':'SYSTEM CONSOLE',
  'modal.busTitle':'🚌 셔틀버스 (5코인)','modal.bikeTitle':'🚲 자전거로 이동',
  'modal.busDesc':'노선을 따라 원하는 곳까지 한 번에. 낯선 승객과 밀착될 수도 있다...','modal.bikeDesc':'페달을 밟아 어디든 빠르고 안전하게.',
+ 'modal.drowsyTitle':'눈이 감긴다...','modal.drowsyDesc':'취기가 한계에 달했다. 이대로 잠들 것 같다. 어떻게 할까?',
+ 'btn.drowsySleep':'그 자리에서 잠든다','btn.drowsyStay':'버틴다',
+ 'modal.leadTitle':'은밀한 제안','modal.leadDesc':'{name}이(가) 단둘이 방으로 가자고 유도하고 있다.',
+ 'modal.confessDesc':'{name}이(가) 고백해 왔다.',
  'err.badSaveFile':'형식이 올바르지 않은 저장 파일','alert.saveBlocked':'이 환경에서는 브라우저 저장이 차단되어 있습니다.\n⬇ 버튼으로 파일 내보내기를 사용해 주세요.',
  'log.saveVariantMismatch':'⚠ 이 저장 파일은 다른 버전({v})에서 만들어졌습니다. 일부 기본값이 예상과 다를 수 있습니다.',
  'log.saveVersionMismatch':'⚠ 저장 파일 형식 버전이 다릅니다(v{v} → 현재 v{cur}). 일부 데이터가 예상과 다르게 불러와질 수 있습니다.',
@@ -564,6 +568,10 @@ Object.assign(I18N.en,{
  'modal.repMatrixTitle':'📊 Reputation Matrix','modal.repMatrixSub':'(row → column liking)','modal.repMatrixMore':' · showing first 10 of {n}','modal.systemConsole':'SYSTEM CONSOLE',
  'modal.busTitle':'🚌 Shuttle Bus (5 coins)','modal.bikeTitle':'🚲 Travel by Bike',
  'modal.busDesc':'Ride the route straight to your destination in one go. You might end up pressed against a stranger...','modal.bikeDesc':'Pedal your way anywhere, fast and safe.',
+ 'modal.drowsyTitle':'Your eyes are closing...','modal.drowsyDesc':'The intoxication has hit its limit. You feel like you could fall asleep right here. What will you do?',
+ 'btn.drowsySleep':'Fall asleep right here','btn.drowsyStay':'Fight it off',
+ 'modal.leadTitle':'A Private Proposition','modal.leadDesc':'{name} is trying to lure you off somewhere private, just the two of you.',
+ 'modal.confessDesc':'{name} has confessed their feelings to you.',
  'err.badSaveFile':'Malformed save file','alert.saveBlocked':'Browser storage is blocked in this environment.\nPlease use the ⬇ Export to File button instead.',
  'log.saveVariantMismatch':'⚠ This save file was made in a different variant ({v}). Some defaults may not match what you expect.',
  'log.saveVersionMismatch':'⚠ Save file format version differs (v{v} → current v{cur}). Some data may not load exactly as expected.',
@@ -1221,6 +1229,7 @@ function normalizeCfg(){
 
 let consoleKeyHandler=null;
 let consolePrevFocus=null;
+let consoleDetachTrap=null;
 function openConsole(){
   stopPlay();
   if(document.getElementById('consoleWrap'))return;
@@ -1252,7 +1261,8 @@ function openConsole(){
   const cCloseBtn=w.querySelector('#cClose'); if(cCloseBtn)cCloseBtn.focus();
   /* 시스템 설정 콘솔은 Escape/바깥 클릭 닫기는 있었지만 Tab 트랩이 없어, 콘솔이 떠 있는
      동안에도 Tab으로 배경 요소까지 포커스가 새 나갔다. 다른 #modal 대화상자와 동일하게 트랩한다. */
-  const detachTrap=trapFocus(w);
+  if(consoleDetachTrap){ consoleDetachTrap(); consoleDetachTrap=null; }
+  consoleDetachTrap=trapFocus(w);
   const apply=function(k,v){
     CFG[k]=v; cfgSave();
     if(k==='se')syncSEBtn();
@@ -1275,7 +1285,7 @@ function openConsole(){
   w.querySelectorAll('select[data-ck]').forEach(function(sl){
     sl.onchange=function(){ apply(sl.dataset.ck,+sl.value); };
   });
-  const close=function(){ w.remove(); detachTrap(); if(consoleKeyHandler){ document.removeEventListener('keydown',consoleKeyHandler); consoleKeyHandler=null; } render(); if(consolePrevFocus&&typeof consolePrevFocus.focus==='function'&&document.body.contains(consolePrevFocus))consolePrevFocus.focus(); };
+  const close=function(){ w.remove(); if(consoleDetachTrap){ consoleDetachTrap(); consoleDetachTrap=null; } if(consoleKeyHandler){ document.removeEventListener('keydown',consoleKeyHandler); consoleKeyHandler=null; } render(); if(consolePrevFocus&&typeof consolePrevFocus.focus==='function'&&document.body.contains(consolePrevFocus))consolePrevFocus.focus(); };
   w.querySelector('#cClose').onclick=close;
   w.querySelector('#cDone').onclick=close;
   w.onclick=function(e){ if(e.target===w)close(); };
@@ -1284,7 +1294,7 @@ function openConsole(){
   w.querySelector('#cReset').onclick=function(){
     if(!confirm(tr('confirm.resetCfg')))return;
     Object.assign(CFG,CFG_DEF); cfgSave(); syncSEBtn();
-    w.remove(); openConsole();
+    if(consoleDetachTrap){ consoleDetachTrap(); consoleDetachTrap=null; } w.remove(); openConsole();
   };
 }
 function syncSEBtn(){
@@ -3455,10 +3465,10 @@ function showLeadPrompt() {
   
   const {s, line} = leadQueue[0];
   const m = document.createElement('div'); m.id = 'modal';
-  m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-label', s.name+' · 은밀한 제안');
+  m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-label', s.name+' · '+tr('modal.leadTitle'));
   m.innerHTML = `<div class="card" style="border-top-color:${s.color}">
-    <div class="who" style="color:${s.color}">${esc(s.name)} · 은밀한 제안</div>
-    <div style="font-size:11.5px;color:var(--muted)">${esc(s.name)}이(가) 단둘이 방으로 가자고 유도하고 있다.</div>
+    <div class="who" style="color:${s.color}">${esc(s.name)} · ${tr('modal.leadTitle')}</div>
+    <div style="font-size:11.5px;color:var(--muted)">${tr('modal.leadDesc').replace('{name}',esc(s.name))}</div>
     <div class="say">${esc(line)}</div>
     <div class="btns"><button class="primary" id="leadYes">${tr('btn.followAlong')}</button><button id="leadNo">${tr('btn.decline')}</button></div></div>`;
   document.body.appendChild(m);
@@ -3535,10 +3545,10 @@ function showConfession(){
   if (existingModal) existingModal.remove();
   const {s,line}=confQueue[0];
   const m=document.createElement('div'); m.id='modal';
-  m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-label', s.name+' · '+s.arch);
+  m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-label', s.name+' · '+lbl('arch',s.arch));
   m.innerHTML=`<div class="card" style="border-top-color:${s.color}">
-    <div class="who" style="color:${s.color}">${esc(s.name)} · ${s.arch}</div>
-    <div style="font-size:11.5px;color:var(--muted)">${esc(s.name)}이(가) 고백해 왔다.</div>
+    <div class="who" style="color:${s.color}">${esc(s.name)} · ${lbl('arch',s.arch)}</div>
+    <div style="font-size:11.5px;color:var(--muted)">${tr('modal.confessDesc').replace('{name}',esc(s.name))}</div>
     <div class="say">${esc(line)}</div>
     <div class="btns"><button class="primary" id="confYes">${tr('btn.accept')}</button><button id="confNo">${tr('btn.decline')}</button></div></div>`;
   document.body.appendChild(m);
@@ -3691,7 +3701,7 @@ function renderTokens(){
       tk.style.borderColor=n.color;
       if(isSel){tk.style.background=n.color; tk.style.color='#fff';}
       else tk.style.color=n.color;
-      tk.textContent=n.name[0]; tk.title=`${n.fixed?'✦ ':''}${n.name} (${n.arch})`; if(n.fixed)tk.classList.add('fixTok');
+      tk.textContent=n.name[0]; tk.title=`${n.fixed?'✦ ':''}${n.name} (${lbl('arch',n.arch)})`; if(n.fixed)tk.classList.add('fixTok');
       tk.tabIndex=0; tk.setAttribute('role','button'); tk.setAttribute('aria-pressed',String(isSel)); tk.setAttribute('aria-label',`${n.fixed?'✦ ':''}${n.name} (${lbl('arch',n.arch)})`);
       tk.onclick=e=>{e.stopPropagation(); select(n.id);};
       tk.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); e.stopPropagation(); select(n.id); } };
@@ -5348,10 +5358,10 @@ function showDrowsyModal(){
   const p=P(); if(!p)return;
   const ex=document.getElementById('modal'); if(ex)ex.remove();
   const m=document.createElement('div'); m.id='modal';
-  m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-label','눈이 감긴다...');
-  m.innerHTML=`<div class="card"><div class="who">눈이 감긴다...</div>
-    <div class="say">취기가 한계에 달했다. 이대로 잠들 것 같다. 어떻게 할까?</div>
-    <div class="btns"><button class="primary" id="drSleep">그 자리에서 잠든다</button><button id="drStay">버틴다</button></div></div>`;
+  m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-label',tr('modal.drowsyTitle'));
+  m.innerHTML=`<div class="card"><div class="who">${tr('modal.drowsyTitle')}</div>
+    <div class="say">${tr('modal.drowsyDesc')}</div>
+    <div class="btns"><button class="primary" id="drSleep">${tr('btn.drowsySleep')}</button><button id="drStay">${tr('btn.drowsyStay')}</button></div></div>`;
   document.body.appendChild(m);
   trapFocus(m);
   document.getElementById('drSleep').onclick=()=>{ m.remove(); startSleep(P(), ri(3,9)); };
