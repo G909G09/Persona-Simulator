@@ -426,7 +426,7 @@ Object.assign(I18N.ko,{
  'btn.randArch':'아키타입 ±15','btn.randFull':'완전 랜덤','btn.addChar':'캐릭터 추가',
  'help.createForm':'아키타입 선택 시 축 값이 프리셋으로 채워지며, 슬라이더로 자유 조정할 수 있습니다. 토큰·목록 클릭 = 캐릭터 단일 확인, 두 사람의 관계는 상세의 [관계] 탭에서 행을 눌러 확인합니다.',
  'map.title':'FLOOR PLAN — 휴양지 숙소동','map.sub':'P0 공공 – P3 밀실 · 이동은 인접 1칸/턴',
- 'log.story':'이야기','log.full':'전체 로그','log.toStory':'이야기로','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기','avatar.preview':'아바타 미리보기',
+ 'log.story':'이야기','log.full':'전체 로그','log.toStory':'이야기로','log.mode.title':'당신에게 벌어진 일만 보는 이야기 모드 / 전체 로그 전환','log.clear':'비우기','avatar.preview':'아바타 미리보기','avatar.appearance':'외형(도트 캐릭터)','avatar.skin':'피부','avatar.hairstyle':'헤어스타일','avatar.haircolor':'머리색','avatar.eyecolor':'눈동자색',
  'log.loaded':'저장 데이터를 불러왔다 (T{n})','log.exported':'저장 파일을 내보냈다 ⬇',
  'log.rating':'관찰 등급 변경 → {name}','rate.short.0':'전체이용가','rate.short.1':'15세','rate.short.2':'성인','rate.short.3':'R18',
  'log.r18template':'R18 행동 풀은 템플릿 상태(내용 미작성)입니다. 등급 3 행동은 캐릭터별 R18 참여 플래그 + 프라이버시 2 이상 공간이 조건입니다.',
@@ -610,7 +610,7 @@ Object.assign(I18N.en,{
  'btn.randArch':'Archetype ±15','btn.randFull':'Fully random','btn.addChar':'Add Character',
  'help.createForm':'Picking an archetype fills the axis sliders with a preset, which you can then adjust freely. Click a token/roster entry to inspect one character; to see how two characters relate, open the [Relations] tab in the detail panel and click a row.',
  'map.title':'FLOOR PLAN — Resort Lodge','map.sub':'P0 Public – P3 Private · Move 1 adjacent room/turn',
- 'log.story':'Story','log.full':'Full Log','log.toStory':'To Story','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear','avatar.preview':'Avatar preview',
+ 'log.story':'Story','log.full':'Full Log','log.toStory':'To Story','log.mode.title':'Toggle between story mode (only what happens to you) and the full log','log.clear':'Clear','avatar.preview':'Avatar preview','avatar.appearance':'Appearance (pixel avatar)','avatar.skin':'Skin','avatar.hairstyle':'Hairstyle','avatar.haircolor':'Hair color','avatar.eyecolor':'Eye color',
  'log.loaded':'Loaded save data (T{n})','log.exported':'Exported save file ⬇',
  'log.rating':'Rating changed → {name}','rate.short.0':'All Ages','rate.short.1':'15+','rate.short.2':'Adult','rate.short.3':'R18',
  'log.r18template':'The R18 action pool is still a template (content not yet written). Rating-3 actions require both the character\'s R18 participation flag and a room with privacy 2+.',
@@ -1822,14 +1822,14 @@ function avatarCanvasHTML(id,size){ size=size||96; return `<canvas id="${id}" wi
    생성 폼·수정 폼·플레이어 시작 화면에서 공통으로 재사용한다. */
 function lookEditorHTML(idp){
   const sw=(id,colors,round)=>`<div class="chipRow" id="${id}">${colors.map(c=>`<button data-c="${c}" style="width:20px;height:20px;padding:0;border-radius:${round?'50%':'3px'};background:${c};border:1.5px solid var(--line)"></button>`).join('')}</div>`;
-  return `<div class="psec">외형(도트 캐릭터)</div>
+  return `<div class="psec">${tr('avatar.appearance')}</div>
     <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
       ${avatarCanvasHTML(idp+'Prev',84)}
       <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
-        <div><span style="font-size:10.5px;color:var(--muted)">피부</span>${sw(idp+'Skin',SKIN_TONES,true)}</div>
-        <div><span style="font-size:10.5px;color:var(--muted)">헤어스타일</span><select id="${idp}HStyle" style="width:100%">${HAIR_STYLES.map(s=>`<option>${s}</option>`).join('')}</select></div>
-        <div><span style="font-size:10.5px;color:var(--muted)">머리색</span>${sw(idp+'HColor',HAIR_COLORS,false)}</div>
-        <div><span style="font-size:10.5px;color:var(--muted)">눈동자색</span>${sw(idp+'EColor',EYE_COLORS,false)}</div>
+        <div><span style="font-size:10.5px;color:var(--muted)">${tr('avatar.skin')}</span>${sw(idp+'Skin',SKIN_TONES,true)}</div>
+        <div><span style="font-size:10.5px;color:var(--muted)">${tr('avatar.hairstyle')}</span><select id="${idp}HStyle" style="width:100%">${HAIR_STYLES.map(s=>`<option>${s}</option>`).join('')}</select></div>
+        <div><span style="font-size:10.5px;color:var(--muted)">${tr('avatar.haircolor')}</span>${sw(idp+'HColor',HAIR_COLORS,false)}</div>
+        <div><span style="font-size:10.5px;color:var(--muted)">${tr('avatar.eyecolor')}</span>${sw(idp+'EColor',EYE_COLORS,false)}</div>
       </div>
     </div>`;
 }
@@ -3917,8 +3917,8 @@ function drawEditForm(){
       ${PARTS.map(p=>`<div class="axRow"><span style="font-size:11px">${lbl('part',p)}</span><input type="range" min="0" max="100" value="${sensOf(n,p)}" data-esens="${p}" aria-label="${lbl('part',p)}"><span class="val">${sensOf(n,p)}</span></div>`).join('')}
    <div class="axRow"><span style="font-size:11px">${tr('edit.build')}</span><input type="range" id="eBody" min="0" max="100" value="${n.body.체격}" aria-label="${tr('edit.build')}"><span class="val">${n.body.체격}</span></div>
    <div class="axRow"><span style="font-size:11px">${tr('edit.athletic')}</span><input type="range" id="eAth" min="0" max="100" value="${n.body.운동}" aria-label="${tr('edit.athletic')}"><span class="val">${n.body.운동}</span></div>
-   <div class="axRow"><span style="font-size:11px">${tr('edit.charm')}</span><input type="range" id="eCharm" min="0" max="100" value="${n.매력||0}" aria-label="${tr('edit.charm')}"><span class="val">${n.매력||0}</span></div>
-   <div class="axRow"><span style="font-size:11px">${tr('edit.exposure')}</span><input type="range" id="eExpose" min="0" max="100" value="${n.노출도||0}" aria-label="${tr('edit.exposure')}"><span class="val">${n.노출도||0}</span></div>
+   <div class="axRow"><span style="font-size:11px">${tr('edit.charm')}</span><input type="range" id="eCharm" min="0" max="100" value="${n.매력base||0}" aria-label="${tr('edit.charm')}"><span class="val">${n.매력base||0}</span></div>
+   <div class="axRow"><span style="font-size:11px">${tr('edit.exposure')}</span><input type="range" id="eExpose" min="0" max="100" value="${n.노출도base||0}" aria-label="${tr('edit.exposure')}"><span class="val">${n.노출도base||0}</span></div>
    <select id="eR18Mode"><option value="기본"${n.r18Mode==='기본'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','기본')}</option><option value="부탁"${n.r18Mode==='부탁'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','부탁')}</option><option value="강압"${n.r18Mode==='강압'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','강압')}</option><option value="복종"${n.r18Mode==='복종'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','복종')}</option></select>
    ${sw}
    <div style="display:flex;gap:6px"><button class="primary" id="eSave" style="flex:1">${tr('edit.save')}</button><button id="eCancel" style="flex:1">${tr('edit.cancel')}</button></div>
@@ -5015,7 +5015,7 @@ function applySave(data){
     if(typeof n.lewd.흥분!=='number'||!Number.isFinite(n.lewd.흥분))n.lewd.흥분=0;
     if(typeof n.lewd.취기!=='number'||!Number.isFinite(n.lewd.취기))n.lewd.취기=0;
     if(typeof n.money!=='number'||!Number.isFinite(n.money))n.money=n.isPlayer?60:0;
-    if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(n.노출도base==null)n.노출도base=0; if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!['기본','부탁','강압','복종'].includes(n.r18Mode))n.r18Mode='기본'; ensureLook(n); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; if(!n.flags)n.flags={}; if(!n.r18log)n.r18log={}; if(!n.relations||typeof n.relations!=='object')n.relations={}; if(!n.isPlayer&&!PALETTE.includes(n.color))n.color=PALETTE[(colorIdx++)%PALETTE.length]; if(n.isPlayer&&!/^#[0-9A-Fa-f]{6}$/.test(n.color))n.color='#17171A'; equipOutfit(n,n.outfit); n.asleep=0;
+    if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(n.노출도base==null)n.노출도base=0; if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!['기본','부탁','강압','복종'].includes(n.r18Mode))n.r18Mode='기본'; ensureLook(n); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(typeof n.평판!=='number'||!Number.isFinite(n.평판))n.평판=0; if(!n.flags)n.flags={}; if(!n.r18log)n.r18log={}; if(!n.relations||typeof n.relations!=='object')n.relations={}; if(!n.isPlayer&&!PALETTE.includes(n.color))n.color=PALETTE[(colorIdx++)%PALETTE.length]; if(n.isPlayer&&!/^#[0-9A-Fa-f]{6}$/.test(n.color))n.color='#17171A'; equipOutfit(n,n.outfit); n.asleep=0;
   });
   /* 위 루프는 각 npc.relations가 객체인지만 보장할 뿐, 모든 상대와의 관계 항목이
      실제로 존재하는지는 보장하지 않는다 — 손상되거나 일부만 담긴 저장 파일은 통과시켜
