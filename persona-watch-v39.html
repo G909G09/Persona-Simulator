@@ -5000,6 +5000,11 @@ function applySave(data){
     if(!ARCH[n.arch])n.arch=Object.keys(ARCH)[0];
     if(!Array.isArray(n.axes)||n.axes.length!==6||!n.axes.every(v=>typeof v==='number'&&Number.isFinite(v)))n.axes=[...ARCH[n.arch]];
     if(!['반말','존댓말','혼합'].includes(n.form))n.form='반말';
+    /* n.form이 '혼합'인데 n.mix가 없거나 형태가 다를 수 있다 — renderDetail()이 n.mix.base에
+       바로 접근해 TypeError로 죽거나(누락 시), lbl()이 화이트리스트에 없는 값을 그대로 반환해
+       임의 문자열이 innerHTML에 그대로 삽입될 수 있었다(색상값과 동일한 유형의 문제). */
+    if(n.form==='혼합'){ if(!n.mix||typeof n.mix!=='object'||!['반말','존댓말'].includes(n.mix.base)||!['감정고조','친밀'].includes(n.mix.trig))n.mix={base:'반말',trig:'감정고조'}; }
+    else n.mix=null;
     if(!n.needs||typeof n.needs!=='object')n.needs={사교:30,피로:20,성취:30};
     if(!n.body||typeof n.body!=='object')n.body={체격:50,운동:50};
     if(typeof n.stability!=='number'||!Number.isFinite(n.stability))n.stability=100;
@@ -5010,7 +5015,7 @@ function applySave(data){
     if(typeof n.lewd.흥분!=='number'||!Number.isFinite(n.lewd.흥분))n.lewd.흥분=0;
     if(typeof n.lewd.취기!=='number'||!Number.isFinite(n.lewd.취기))n.lewd.취기=0;
     if(typeof n.money!=='number'||!Number.isFinite(n.money))n.money=n.isPlayer?60:0;
-    if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(n.노출도base==null)n.노출도base=0; if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; ensureLook(n); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; if(!n.flags)n.flags={}; if(!n.r18log)n.r18log={}; if(!n.relations||typeof n.relations!=='object')n.relations={}; if(!n.isPlayer&&!PALETTE.includes(n.color))n.color=PALETTE[(colorIdx++)%PALETTE.length]; if(n.isPlayer&&!/^#[0-9A-Fa-f]{6}$/.test(n.color))n.color='#17171A'; equipOutfit(n,n.outfit); n.asleep=0;
+    if(!Array.isArray(n.actHist))n.actHist=[]; if(n.매력base==null)n.매력base=(n.매력!=null?n.매력:50); if(n.노출도base==null)n.노출도base=0; if(!n.outfit)n.outfit='평상복'; if(!Array.isArray(n.wardrobe))n.wardrobe=[n.outfit]; if(!n.wardrobe.includes(n.outfit))n.wardrobe.push(n.outfit); if(!n.gender)n.gender='여성'; if(!n.genital)n.genital='여성기'; if(!n.under)n.under={상:'브라',하:'팬티'}; if(!['기본','부탁','강압','복종'].includes(n.r18Mode))n.r18Mode='기본'; ensureLook(n); if(!n.wardrobe.includes('알몸'))n.wardrobe.push('알몸'); if(n.평판==null)n.평판=0; if(!n.flags)n.flags={}; if(!n.r18log)n.r18log={}; if(!n.relations||typeof n.relations!=='object')n.relations={}; if(!n.isPlayer&&!PALETTE.includes(n.color))n.color=PALETTE[(colorIdx++)%PALETTE.length]; if(n.isPlayer&&!/^#[0-9A-Fa-f]{6}$/.test(n.color))n.color='#17171A'; equipOutfit(n,n.outfit); n.asleep=0;
   });
   /* 위 루프는 각 npc.relations가 객체인지만 보장할 뿐, 모든 상대와의 관계 항목이
      실제로 존재하는지는 보장하지 않는다 — 손상되거나 일부만 담긴 저장 파일은 통과시켜
