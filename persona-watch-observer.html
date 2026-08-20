@@ -3919,7 +3919,7 @@ function drawEditForm(){
    <div class="axRow"><span style="font-size:11px">${tr('edit.athletic')}</span><input type="range" id="eAth" min="0" max="100" value="${n.body.운동}" aria-label="${tr('edit.athletic')}"><span class="val">${n.body.운동}</span></div>
    <div class="axRow"><span style="font-size:11px">${tr('edit.charm')}</span><input type="range" id="eCharm" min="0" max="100" value="${n.매력base||0}" aria-label="${tr('edit.charm')}"><span class="val">${n.매력base||0}</span></div>
    <div class="axRow"><span style="font-size:11px">${tr('edit.exposure')}</span><input type="range" id="eExpose" min="0" max="100" value="${n.노출도base||0}" aria-label="${tr('edit.exposure')}"><span class="val">${n.노출도base||0}</span></div>
-   <select id="eR18Mode"><option value="기본"${n.r18Mode==='기본'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','기본')}</option><option value="부탁"${n.r18Mode==='부탁'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','부탁')}</option><option value="강압"${n.r18Mode==='강압'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','강압')}</option><option value="복종"${n.r18Mode==='복종'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','복종')}</option></select>
+   <select id="eR18Mode" aria-label="${tr('sec.r18mode')}"><option value="기본"${n.r18Mode==='기본'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','기본')}</option><option value="부탁"${n.r18Mode==='부탁'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','부탁')}</option><option value="강압"${n.r18Mode==='강압'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','강압')}</option><option value="복종"${n.r18Mode==='복종'?' selected':''}>${tr('sec.r18mode')}: ${lbl('r18mode','복종')}</option></select>
    ${sw}
    <div style="display:flex;gap:6px"><button class="primary" id="eSave" style="flex:1">${tr('edit.save')}</button><button id="eCancel" style="flex:1">${tr('edit.cancel')}</button></div>
    </div>`;
@@ -5009,6 +5009,13 @@ function applySave(data){
     else n.mix=null;
     if(!n.needs||typeof n.needs!=='object')n.needs={사교:30,피로:20,성취:30};
     if(!n.body||typeof n.body!=='object')n.body={체격:50,운동:50};
+    /* editChar()의 체격/운동 슬라이더는 n.body.체격/운동을 <input type="range" value="${v}">에
+       어떤 수치 변환도 거치지 않고 그대로 꽂아 넣는다 — 위 줄은 body가 객체인지만 보장할 뿐
+       그 안의 각 필드까지 숫자인지는 보장하지 않으므로, 손상된 저장 파일에 따옴표를 포함한
+       문자열을 넣으면 value 속성을 깨고 임의 속성을 주입하는 XSS로 이어질 수 있었다. 형제
+       필드(안정도 등)와 동일하게 검증한다. */
+    if(typeof n.body.체격!=='number'||!Number.isFinite(n.body.체격))n.body.체격=50;
+    if(typeof n.body.운동!=='number'||!Number.isFinite(n.body.운동))n.body.운동=50;
     if(typeof n.stability!=='number'||!Number.isFinite(n.stability))n.stability=100;
     if(!n.lewd||typeof n.lewd!=='object')n.lewd={흥분:0,취기:0,타락:0,정력:100,max정력:100};
     if(typeof n.lewd.max정력!=='number'||!Number.isFinite(n.lewd.max정력))n.lewd.max정력=100;
