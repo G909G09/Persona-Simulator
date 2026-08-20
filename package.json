@@ -1,0 +1,11 @@
+{
+  "name": "persona-simulator",
+  "private": true,
+  "description": "Persona Watch — a single-HTML-file persona life simulator. No build step; this manifest only wires up the maintenance scripts used in development and CI.",
+  "scripts": {
+    "test": "node scripts/test-scripts.js",
+    "check:syntax": "node scripts/check-html-script-syntax.js persona-watch-v39.html persona-watch-observer.html",
+    "check:sync": "node scripts/check-variant-sync.js",
+    "check": "npm run test && npm run check:syntax && npm run check:sync"
+  }
+}
