@@ -5008,6 +5008,14 @@ function applySave(data){
     if(n.form==='혼합'){ if(!n.mix||typeof n.mix!=='object'||!['반말','존댓말'].includes(n.mix.base)||!['감정고조','친밀'].includes(n.mix.trig))n.mix={base:'반말',trig:'감정고조'}; }
     else n.mix=null;
     if(!n.needs||typeof n.needs!=='object')n.needs={사교:30,피로:20,성취:30};
+    /* renderDetail()/renderPlayerPanel()은 n.needs.사교/피로/성취를 어떤 수치 검증도 없이
+       <span style="width:${v}%">에 그대로 꽂아 넣는다 — 위 줄은 needs가 객체인지만 보장할
+       뿐 그 안의 각 필드까지 숫자인지는 보장하지 않으므로, 손상된 저장 파일에 따옴표를
+       포함한 문자열을 넣으면 style 속성을 깨고 임의 속성을 주입하는 XSS로 이어질 수
+       있었다(n.body 체격/운동과 동일한 유형). 형제 필드와 동일하게 검증한다. */
+    if(typeof n.needs.사교!=='number'||!Number.isFinite(n.needs.사교))n.needs.사교=30;
+    if(typeof n.needs.피로!=='number'||!Number.isFinite(n.needs.피로))n.needs.피로=20;
+    if(typeof n.needs.성취!=='number'||!Number.isFinite(n.needs.성취))n.needs.성취=30;
     if(!n.body||typeof n.body!=='object')n.body={체격:50,운동:50};
     /* editChar()의 체격/운동 슬라이더는 n.body.체격/운동을 <input type="range" value="${v}">에
        어떤 수치 변환도 거치지 않고 그대로 꽂아 넣는다 — 위 줄은 body가 객체인지만 보장할 뿐
