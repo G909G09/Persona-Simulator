@@ -12,4 +12,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - run: node scripts/test-scripts.js
       - run: node scripts/check-html-script-syntax.js persona-watch-v39.html persona-watch-observer.html
+      - run: node scripts/check-variant-sync.js
