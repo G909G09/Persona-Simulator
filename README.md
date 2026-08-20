@@ -41,6 +41,12 @@
 
 이 프로젝트는 성인용(R18) 콘텐츠를 포함합니다. 성인 사용자만 이용해 주세요.
 
+## 개발자를 위한 안내
+
+- `persona-watch-v39.html`과 `persona-watch-observer.html`은 상태 모델·저장/불러오기·i18n(`tr()`, `I18N.ko`, `I18N.en`)·아바타 시스템 등 핵심 로직을 그대로 공유하는 두 개의 독립된 파일입니다. 한쪽 파일의 로직을 고치면 **다른 쪽 파일에도 동일하게 반영**해야 두 버전이 어긋나지 않습니다.
+- 커밋 전에는 `node scripts/check-html-script-syntax.js persona-watch-v39.html persona-watch-observer.html`로 인라인 `<script>` 블록의 문법 오류를 확인하세요. 동일한 검사가 GitHub Actions(`.github/workflows/check.yml`)에서 push·PR마다 자동으로 실행됩니다.
+- `avatar_assets/` 폴더는 선택적 PNG 레이어 모드용입니다. 폴더가 비어 있거나 규격에 맞는 파일이 없으면 자동으로 기존 도트 렌더러로 대체(fallback)되므로, 새 레이어를 추가할 때는 기존 파일명 규칙을 따라야 합니다.
+
 ---
 
 <a id="persona-watch-english"></a>
@@ -86,3 +92,9 @@ The two files keep separate save data and settings, so they never interfere with
 4. Adjust the content rating as needed, then start the simulation with a single turn or auto-play.
 
 This project contains adult (R18) content. For adult users only.
+
+## Development
+
+- `persona-watch-v39.html` and `persona-watch-observer.html` share the same core logic — state model, save/load, i18n (`tr()`, `I18N.ko`, `I18N.en`), avatar system, and so on — as two independent files. A logic fix in one file needs to be **applied identically to the other** to keep the two versions in sync.
+- Before committing, run `node scripts/check-html-script-syntax.js persona-watch-v39.html persona-watch-observer.html` to catch syntax errors in the inline `<script>` blocks. The same check now runs automatically on every push/PR via GitHub Actions (`.github/workflows/check.yml`).
+- The `avatar_assets/` folder is for the optional PNG-layer rendering mode. If the folder is empty or a file doesn't match the expected naming, it falls back to the built-in pixel renderer automatically — follow the existing file-naming convention when adding new layers.
