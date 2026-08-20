@@ -4998,6 +4998,8 @@ function applySave(data){
      npcs는 이미 전역에 반영된 뒤라 앱이 반쯤 깨진 상태로 멈췄다. 렌더 전에 최소 형태를 보장한다. */
   npcs.forEach(n=>{
     if(!ARCH[n.arch])n.arch=Object.keys(ARCH)[0];
+    if(!SPACES[n.home])n.home=ROOMS_PRIVATE[0];
+    if(!SPACES[n.space])n.space=n.home;
     if(!Array.isArray(n.axes)||n.axes.length!==6||!n.axes.every(v=>typeof v==='number'&&Number.isFinite(v)))n.axes=[...ARCH[n.arch]];
     if(!['반말','존댓말','혼합'].includes(n.form))n.form='반말';
     /* n.form이 '혼합'인데 n.mix가 없거나 형태가 다를 수 있다 — renderDetail()이 n.mix.base에
